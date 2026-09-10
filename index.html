@@ -1,224 +1,505 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>쿠로코의 농구 나무위키 생성기</title>
-    <style>
-        :root {
-            --primary-color: #007bff;
-            --bg-color: #f4f6f9;
-        }
-        body {
-            font-family: 'Apple SD Gothic Neo', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        /* 좌측 입력 폼 영역 */
-        .editor-pane {
-            width: 45%;
-            background: #fff;
-            border-right: 1px solid #ddd;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-y: auto;
-        }
-        /* 우측 미리보기 영역 */
-        .preview-pane {
-            width: 55%;
-            padding: 30px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            background: #fff;
-        }
-        h2 { font-size: 1.1rem; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 5px; margin-top: 20px; }
-        .form-group {
-            margin-bottom: 12px;
-        }
-        label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-bottom: 4px;
-            color: #555;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 0.9rem;
-        }
-        .row { display: flex; gap: 10px; }
-        .row .form-group { flex: 1; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오리지널 캐릭터 위키 생성기</title>
+<style>
+  :root{
+    --accent:#0a6e5e;
+    --ink:#1c1c1c;
+    --sub:#6b6b6b;
+    --line:#e2e0d8;
+    --paper:#fffefb;
+    --panel:#f6f4ee;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; height:100vh; display:flex; overflow:hidden;
+    font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    color:var(--ink); background:var(--panel);
+  }
+  /* ---------- 좌측 편집 패널 ---------- */
+  .editor{
+    width:420px; flex-shrink:0; background:var(--panel);
+    border-right:1px solid var(--line);
+    overflow-y:auto; padding:28px 24px 80px;
+  }
+  .editor-title{
+    font-size:1rem; font-weight:700; letter-spacing:-0.01em;
+    margin:0 0 4px;
+  }
+  .editor-sub{
+    font-size:0.78rem; color:var(--sub); margin:0 0 24px;
+  }
+  .block{
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:2px; padding:16px 16px 18px; margin-bottom:14px;
+  }
+  .block h3{
+    margin:0 0 12px; font-size:0.82rem; font-weight:700;
+    color:var(--accent); display:flex; align-items:center; gap:6px;
+  }
+  .field{margin-bottom:10px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{
+    display:block; font-size:0.72rem; color:var(--sub); margin-bottom:4px;
+  }
+  .row{display:flex; gap:8px;}
+  .row .field{flex:1;}
+  input[type=text], select, textarea{
+    width:100%; padding:7px 9px; border:1px solid var(--line);
+    border-radius:2px; font-size:0.83rem; font-family:inherit;
+    background:#fff; color:var(--ink);
+  }
+  input[type=text]:focus, select:focus, textarea:focus{
+    outline:none; border-color:var(--accent);
+  }
+  textarea{resize:vertical; line-height:1.5;}
+  input[type=color]{
+    width:44px; height:30px; padding:2px; border:1px solid var(--line);
+    border-radius:2px; background:#fff; cursor:pointer;
+  }
+  .color-row{display:flex; align-items:center; gap:10px;}
+  .color-row span{font-size:0.78rem; color:var(--sub);}
 
-        /* 나무위키 인포박스 스타일 */
-        .wiki-infobox {
-            width: 100%;
-            max-width: 350px;
-            border: 2px solid var(--theme-color, #1a73e8);
-            background: #fff;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-        }
-        .wiki-infobox-header {
-            background-color: var(--theme-color, #1a73e8);
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-            font-weight: bold;
-        }
-        .wiki-infobox-sub {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #666;
-            padding: 5px;
-            border-bottom: 1px solid #ddd;
-            background: #fafafa;
-        }
-        .wiki-infobox table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .wiki-infobox th, .wiki-infobox td {
-            padding: 6px 10px;
-            border-bottom: 1px solid #eee;
-            font-size: 0.85rem;
-        }
-        .wiki-infobox th {
-            width: 35%;
-            background: #f4f4f4;
-            text-align: left;
-            color: #333;
-        }
-        .wiki-content h3 {
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 4px;
-            color: #333;
-        }
-    </style>
+  .img-drop{
+    border:1px dashed var(--line); border-radius:2px; padding:10px;
+    display:flex; align-items:center; gap:10px; background:#fff;
+  }
+  .img-drop img{
+    width:48px; height:48px; object-fit:cover; border:1px solid var(--line);
+  }
+  .img-drop .ph{
+    width:48px; height:48px; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.65rem; color:var(--sub); text-align:center; background:var(--panel);
+  }
+  .img-drop input[type=file]{font-size:0.72rem; flex:1;}
+  .btn-mini{
+    border:1px solid var(--line); background:#fff; color:var(--sub);
+    font-size:0.7rem; padding:3px 8px; border-radius:2px; cursor:pointer;
+  }
+  .btn-mini:hover{border-color:var(--accent); color:var(--accent);}
+
+  .repeat-item{
+    border:1px solid var(--line); border-radius:2px; padding:10px;
+    margin-bottom:8px; background:#fbfaf7; position:relative;
+  }
+  .repeat-item .del{
+    position:absolute; top:6px; right:6px; border:none; background:none;
+    color:var(--sub); font-size:0.85rem; cursor:pointer; line-height:1;
+  }
+  .repeat-item .del:hover{color:#c0392b;}
+  .add-btn{
+    width:100%; padding:8px; border:1px dashed var(--line); background:#fff;
+    color:var(--accent); font-size:0.8rem; border-radius:2px; cursor:pointer;
+    font-weight:600;
+  }
+  .add-btn:hover{background:var(--panel);}
+
+  .download-bar{
+    position:fixed; bottom:0; left:0; width:420px; padding:14px 24px;
+    background:var(--panel); border-top:1px solid var(--line);
+  }
+  .download-btn{
+    width:100%; padding:11px; border:none; border-radius:2px;
+    background:var(--accent); color:#fff; font-size:0.85rem; font-weight:700;
+    cursor:pointer; letter-spacing:-0.01em;
+  }
+  .download-btn:hover{opacity:0.92;}
+
+  /* ---------- 우측 미리보기 ---------- */
+  .preview-wrap{
+    flex:1; overflow-y:auto; background:var(--paper);
+    display:flex; justify-content:center;
+  }
+  .preview-page{ width:100%; max-width:760px; padding:40px 36px 100px; }
+
+  .wiki-toc{
+    float:right; width:190px; margin:0 0 16px 20px;
+    border:1px solid var(--line); background:#fbfaf7; font-size:0.78rem;
+  }
+  .wiki-toc-head{
+    padding:8px 10px; font-weight:700; border-bottom:1px solid var(--line);
+    color:var(--ink);
+  }
+  .wiki-toc ol{margin:0; padding:8px 10px 8px 24px;}
+  .wiki-toc li{margin-bottom:3px; color:var(--accent);}
+  .wiki-toc li::marker{color:var(--sub);}
+
+  .wiki-infobox{
+    width:280px; border:1px solid var(--line); margin:0 0 20px 20px; float:right;
+    clear:right; font-size:0.82rem; background:#fff;
+  }
+  .wiki-infobox-header{
+    background:var(--accent-c, var(--accent)); color:#fff; text-align:center;
+    padding:12px 8px 10px; font-weight:700; font-size:1.02rem;
+  }
+  .wiki-infobox-sub{
+    text-align:center; font-size:0.74rem; color:var(--sub);
+    padding:5px; border-bottom:1px solid var(--line); background:#fafafa;
+  }
+  .wiki-infobox-img{ width:100%; aspect-ratio:1; object-fit:cover; display:block; border-bottom:1px solid var(--line); }
+  .wiki-infobox table{width:100%; border-collapse:collapse;}
+  .wiki-infobox th, .wiki-infobox td{
+    padding:6px 9px; border-bottom:1px solid #eee; font-size:0.78rem;
+    text-align:left; vertical-align:top;
+  }
+  .wiki-infobox th{ width:34%; background:#f7f7f5; color:var(--sub); font-weight:600; }
+
+  .wiki-title{
+    font-size:1.7rem; font-weight:800; margin:0 0 4px; letter-spacing:-0.02em;
+  }
+  .wiki-title-sub{ font-size:0.82rem; color:var(--sub); margin:0 0 18px; }
+  .wiki-lead{ line-height:1.75; font-size:0.92rem; margin:0 0 6px; }
+  .wiki-lead b{font-weight:700;}
+  .wiki-lead a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent;}
+  .wiki-lead a:hover{border-color:var(--accent);}
+
+  .wiki-content{ clear:none; }
+  .wiki-h2{
+    font-size:1.12rem; font-weight:700; border-bottom:2px solid var(--ink);
+    padding-bottom:6px; margin:26px 0 10px;
+  }
+  .wiki-h3{
+    font-size:0.98rem; font-weight:700; margin:16px 0 6px; color:var(--ink);
+  }
+  .wiki-p{ line-height:1.8; font-size:0.9rem; margin:0 0 10px; color:#2a2a2a; }
+
+  .wiki-relation{
+    border:1px solid var(--line); border-left:3px solid var(--accent);
+    padding:8px 12px; margin-bottom:8px; background:#fbfaf7;
+  }
+  .wiki-relation .rname{font-weight:700; font-size:0.87rem;}
+  .wiki-relation .rdesc{font-size:0.83rem; color:#3a3a3a; margin-top:2px; line-height:1.6;}
+
+  .wiki-quote{
+    border-left:3px solid var(--line); padding:6px 14px; margin-bottom:8px;
+    font-size:0.87rem; font-style:normal; color:#333;
+  }
+  .wiki-quote .qspeaker{ font-size:0.74rem; color:var(--sub); margin-top:3px; }
+
+  .wiki-footer{
+    margin-top:36px; padding-top:14px; border-top:1px solid var(--line);
+    font-size:0.72rem; color:var(--sub);
+  }
+  .wiki-cats{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .wiki-cats span{
+    border:1px solid var(--line); padding:2px 8px; border-radius:10px;
+    background:#f7f7f5;
+  }
+  .clearfix::after{ content:""; display:table; clear:both; }
+
+  ::-webkit-scrollbar{ width:9px; }
+  ::-webkit-scrollbar-thumb{ background:#d7d4c8; border-radius:5px; }
+</style>
 </head>
 <body>
 
-    <!-- 좌측 에디터 패널 -->
-    <div class="editor-pane">
-        <h2>🏀 쿠로코의 농구 자캐 위키 생성기</h2>
-        
-        <div class="form-group">
-            <label>테마 컬러 (학교 컬러 등)</label>
-            <input type="color" id="themeColor" value="#1a73e8" oninput="updatePreview()">
-        </div>
+<div class="editor">
+  <p class="editor-title">🏀 오리지널 캐릭터 위키 생성기</p>
+  <p class="editor-sub">쿠로코의 농구 자캐(自캐) 설정을 입력하면 오른쪽에 위키 문서 형태로 바로 조립됩니다.</p>
 
-        <div class="row">
-            <div class="form-group">
-                <label>이름 (한글)</label>
-                <input type="text" id="nameKo" value="쿠로바 사쿠라" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-                <label>이름 (영문)</label>
-                <input type="text" id="nameEn" value="Kuroba Sakura" oninput="updatePreview()">
-            </div>
-        </div>
+  <div class="block">
+    <h3>테마</h3>
+    <div class="field">
+      <label>인포박스 색상</label>
+      <div class="color-row">
+        <input type="color" id="themeColor" value="#0a6e5e" oninput="render()">
+        <span>학교 상징색 등으로 지정해보세요</span>
+      </div>
+    </div>
+  </div>
 
-        <div class="row">
-            <div class="form-group">
-                <label>소속 고교</label>
-                <select id="school" onchange="updatePreview()">
-                    <option value="세이린 고교">세이린 고교</option>
-                    <option value="카이조 고교">카이조 고교</option>
-                    <option value="슈토쿠 고교">슈토쿠 고교</option>
-                    <option value="토오 학원">토오 학원</option>
-                    <option value="요센 고교">요센 고교</option>
-                    <option value="락산 고교">락산 고교</option>
-                    <option value="오리지널/기타 학교" selected>오리지널 고교</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>학년 / 포지션</label>
-                <input type="text" id="position" value="1학년 / PG (포인트 가드)" oninput="updatePreview()">
-            </div>
-        </div>
+  <div class="block">
+    <h3>기본 정보</h3>
+    <div class="row">
+      <div class="field"><label>이름 (한글)</label><input type="text" id="nameKo" value="쿠로바 사쿠라" oninput="render()"></div>
+      <div class="field"><label>이름 (영문/원어)</label><input type="text" id="nameEn" value="Kuroba Sakura" oninput="render()"></div>
+    </div>
+    <div class="field">
+      <label>캐릭터 이미지</label>
+      <div class="img-drop">
+        <div id="imgPreviewWrap"><div class="ph">이미지<br>없음</div></div>
+        <input type="file" id="imgFile" accept="image/*" onchange="handleImage(event)">
+        <button class="btn-mini" onclick="clearImage()" type="button">제거</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>소속 고교</label>
+        <select id="school" onchange="render()">
+          <option>세이린 고교</option>
+          <option>카이조 고교</option>
+          <option>슈토쿠 고교</option>
+          <option>토오 학원</option>
+          <option>요센 고교</option>
+          <option>락산 고교</option>
+          <option value="오리지널 고교" selected>오리지널 고교</option>
+        </select>
+      </div>
+      <div class="field"><label>학년 / 포지션</label><input type="text" id="position" value="1학년 / PG (포인트 가드)" oninput="render()"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>등번호</label><input type="text" id="backNumber" value="No. 10" oninput="render()"></div>
+      <div class="field"><label>신장 / 체중</label><input type="text" id="physical" value="175cm / 63kg" oninput="render()"></div>
+    </div>
+  </div>
 
-        <div class="row">
-            <div class="form-group">
-                <label>등번호</label>
-                <input type="text" id="backNumber" value="No. 10" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-                <label>신장 / 체중</label>
-                <input type="text" id="physical" value="175cm / 63kg" oninput="updatePreview()">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>특기 / 스킬</label>
-            <input type="text" id="skill" value="미라지 패스 /코트 시야" oninput="updatePreview()">
-        </div>
-
-        <div class="form-group">
-            <label>소개 및 설정 내용</label>
-            <textarea id="description" rows="5" oninput="updatePreview()">만화 《쿠로코의 농구》의 오리지널 캐릭터. 
+  <div class="block">
+    <h3>개요 · 외형 · 성격</h3>
+    <div class="field"><label>개요 (한 줄 소개 포함)</label>
+      <textarea id="overview" rows="4" oninput="render()">만화 《쿠로코의 농구》의 세계관을 기반으로 한 오리지널 캐릭터.
 뛰어난 관찰력과 넓은 시야를 가진 포인트 가드.</textarea>
-        </div>
+    </div>
+    <div class="field"><label>외형</label>
+      <textarea id="appearance" rows="3" oninput="render()">단발의 흑발에 또렷한 눈매를 지녔으며, 코트 위에서는 냉정한 표정을 유지한다.</textarea>
+    </div>
+    <div class="field"><label>성격</label>
+      <textarea id="personality" rows="3" oninput="render()">평소엔 조용하고 무뚝뚝하지만 동료를 향한 신뢰가 깊고, 경기 중에는 지휘관형으로 돌변한다.</textarea>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>능력 / 특기 스킬</h3>
+    <div id="skillList"></div>
+    <button class="add-btn" onclick="addSkill()" type="button">+ 스킬 추가</button>
+  </div>
+
+  <div class="block">
+    <h3>인물 관계</h3>
+    <div id="relationList"></div>
+    <button class="add-btn" onclick="addRelation()" type="button">+ 관계 추가</button>
+  </div>
+
+  <div class="block">
+    <h3>명대사</h3>
+    <div id="quoteList"></div>
+    <button class="add-btn" onclick="addQuote()" type="button">+ 대사 추가</button>
+  </div>
+
+  <div class="block">
+    <h3>분류 태그</h3>
+    <div class="field"><label>쉼표(,)로 구분</label>
+      <input type="text" id="categories" value="쿠로코의 농구/등장인물, 오리지널 캐릭터, 세이린 고교" oninput="render()">
+    </div>
+  </div>
+</div>
+
+<div class="download-bar">
+  <button class="download-btn" onclick="downloadPage()" type="button">📄 위키 문서 HTML로 다운로드</button>
+</div>
+
+<div class="preview-wrap">
+  <div class="preview-page" id="wikiOutput"></div>
+</div>
+
+<script>
+let skills = [
+  {name:"미라지 패스", desc:"상대의 시야 사각을 이용해 궤적을 숨기는 패스."},
+  {name:"코트 시야", desc:"코트 전체를 넓게 조망하는 관찰력."}
+];
+let relations = [
+  {name:"세이린 고교 농구부원", desc:"입학과 동시에 가장 먼저 마음을 터놓은 동료들."}
+];
+let quotes = [
+  {text:"패스는 눈에 보이지 않아도, 마음에는 닿아야 하니까.", speaker:"경기 중, 팀원에게"}
+];
+let imageData = null;
+
+function uid(){ return Math.random().toString(36).slice(2,9); }
+
+function handleImage(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    imageData = ev.target.result;
+    render();
+  };
+  reader.readAsDataURL(file);
+}
+function clearImage(){
+  imageData = null;
+  document.getElementById('imgFile').value = "";
+  render();
+}
+
+function addSkill(){ skills.push({name:"", desc:""}); renderSkillEditor(); render(); }
+function removeSkill(i){ skills.splice(i,1); renderSkillEditor(); render(); }
+function addRelation(){ relations.push({name:"", desc:""}); renderRelationEditor(); render(); }
+function removeRelation(i){ relations.splice(i,1); renderRelationEditor(); render(); }
+function addQuote(){ quotes.push({text:"", speaker:""}); renderQuoteEditor(); render(); }
+function removeQuote(i){ quotes.splice(i,1); renderQuoteEditor(); render(); }
+
+function renderSkillEditor(){
+  const el = document.getElementById('skillList');
+  el.innerHTML = skills.map((s,i)=>`
+    <div class="repeat-item">
+      <button class="del" type="button" onclick="removeSkill(${i})">✕</button>
+      <div class="field"><label>스킬명</label>
+        <input type="text" value="${escAttr(s.name)}" oninput="skills[${i}].name=this.value; render()"></div>
+      <div class="field"><label>설명</label>
+        <input type="text" value="${escAttr(s.desc)}" oninput="skills[${i}].desc=this.value; render()"></div>
+    </div>`).join('');
+}
+function renderRelationEditor(){
+  const el = document.getElementById('relationList');
+  el.innerHTML = relations.map((r,i)=>`
+    <div class="repeat-item">
+      <button class="del" type="button" onclick="removeRelation(${i})">✕</button>
+      <div class="field"><label>대상</label>
+        <input type="text" value="${escAttr(r.name)}" oninput="relations[${i}].name=this.value; render()"></div>
+      <div class="field"><label>관계 설명</label>
+        <input type="text" value="${escAttr(r.desc)}" oninput="relations[${i}].desc=this.value; render()"></div>
+    </div>`).join('');
+}
+function renderQuoteEditor(){
+  const el = document.getElementById('quoteList');
+  el.innerHTML = quotes.map((q,i)=>`
+    <div class="repeat-item">
+      <button class="del" type="button" onclick="removeQuote(${i})">✕</button>
+      <div class="field"><label>대사</label>
+        <input type="text" value="${escAttr(q.text)}" oninput="quotes[${i}].text=this.value; render()"></div>
+      <div class="field"><label>상황/대상</label>
+        <input type="text" value="${escAttr(q.speaker)}" oninput="quotes[${i}].speaker=this.value; render()"></div>
+    </div>`).join('');
+}
+
+function escHtml(str){
+  return (str||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escAttr(str){ return escHtml(str); }
+function nl2br(str){ return escHtml(str).replace(/\n/g,'<br>'); }
+
+function buildWikiHTML(){
+  const color = document.getElementById('themeColor').value;
+  const nameKo = document.getElementById('nameKo').value.trim() || "이름 없음";
+  const nameEn = document.getElementById('nameEn').value.trim();
+  const school = document.getElementById('school').value;
+  const position = document.getElementById('position').value;
+  const backNumber = document.getElementById('backNumber').value;
+  const physical = document.getElementById('physical').value;
+  const overview = document.getElementById('overview').value;
+  const appearance = document.getElementById('appearance').value;
+  const personality = document.getElementById('personality').value;
+  const categories = document.getElementById('categories').value
+    .split(',').map(s=>s.trim()).filter(Boolean);
+
+  const validSkills = skills.filter(s => s.name.trim() || s.desc.trim());
+  const validRelations = relations.filter(r => r.name.trim() || r.desc.trim());
+  const validQuotes = quotes.filter(q => q.text.trim());
+
+  const tocItems = ["1. 개요","2. 외형","3. 성격","4. 능력"];
+  if(validRelations.length) tocItems.push("5. 인물 관계");
+  if(validQuotes.length) tocItems.push((validRelations.length?"6":"5")+". 명대사");
+
+  const infoboxImg = imageData
+    ? `<img class="wiki-infobox-img" src="${imageData}" alt="${escAttr(nameKo)}">`
+    : "";
+
+  let n = 1;
+  const skillBlock = validSkills.map(s =>
+    `<h3 class="wiki-h3">4.${validSkills.indexOf(s)+1} ${escHtml(s.name)||"(이름 없음)"}</h3>
+     <p class="wiki-p">${escHtml(s.desc)}</p>`).join('');
+
+  const relationBlock = validRelations.length ? `
+    <h2 class="wiki-h2">5. 인물 관계</h2>
+    ${validRelations.map(r=>`
+      <div class="wiki-relation">
+        <div class="rname">${escHtml(r.name)||"(이름 없음)"}</div>
+        <div class="rdesc">${escHtml(r.desc)}</div>
+      </div>`).join('')}` : "";
+
+  const quoteHeadNum = validRelations.length ? 6 : 5;
+  const quoteBlock = validQuotes.length ? `
+    <h2 class="wiki-h2">${quoteHeadNum}. 명대사</h2>
+    ${validQuotes.map(q=>`
+      <div class="wiki-quote">
+        "${escHtml(q.text)}"
+        ${q.speaker ? `<div class="qspeaker">— ${escHtml(q.speaker)}</div>` : ""}
+      </div>`).join('')}` : "";
+
+  const catsBlock = categories.length ? `
+    <div class="wiki-cats">${categories.map(c=>`<span>${escHtml(c)}</span>`).join('')}</div>` : "";
+
+  return `
+    <div class="clearfix">
+      <div class="wiki-toc">
+        <div class="wiki-toc-head">목차</div>
+        <ol>${tocItems.map(t=>`<li>${t}</li>`).join('')}</ol>
+      </div>
+      <div class="wiki-infobox" style="--accent-c:${color}">
+        <div class="wiki-infobox-header" style="background:${color}">${escHtml(nameKo)}</div>
+        <div class="wiki-infobox-sub">${escHtml(nameEn)}</div>
+        ${infoboxImg}
+        <table>
+          <tr><th>소속</th><td>${escHtml(school)}</td></tr>
+          <tr><th>학년/포지션</th><td>${escHtml(position)}</td></tr>
+          <tr><th>등번호</th><td>${escHtml(backNumber)}</td></tr>
+          <tr><th>신체사이즈</th><td>${escHtml(physical)}</td></tr>
+        </table>
+      </div>
+      <h1 class="wiki-title">${escHtml(nameKo)}</h1>
+      <p class="wiki-title-sub">${escHtml(nameEn)}</p>
+      <p class="wiki-lead"><b>${escHtml(nameKo)}</b>${nameEn ? `(${escHtml(nameEn)})` : ""}는 만화 《쿠로코의 농구》 세계관을 바탕으로 한 오리지널 캐릭터이다.</p>
     </div>
 
-    <!-- 우측 미리보기 패널 -->
-    <div class="preview-pane">
-        <div id="wikiOutput">
-            <!-- 실시간 렌더링 영역 -->
-        </div>
+    <div class="wiki-content">
+      <h2 class="wiki-h2">1. 개요</h2>
+      <p class="wiki-p">${nl2br(overview)}</p>
+
+      <h2 class="wiki-h2">2. 외형</h2>
+      <p class="wiki-p">${nl2br(appearance)}</p>
+
+      <h2 class="wiki-h2">3. 성격</h2>
+      <p class="wiki-p">${nl2br(personality)}</p>
+
+      <h2 class="wiki-h2">4. 능력</h2>
+      <p class="wiki-p">${escHtml(school)}의 ${escHtml(position)}로서 활약하며 아래와 같은 특기를 지녔다.</p>
+      ${skillBlock || '<p class="wiki-p" style="color:var(--sub)">등록된 스킬이 없습니다.</p>'}
+
+      ${relationBlock}
+      ${quoteBlock}
+
+      <div class="wiki-footer">
+        이 문서는 오리지널 캐릭터 위키 생성기로 작성되었습니다.
+        ${catsBlock}
+      </div>
     </div>
+  `;
+}
 
-    <script>
-        function updatePreview() {
-            const color = document.getElementById('themeColor').value;
-            const nameKo = document.getElementById('nameKo').value;
-            const nameEn = document.getElementById('nameEn').value;
-            const school = document.getElementById('school').value;
-            const position = document.getElementById('position').value;
-            const backNumber = document.getElementById('backNumber').value;
-            const physical = document.getElementById('physical').value;
-            const skill = document.getElementById('skill').value;
-            const description = document.getElementById('description').value;
+function render(){
+  const color = document.getElementById('themeColor').value;
+  document.getElementById('imgPreviewWrap').innerHTML = imageData
+    ? `<img src="${imageData}" alt="preview">`
+    : `<div class="ph">이미지<br>없음</div>`;
+  document.getElementById('wikiOutput').innerHTML = buildWikiHTML();
+}
 
-            // CSS 루트 컬러 동적 변경
-            document.documentElement.style.setProperty('--theme-color', color);
+function downloadPage(){
+  const styleTag = document.querySelector('style').outerHTML;
+  const nameKo = document.getElementById('nameKo').value.trim() || "character";
+  const full = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">
+  <title>${escHtml(nameKo)}</title>${styleTag}
+  <style>body{display:block;height:auto;overflow:visible;background:#fffefb;}
+  .preview-wrap{display:block;} .preview-page{max-width:760px;margin:0 auto;}</style>
+  </head><body><div class="preview-wrap"><div class="preview-page">${buildWikiHTML()}</div></div></body></html>`;
+  const blob = new Blob([full], {type:"text/html"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${nameKo}_위키문서.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
-            const html = `
-                <div class="wiki-infobox" style="--theme-color: ${color};">
-                    <div class="wiki-infobox-header">${nameKo}</div>
-                    <div class="wiki-infobox-sub">${nameEn}</div>
-                    <table>
-                        <tr><th>소속</th><td>${school}</td></tr>
-                        <tr><th>학년/포지션</th><td>${position}</td></tr>
-                        <tr><th>등번호</th><td>${backNumber}</td></tr>
-                        <tr><th>신체사이즈</th><td>${physical}</td></tr>
-                        <tr><th>특기 스킬</th><td>${skill}</td></tr>
-                    </table>
-                </div>
-
-                <div class="wiki-content">
-                    <h1>${nameKo}</h1>
-                    <p><b>${nameKo}</b>(${nameEn})는 농구 만화 《<a href="#">쿠로코의 농구</a>》의 오리지널 캐릭터이다.</p>
-                    
-                    <h3>1. 개요</h3>
-                    <p>${description.replace(/\n/g, '<br>')}</p>
-
-                    <h3>2. 플레이 스타일</h3>
-                    <p>${school}의 ${position}로서 활약하며, 특히 ${skill}을(를) 주무기로 삼는다.</p>
-                </div>
-            `;
-
-            document.getElementById('wikiOutput').innerHTML = html;
-        }
-
-        // 초기 실행
-        updatePreview();
-    </script>
+renderSkillEditor();
+renderRelationEditor();
+renderQuoteEditor();
+render();
+</script>
 </body>
 </html>
