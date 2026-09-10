@@ -3,143 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>쿠로코의 농구 아카이브 위키</title>
+    <title>쿠로코의 농구 나무위키 생성기</title>
     <style>
         :root {
-            --primary-color: #1a73e8; /* 세이린 블루톤 */
-            --bg-color: #f8f9fa;
-            --text-color: #333;
+            --primary-color: #007bff;
+            --bg-color: #f4f6f9;
         }
         body {
             font-family: 'Apple SD Gothic Neo', sans-serif;
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
-            color: var(--text-color);
             display: flex;
             height: 100vh;
             overflow: hidden;
         }
-        /* 사이드바 메뉴 */
-        nav {
-            width: 250px;
+        /* 좌측 입력 폼 영역 */
+        .editor-pane {
+            width: 45%;
             background: #fff;
             border-right: 1px solid #ddd;
             padding: 20px;
             box-sizing: border-box;
             overflow-y: auto;
         }
-        nav h2 {
-            font-size: 1.2rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-        }
-        nav li {
-            margin-bottom: 10px;
-        }
-        nav a {
-            text-decoration: none;
-            color: #555;
-            display: block;
-            padding: 8px 12px;
-            border-radius: 4px;
-            transition: 0.2s;
-        }
-        nav a:hover {
-            background-color: #e8f0fe;
-            color: var(--primary-color);
-        }
-        /* 메인 콘텐츠 영역 */
-        main {
-            flex: 1;
-            padding: 40px;
+        /* 우측 미리보기 영역 */
+        .preview-pane {
+            width: 55%;
+            padding: 30px;
+            box-sizing: border-box;
             overflow-y: auto;
             background: #fff;
         }
-        article {
-            max-width: 800px;
-            margin: 0 auto;
+        h2 { font-size: 1.1rem; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 5px; margin-top: 20px; }
+        .form-group {
+            margin-bottom: 12px;
         }
-        h1 {
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 10px;
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+        }
+        .row { display: flex; gap: 10px; }
+        .row .form-group { flex: 1; }
+
+        /* 나무위키 인포박스 스타일 */
+        .wiki-infobox {
+            width: 100%;
+            max-width: 350px;
+            border: 2px solid var(--theme-color, #1a73e8);
+            background: #fff;
+            font-size: 0.9rem;
             margin-bottom: 20px;
         }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+        .wiki-infobox-header {
+            background-color: var(--theme-color, #1a73e8);
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
         }
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
+        .wiki-infobox-sub {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
             background: #fafafa;
         }
-        .card h3 {
-            margin-top: 0;
-            font-size: 1rem;
-            color: var(--primary-color);
+        .wiki-infobox table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .wiki-infobox th, .wiki-infobox td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.85rem;
+        }
+        .wiki-infobox th {
+            width: 35%;
+            background: #f4f4f4;
+            text-align: left;
+            color: #333;
+        }
+        .wiki-content h3 {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 4px;
+            color: #333;
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <h2>🏀 KNB Archive</h2>
-        <ul>
-            <li><a href="#home" onclick="loadPage('home')">홈 / 소개</a></li>
-            <li><a href="#characters" onclick="loadPage('characters')">기적의 세대 & 팀</a></li>
-            <li><a href="#fanart" onclick="loadPage('fanart')">창작물 및 연성</a></li>
-            <li><a href="#goods" onclick="loadPage('goods')">굿즈 컬렉션</a></li>
-        </ul>
-    </nav>
+    <!-- 좌측 에디터 패널 -->
+    <div class="editor-pane">
+        <h2>🏀 쿠로코의 농구 자캐 위키 생성기</h2>
+        
+        <div class="form-group">
+            <label>테마 컬러 (학교 컬러 등)</label>
+            <input type="color" id="themeColor" value="#1a73e8" oninput="updatePreview()">
+        </div>
 
-    <main>
-        <article id="content">
-            <!-- 기본 홈 화면 내용 -->
-            <h1>쿠로코의 농구 아카이브에 오신 것을 환영합니다!</h1>
-            <p>나만의 취향과 제작물들을 차곡차곡 모아두는 개인 위키 공간입니다.</p>
-            <div class="card-grid">
-                <div class="card">
-                    <h3>💡 Tip</h3>
-                    <p>좌측 메뉴를 눌러 카테고리별로 기록을 정리해 보세요.</p>
-                </div>
+        <div class="row">
+            <div class="form-group">
+                <label>이름 (한글)</label>
+                <input type="text" id="nameKo" value="쿠로바 사쿠라" oninput="updatePreview()">
             </div>
-        </article>
-    </main>
+            <div class="form-group">
+                <label>이름 (영문)</label>
+                <input type="text" id="nameEn" value="Kuroba Sakura" oninput="updatePreview()">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label>소속 고교</label>
+                <select id="school" onchange="updatePreview()">
+                    <option value="세이린 고교">세이린 고교</option>
+                    <option value="카이조 고교">카이조 고교</option>
+                    <option value="슈토쿠 고교">슈토쿠 고교</option>
+                    <option value="토오 학원">토오 학원</option>
+                    <option value="요센 고교">요센 고교</option>
+                    <option value="락산 고교">락산 고교</option>
+                    <option value="오리지널/기타 학교" selected>오리지널 고교</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>학년 / 포지션</label>
+                <input type="text" id="position" value="1학년 / PG (포인트 가드)" oninput="updatePreview()">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label>등번호</label>
+                <input type="text" id="backNumber" value="No. 10" oninput="updatePreview()">
+            </div>
+            <div class="form-group">
+                <label>신장 / 체중</label>
+                <input type="text" id="physical" value="175cm / 63kg" oninput="updatePreview()">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>특기 / 스킬</label>
+            <input type="text" id="skill" value="미라지 패스 /코트 시야" oninput="updatePreview()">
+        </div>
+
+        <div class="form-group">
+            <label>소개 및 설정 내용</label>
+            <textarea id="description" rows="5" oninput="updatePreview()">만화 《쿠로코의 농구》의 오리지널 캐릭터. 
+뛰어난 관찰력과 넓은 시야를 가진 포인트 가드.</textarea>
+        </div>
+    </div>
+
+    <!-- 우측 미리보기 패널 -->
+    <div class="preview-pane">
+        <div id="wikiOutput">
+            <!-- 실시간 렌더링 영역 -->
+        </div>
+    </div>
 
     <script>
-        // 간단한 페이지 전환 스크립트 예시
-        function loadPage(page) {
-            const content = document.getElementById('content');
-            if (page === 'home') {
-                content.innerHTML = `
-                    <h1>쿠로코의 농구 아카이브</h1>
-                    <p>나만의 취향과 제작물들을 차곡차곡 모아두는 개인 위키 공간입니다.</p>
-                `;
-            } else if (page === 'characters') {
-                content.innerHTML = `
-                    <h1>기적의 세대 & 주요 캐릭터</h1>
-                    <p>세이린 고교, 카이조, 슈토쿠, 토오 학원, 요센, 라락산 등 캐릭터별 데이터베이스.</p>
-                `;
-            } else if (page === 'fanart') {
-                content.innerHTML = `
-                    <h1>창작물 및 연성 목록</h1>
-                    <p>직접 그린 팬아트, 쓴 글, 혹은 소장 중인 연성들을 모아두는 공간입니다.</p>
-                `;
-            } else if (page === 'goods') {
-                content.innerHTML = `
-                    <h1>굿즈 컬렉션</h1>
-                    <p>넨도로이드, 아크릴 스탠드, 단행본 등 수집한 굿즈 리스트.</p>
-                `;
-            }
+        function updatePreview() {
+            const color = document.getElementById('themeColor').value;
+            const nameKo = document.getElementById('nameKo').value;
+            const nameEn = document.getElementById('nameEn').value;
+            const school = document.getElementById('school').value;
+            const position = document.getElementById('position').value;
+            const backNumber = document.getElementById('backNumber').value;
+            const physical = document.getElementById('physical').value;
+            const skill = document.getElementById('skill').value;
+            const description = document.getElementById('description').value;
+
+            // CSS 루트 컬러 동적 변경
+            document.documentElement.style.setProperty('--theme-color', color);
+
+            const html = `
+                <div class="wiki-infobox" style="--theme-color: ${color};">
+                    <div class="wiki-infobox-header">${nameKo}</div>
+                    <div class="wiki-infobox-sub">${nameEn}</div>
+                    <table>
+                        <tr><th>소속</th><td>${school}</td></tr>
+                        <tr><th>학년/포지션</th><td>${position}</td></tr>
+                        <tr><th>등번호</th><td>${backNumber}</td></tr>
+                        <tr><th>신체사이즈</th><td>${physical}</td></tr>
+                        <tr><th>특기 스킬</th><td>${skill}</td></tr>
+                    </table>
+                </div>
+
+                <div class="wiki-content">
+                    <h1>${nameKo}</h1>
+                    <p><b>${nameKo}</b>(${nameEn})는 농구 만화 《<a href="#">쿠로코의 농구</a>》의 오리지널 캐릭터이다.</p>
+                    
+                    <h3>1. 개요</h3>
+                    <p>${description.replace(/\n/g, '<br>')}</p>
+
+                    <h3>2. 플레이 스타일</h3>
+                    <p>${school}의 ${position}로서 활약하며, 특히 ${skill}을(를) 주무기로 삼는다.</p>
+                </div>
+            `;
+
+            document.getElementById('wikiOutput').innerHTML = html;
         }
+
+        // 초기 실행
+        updatePreview();
     </script>
 </body>
 </html>
