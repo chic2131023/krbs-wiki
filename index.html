@@ -6,7 +6,7 @@
 <title>오리지널 캐릭터 위키 생성기</title>
 <style>
   :root{
-    --accent:#0a6e5e;
+    --accent:#1a73e8;
     --ink:#1c1c1c;
     --sub:#6b6b6b;
     --line:#e2e0d8;
@@ -19,178 +19,135 @@
     font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
     color:var(--ink); background:var(--panel);
   }
-  /* ---------- 좌측 편집 패널 ---------- */
   .editor{
-    width:420px; flex-shrink:0; background:var(--panel);
-    border-right:1px solid var(--line);
-    overflow-y:auto; padding:28px 24px 80px;
+    width:460px; flex-shrink:0; background:var(--panel);
+    border-right:1px solid var(--line); overflow-y:auto; padding:28px 24px 90px;
   }
-  .editor-title{
-    font-size:1rem; font-weight:700; letter-spacing:-0.01em;
-    margin:0 0 4px;
-  }
-  .editor-sub{
-    font-size:0.78rem; color:var(--sub); margin:0 0 24px;
-  }
-  .block{
-    background:var(--paper); border:1px solid var(--line);
-    border-radius:2px; padding:16px 16px 18px; margin-bottom:14px;
-  }
-  .block h3{
-    margin:0 0 12px; font-size:0.82rem; font-weight:700;
-    color:var(--accent); display:flex; align-items:center; gap:6px;
-  }
+  .editor-title{ font-size:1rem; font-weight:700; letter-spacing:-0.01em; margin:0 0 4px; }
+  .editor-sub{ font-size:0.78rem; color:var(--sub); margin:0 0 22px; line-height:1.5; }
+  .block{ background:var(--paper); border:1px solid var(--line); border-radius:2px; padding:16px 16px 18px; margin-bottom:14px; }
+  .block h3{ margin:0 0 4px; font-size:0.82rem; font-weight:700; color:var(--accent); }
+  .block .hint{ font-size:0.7rem; color:var(--sub); margin:0 0 12px; line-height:1.5; }
   .field{margin-bottom:10px;}
   .field:last-child{margin-bottom:0;}
-  .field label{
-    display:block; font-size:0.72rem; color:var(--sub); margin-bottom:4px;
-  }
+  .field label{ display:block; font-size:0.72rem; color:var(--sub); margin-bottom:4px; }
   .row{display:flex; gap:8px;}
   .row .field{flex:1;}
-  input[type=text], select, textarea{
+  input[type=text], select, textarea, input[type=number]{
     width:100%; padding:7px 9px; border:1px solid var(--line);
-    border-radius:2px; font-size:0.83rem; font-family:inherit;
-    background:#fff; color:var(--ink);
+    border-radius:2px; font-size:0.83rem; font-family:inherit; background:#fff; color:var(--ink);
   }
-  input[type=text]:focus, select:focus, textarea:focus{
-    outline:none; border-color:var(--accent);
-  }
-  textarea{resize:vertical; line-height:1.5;}
-  input[type=color]{
-    width:44px; height:30px; padding:2px; border:1px solid var(--line);
-    border-radius:2px; background:#fff; cursor:pointer;
-  }
+  input:focus, select:focus, textarea:focus{ outline:none; border-color:var(--accent); }
+  textarea{resize:vertical; line-height:1.5; font-family:inherit;}
+  input[type=color]{ width:44px; height:30px; padding:2px; border:1px solid var(--line); border-radius:2px; background:#fff; cursor:pointer; }
   .color-row{display:flex; align-items:center; gap:10px;}
   .color-row span{font-size:0.78rem; color:var(--sub);}
+  code{ background:#f0efe8; padding:1px 5px; border-radius:3px; font-size:0.78rem; }
 
-  .img-drop{
-    border:1px dashed var(--line); border-radius:2px; padding:10px;
-    display:flex; align-items:center; gap:10px; background:#fff;
-  }
-  .img-drop img{
-    width:48px; height:48px; object-fit:cover; border:1px solid var(--line);
-  }
-  .img-drop .ph{
-    width:48px; height:48px; border:1px solid var(--line);
-    display:flex; align-items:center; justify-content:center;
-    font-size:0.65rem; color:var(--sub); text-align:center; background:var(--panel);
-  }
-  .img-drop input[type=file]{font-size:0.72rem; flex:1;}
-  .btn-mini{
-    border:1px solid var(--line); background:#fff; color:var(--sub);
-    font-size:0.7rem; padding:3px 8px; border-radius:2px; cursor:pointer;
-  }
+  .img-drop{ border:1px dashed var(--line); border-radius:2px; padding:10px; display:flex; align-items:center; gap:10px; background:#fff; }
+  .img-drop img{ width:48px; height:48px; object-fit:cover; border:1px solid var(--line); }
+  .img-drop .ph{ width:44px; height:44px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+    font-size:0.6rem; color:var(--sub); text-align:center; background:var(--panel); flex-shrink:0; }
+  .img-drop input[type=file]{font-size:0.7rem; flex:1;}
+  .btn-mini{ border:1px solid var(--line); background:#fff; color:var(--sub); font-size:0.7rem; padding:3px 8px; border-radius:2px; cursor:pointer; }
   .btn-mini:hover{border-color:var(--accent); color:var(--accent);}
 
-  .repeat-item{
-    border:1px solid var(--line); border-radius:2px; padding:10px;
-    margin-bottom:8px; background:#fbfaf7; position:relative;
-  }
-  .repeat-item .del{
-    position:absolute; top:6px; right:6px; border:none; background:none;
-    color:var(--sub); font-size:0.85rem; cursor:pointer; line-height:1;
-  }
+  .repeat-item{ border:1px solid var(--line); border-radius:2px; padding:10px; margin-bottom:8px; background:#fbfaf7; position:relative; }
+  .repeat-item .del{ position:absolute; top:6px; right:6px; border:none; background:none; color:var(--sub); font-size:0.85rem; cursor:pointer; line-height:1; }
   .repeat-item .del:hover{color:#c0392b;}
-  .add-btn{
-    width:100%; padding:8px; border:1px dashed var(--line); background:#fff;
-    color:var(--accent); font-size:0.8rem; border-radius:2px; cursor:pointer;
-    font-weight:600;
-  }
+  .add-btn{ width:100%; padding:8px; border:1px dashed var(--line); background:#fff; color:var(--accent); font-size:0.8rem; border-radius:2px; cursor:pointer; font-weight:600; }
   .add-btn:hover{background:var(--panel);}
+  .stat-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .stat-grid .field label{ font-size:0.68rem; }
 
-  .download-bar{
-    position:fixed; bottom:0; left:0; width:420px; padding:14px 24px;
-    background:var(--panel); border-top:1px solid var(--line);
-  }
-  .download-btn{
-    width:100%; padding:11px; border:none; border-radius:2px;
-    background:var(--accent); color:#fff; font-size:0.85rem; font-weight:700;
-    cursor:pointer; letter-spacing:-0.01em;
-  }
+  /* ---- 목차 항목 카드 ---- */
+  .toc-item{ border:1px solid var(--line); border-radius:2px; margin-bottom:10px; background:#fbfaf7; overflow:hidden; }
+  .toc-item-head{ display:flex; align-items:center; gap:6px; padding:8px 8px; background:#f0efe6; border-bottom:1px solid var(--line); }
+  .toc-num{ font-size:0.78rem; font-weight:700; color:var(--accent); width:34px; flex-shrink:0; }
+  .toc-title-input{ flex:1; padding:5px 7px; font-size:0.83rem; border:1px solid var(--line); border-radius:2px; }
+  .toc-type-select{ width:80px; flex-shrink:0; padding:5px 4px; font-size:0.74rem; }
+  .icon-btn{ width:24px; height:24px; border:1px solid var(--line); background:#fff; border-radius:2px; cursor:pointer; font-size:0.75rem; color:var(--sub); flex-shrink:0; }
+  .icon-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .icon-btn.del:hover{ border-color:#c0392b; color:#c0392b; }
+  .toc-toolbar{ display:flex; flex-wrap:wrap; gap:4px; padding:7px 8px; border-bottom:1px solid var(--line); background:#fff; }
+  .toc-toolbar button{ border:1px solid var(--line); background:#fff; border-radius:2px; font-size:0.72rem; padding:3px 7px; cursor:pointer; color:#444; }
+  .toc-toolbar button:hover{ border-color:var(--accent); color:var(--accent); }
+  .toc-item textarea{ border:none; border-radius:0; padding:10px 10px; min-height:90px; font-size:0.84rem; }
+  .toc-tip{ font-size:0.68rem; color:var(--sub); padding:6px 10px 8px; background:#fff; line-height:1.6; }
+  .img-num-badge{ display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%;
+    background:var(--accent); color:#fff; font-size:0.68rem; font-weight:700; flex-shrink:0; }
+
+  .download-bar{ position:fixed; bottom:0; left:0; width:460px; padding:14px 24px; background:var(--panel); border-top:1px solid var(--line); }
+  .download-btn{ width:100%; padding:11px; border:none; border-radius:2px; background:var(--accent); color:#fff; font-size:0.85rem; font-weight:700; cursor:pointer; }
   .download-btn:hover{opacity:0.92;}
 
   /* ---------- 우측 미리보기 ---------- */
-  .preview-wrap{
-    flex:1; overflow-y:auto; background:var(--paper);
-    display:flex; justify-content:center;
-  }
-  .preview-page{ width:100%; max-width:760px; padding:40px 36px 100px; }
+  .preview-wrap{ flex:1; overflow-y:auto; background:var(--paper); display:flex; justify-content:center; }
+  .preview-page{ width:100%; max-width:800px; padding:36px 36px 80px; }
 
-  .wiki-toc{
-    float:right; width:190px; margin:0 0 16px 20px;
-    border:1px solid var(--line); background:#fbfaf7; font-size:0.78rem;
-  }
-  .wiki-toc-head{
-    padding:8px 10px; font-weight:700; border-bottom:1px solid var(--line);
-    color:var(--ink);
-  }
-  .wiki-toc ol{margin:0; padding:8px 10px 8px 24px;}
-  .wiki-toc li{margin-bottom:3px; color:var(--accent);}
-  .wiki-toc li::marker{color:var(--sub);}
+  .wiki-cats{ font-size:0.75rem; color:var(--sub); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--line); }
+  .wiki-cats b{ color:var(--ink); font-weight:600; }
+  .wiki-cats .tag{ color:var(--accent); margin-right:4px; }
 
-  .wiki-infobox{
-    width:280px; border:1px solid var(--line); margin:0 0 20px 20px; float:right;
-    clear:right; font-size:0.82rem; background:#fff;
-  }
-  .wiki-infobox-header{
-    background:var(--accent-c, var(--accent)); color:#fff; text-align:center;
-    padding:12px 8px 10px; font-weight:700; font-size:1.02rem;
-  }
-  .wiki-infobox-sub{
-    text-align:center; font-size:0.74rem; color:var(--sub);
-    padding:5px; border-bottom:1px solid var(--line); background:#fafafa;
-  }
+  .wiki-roster{ border:1px solid var(--line); margin-bottom:20px; }
+  .wiki-roster-header{ color:#fff; text-align:center; font-weight:700; padding:10px; font-size:0.92rem; }
+  .wiki-roster-toggle{ text-align:center; font-size:0.76rem; padding:6px; color:var(--accent); cursor:pointer; border-bottom:1px solid var(--line); background:#fafafa; }
+  .wiki-roster-body.collapsed{ display:none; }
+  .wiki-roster-banner{ color:#fff; text-align:center; font-weight:700; padding:8px; font-size:0.9rem; }
+  .wiki-roster-members{ padding:12px 16px; font-size:0.85rem; line-height:2; text-align:center; border-bottom:1px solid var(--line); }
+  .wiki-roster-members .pos{ font-size:0.68rem; color:var(--sub); font-style:italic; margin-left:1px; }
+  .wiki-roster-staff{ padding:8px; text-align:center; font-size:0.82rem; color:#333; }
+
+  .wiki-top{ display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-bottom:20px; }
+
+  .wiki-toc{ flex:1 1 220px; min-width:200px; border:1px solid var(--line); background:#fff; font-size:0.85rem; }
+  .wiki-toc-head{ display:flex; align-items:center; justify-content:space-between; padding:10px 14px; font-weight:700;
+    border-bottom:1px solid var(--line); cursor:pointer; font-size:0.95rem; }
+  .wiki-toc-head .chev{ color:var(--sub); font-size:0.8rem; transition:transform .15s; }
+  .wiki-toc-head .chev.closed{ transform:rotate(-90deg); }
+  .wiki-toc ol{ margin:0; padding:14px 14px 14px 30px; line-height:2; }
+  .wiki-toc li{ margin-bottom:2px; color:var(--accent); }
+  .wiki-toc li.sub{ list-style:none; margin-left:16px; color:#555; }
+
+  .wiki-infobox{ flex:0 0 280px; width:280px; border:1px solid var(--line); font-size:0.82rem; background:#fff; }
+  .wiki-infobox-header{ background:var(--accent-c, var(--accent)); color:#fff; text-align:center; padding:6px 8px; font-size:0.78rem; opacity:0.95; }
+  .wiki-infobox-name{ text-align:center; padding:8px 8px 10px; border-bottom:1px solid var(--line); }
+  .wiki-infobox-name .ko{ font-size:1.15rem; font-weight:800; }
+  .wiki-infobox-name .orig{ font-size:0.76rem; color:var(--sub); margin-top:2px; }
   .wiki-infobox-img{ width:100%; aspect-ratio:1; object-fit:cover; display:block; border-bottom:1px solid var(--line); }
   .wiki-infobox table{width:100%; border-collapse:collapse;}
-  .wiki-infobox th, .wiki-infobox td{
-    padding:6px 9px; border-bottom:1px solid #eee; font-size:0.78rem;
-    text-align:left; vertical-align:top;
-  }
-  .wiki-infobox th{ width:34%; background:#f7f7f5; color:var(--sub); font-weight:600; }
+  .wiki-infobox th, .wiki-infobox td{ padding:6px 9px; border-bottom:1px solid #eee; font-size:0.78rem; text-align:left; vertical-align:top; }
+  .wiki-infobox th{ width:34%; background:var(--th-bg, #f7f7f5); color:#fff; font-weight:600; }
+  .wiki-infobox-toggle{ text-align:center; font-size:0.74rem; color:var(--accent); padding:7px; border-bottom:1px solid var(--line); background:#fafafa; cursor:pointer; }
+  .wiki-infobox-toggle:hover{ filter:brightness(0.94); }
+  .wiki-stats-title{ text-align:center; font-size:0.72rem; color:var(--sub); padding:6px; background:#fafafa; border-bottom:1px solid var(--line); }
+  .wiki-stats th, .wiki-stats td{ text-align:center; }
 
-  .wiki-title{
-    font-size:1.7rem; font-weight:800; margin:0 0 4px; letter-spacing:-0.02em;
-  }
-  .wiki-title-sub{ font-size:0.82rem; color:var(--sub); margin:0 0 18px; }
-  .wiki-lead{ line-height:1.75; font-size:0.92rem; margin:0 0 6px; }
-  .wiki-lead b{font-weight:700;}
-  .wiki-lead a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent;}
-  .wiki-lead a:hover{border-color:var(--accent);}
+  .wiki-title{ font-size:1.7rem; font-weight:800; margin:0 0 2px; letter-spacing:-0.02em; }
+  .wiki-meta{ font-size:0.76rem; color:var(--sub); margin:0 0 18px; }
 
   .wiki-content{ clear:none; }
-  .wiki-h2{
-    font-size:1.12rem; font-weight:700; border-bottom:2px solid var(--ink);
-    padding-bottom:6px; margin:26px 0 10px;
-  }
-  .wiki-h3{
-    font-size:0.98rem; font-weight:700; margin:16px 0 6px; color:var(--ink);
-  }
-  .wiki-p{ line-height:1.8; font-size:0.9rem; margin:0 0 10px; color:#2a2a2a; }
+  .wiki-h2{ font-size:1.1rem; font-weight:700; border-bottom:2px solid var(--ink); padding-bottom:6px; margin:26px 0 10px; }
+  .wiki-h3{ font-size:0.98rem; font-weight:700; margin:18px 0 6px; padding-top:8px; border-top:1px dashed var(--line); }
+  .wiki-p{ line-height:1.85; font-size:0.9rem; margin:0 0 10px; color:#2a2a2a; }
+  .wiki-content a{ color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; }
+  .wiki-content a:hover{ border-bottom-color:var(--accent); }
+  .wiki-list{ margin:0 0 10px; padding-left:20px; font-size:0.9rem; line-height:1.8; color:#2a2a2a; }
+  .wiki-fn{ font-size:0.72rem; color:var(--accent); }
+  .wiki-source{ font-size:0.78rem; color:var(--sub); font-style:normal; }
+  .wiki-spoiler{ background:#1c1c1c; color:#1c1c1c; border-radius:3px; padding:0 3px; cursor:pointer; transition:color .15s; }
+  .wiki-spoiler.revealed{ background:#f0efe6; color:inherit; }
+  .wiki-img-inline{ max-width:100%; display:block; margin:10px 0; border:1px solid var(--line); }
+  .wiki-quote-dialogue{ border-left:4px solid #4caf50; background:#f4faf4; padding:12px 16px; margin:10px 0 14px; border-radius:2px; }
+  .wiki-quote-dialogue p{ margin:0 0 4px; font-size:0.88rem; color:#2a2a2a; line-height:1.7; }
+  .wiki-quote-dialogue p:last-child{ margin-bottom:0; }
+  .wiki-spoiler-warn{ border-top:3px solid #f5a623; background:#fffdf7; padding:14px 16px; margin:10px 0 14px; }
+  .wiki-spoiler-warn .spoiler-warn-title{ font-weight:700; font-size:0.95rem; margin-bottom:8px; color:var(--ink); }
+  .wiki-spoiler-warn .spoiler-warn-desc{ font-size:0.85rem; color:#444; line-height:1.7; }
 
-  .wiki-relation{
-    border:1px solid var(--line); border-left:3px solid var(--accent);
-    padding:8px 12px; margin-bottom:8px; background:#fbfaf7;
-  }
-  .wiki-relation .rname{font-weight:700; font-size:0.87rem;}
-  .wiki-relation .rdesc{font-size:0.83rem; color:#3a3a3a; margin-top:2px; line-height:1.6;}
-
-  .wiki-quote{
-    border-left:3px solid var(--line); padding:6px 14px; margin-bottom:8px;
-    font-size:0.87rem; font-style:normal; color:#333;
-  }
-  .wiki-quote .qspeaker{ font-size:0.74rem; color:var(--sub); margin-top:3px; }
-
-  .wiki-footer{
-    margin-top:36px; padding-top:14px; border-top:1px solid var(--line);
-    font-size:0.72rem; color:var(--sub);
-  }
-  .wiki-cats{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
-  .wiki-cats span{
-    border:1px solid var(--line); padding:2px 8px; border-radius:10px;
-    background:#f7f7f5;
-  }
+  .wiki-footnotes{ margin-top:28px; padding-top:12px; border-top:1px solid var(--line); font-size:0.74rem; color:var(--sub); line-height:1.9; }
+  .wiki-license{ margin-top:20px; padding-top:14px; border-top:1px solid var(--line); font-size:0.7rem; color:var(--sub); line-height:1.8; }
   .clearfix::after{ content:""; display:table; clear:both; }
-
   ::-webkit-scrollbar{ width:9px; }
   ::-webkit-scrollbar-thumb{ background:#d7d4c8; border-radius:5px; }
 </style>
@@ -199,92 +156,84 @@
 
 <div class="editor">
   <p class="editor-title">🏀 오리지널 캐릭터 위키 생성기</p>
-  <p class="editor-sub">쿠로코의 농구 자캐(自캐) 설정을 입력하면 오른쪽에 위키 문서 형태로 바로 조립됩니다.</p>
+  <p class="editor-sub">나무위키 등장인물 문서 형식을 따릅니다. 목차 항목은 자유롭게 추가·삭제·순서변경할 수 있고, 각 항목 안에서 굵게·각주·링크·스포일러 등 서식을 직접 넣을 수 있어요.</p>
 
   <div class="block">
-    <h3>테마</h3>
+    <h3>테마 · 분류</h3>
     <div class="field">
-      <label>인포박스 색상</label>
       <div class="color-row">
-        <input type="color" id="themeColor" value="#0a6e5e" oninput="render()">
-        <span>학교 상징색 등으로 지정해보세요</span>
+        <input type="color" id="themeColor" value="#1a73e8" oninput="render()">
+        <span>인포박스 색상 (학교 상징색 등)</span>
       </div>
+    </div>
+    <div class="field">
+      <label>분류 (쉼표로 구분)</label>
+      <input type="text" id="categories" value="쿠로코의 농구/등장인물, 세이린 고등학교, 오리지널 캐릭터" oninput="render()">
     </div>
   </div>
 
   <div class="block">
-    <h3>기본 정보</h3>
-    <div class="row">
-      <div class="field"><label>이름 (한글)</label><input type="text" id="nameKo" value="쿠로바 사쿠라" oninput="render()"></div>
-      <div class="field"><label>이름 (영문/원어)</label><input type="text" id="nameEn" value="Kuroba Sakura" oninput="render()"></div>
-    </div>
+    <h3>인포박스 · 기본 정보</h3>
     <div class="field">
-      <label>캐릭터 이미지</label>
+      <label>인포박스 사진</label>
       <div class="img-drop">
         <div id="imgPreviewWrap"><div class="ph">이미지<br>없음</div></div>
-        <input type="file" id="imgFile" accept="image/*" onchange="handleImage(event)">
-        <button class="btn-mini" onclick="clearImage()" type="button">제거</button>
+        <input type="file" id="imgFile" accept="image/*" onchange="handleInfoboxImage(event)">
+        <button class="btn-mini" onclick="clearInfoboxImage()" type="button">제거</button>
       </div>
     </div>
     <div class="row">
-      <div class="field">
-        <label>소속 고교</label>
+      <div class="field"><label>이름 (한글)</label><input type="text" id="nameKo" value="쿠로바 사쿠라" oninput="render()"></div>
+      <div class="field"><label>이름 (원어/한자·영문)</label><input type="text" id="nameOrig" value="黒羽 桜 ｜ Kuroba Sakura" oninput="render()"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>학교</label>
         <select id="school" onchange="render()">
-          <option>세이린 고교</option>
-          <option>카이조 고교</option>
-          <option>슈토쿠 고교</option>
-          <option>토오 학원</option>
-          <option>요센 고교</option>
-          <option> 라쿠잔 고교</option>
-          <option> 테이코 중학교</option>
-          <option value="오리지널 고교" selected>오리지널 고교</option>
+          <option selected>세이린 고교</option><option>카이조 고교</option><option>슈토쿠 고교</option>
+          <option>토오 학원</option><option>요센 고교</option><option>라쿠잔 고교</option>
+          <option>테이코 중학교</option>
         </select>
       </div>
-      <div class="field"><label>학년 / 포지션</label><input type="text" id="position" value="1학년 / PG (포인트 가드)" oninput="render()"></div>
-    </div>
-    <div class="row">
-      <div class="field"><label>등번호</label><input type="text" id="backNumber" value="No. 10" oninput="render()"></div>
-      <div class="field"><label>신장 / 체중</label><input type="text" id="physical" value="175cm / 63kg" oninput="render()"></div>
+      <div class="field"><label>학년/반</label><input type="text" id="grade" value="1학년 A반" oninput="render()"></div>
     </div>
   </div>
 
   <div class="block">
-    <h3>개요 · 외형 · 성격</h3>
-    <div class="field"><label>개요 (한 줄 소개 포함)</label>
-      <textarea id="overview" rows="4" oninput="render()">만화 《쿠로코의 농구》의 세계관을 기반으로 한 오리지널 캐릭터.
-뛰어난 관찰력과 넓은 시야를 가진 포인트 가드.</textarea>
-    </div>
-    <div class="field"><label>외형</label>
-      <textarea id="appearance" rows="3" oninput="render()">단발의 흑발에 또렷한 눈매를 지녔으며, 코트 위에서는 냉정한 표정을 유지한다.</textarea>
-    </div>
-    <div class="field"><label>성격</label>
-      <textarea id="personality" rows="3" oninput="render()">평소엔 조용하고 무뚝뚝하지만 동료를 향한 신뢰가 깊고, 경기 중에는 지휘관형으로 돌변한다.</textarea>
-    </div>
+    <h3>기본 정보 항목</h3>
+    <p class="hint">생일·신체·혈액형처럼 인포박스 표에 들어갈 항목을 자유롭게 추가·수정·삭제하세요. 미리보기에서 통째로 접고 펼 수 있어요.</p>
+    <div id="basicInfoList"></div>
+    <button class="add-btn" onclick="addBasicInfo()" type="button">+ 항목 추가</button>
   </div>
 
   <div class="block">
-    <h3>능력 / 특기 스킬</h3>
-    <div id="skillList"></div>
-    <button class="add-btn" onclick="addSkill()" type="button">+ 스킬 추가</button>
+    <h3>프로필 더 보기</h3>
+    <p class="hint">취미·특기 등 세부 항목</p>
+    <div id="profileList"></div>
+    <button class="add-btn" onclick="addProfile()" type="button">+ 세부 항목 추가</button>
   </div>
 
   <div class="block">
-    <h3>인물 관계</h3>
-    <div id="relationList"></div>
-    <button class="add-btn" onclick="addRelation()" type="button">+ 관계 추가</button>
+    <h3>능력치 파라미터</h3>
+    <p class="hint">항목명과 수치를 자유롭게 추가·수정·삭제하세요.</p>
+    <div id="statList"></div>
+    <button class="add-btn" onclick="addStat()" type="button">+ 항목 추가</button>
   </div>
 
   <div class="block">
-    <h3>명대사</h3>
-    <div id="quoteList"></div>
-    <button class="add-btn" onclick="addQuote()" type="button">+ 대사 추가</button>
+    <h3>목차 &amp; 본문 작성</h3>
+    <p class="hint">
+      <b>대항목</b>은 1, 2, 3…으로, <b>중항목</b>은 직전 대항목 아래 4.1, 4.2…로 자동 번호가 매겨져요.<br>
+      본문 툴바로 서식을 넣거나, 직접 <code>**굵게**</code> <code>~~취소선~~</code> <code>__밑줄__</code> <code>[[주석:내용]]</code> <code>[[링크:URL|텍스트]]</code> 처럼 입력해도 됩니다.
+    </p>
+    <div id="tocEditorList"></div>
+    <button class="add-btn" onclick="addTocItem()" type="button">+ 목차 항목 추가</button>
   </div>
 
   <div class="block">
-    <h3>분류 태그</h3>
-    <div class="field"><label>쉼표(,)로 구분</label>
-      <input type="text" id="categories" value="쿠로코의 농구/등장인물, 오리지널 캐릭터, 세이린 고교" oninput="render()">
-    </div>
+    <h3>이미지 블록</h3>
+    <p class="hint">본문에 <code>[[이미지:N]]</code>을 넣으면 그 자리에 사진이 나와요. 이미지를 올리면 번호가 자동 부여됩니다.</p>
+    <div id="imageBlockList"></div>
+    <button class="add-btn" onclick="addImageBlock()" type="button">+ 이미지 블록 추가</button>
   </div>
 </div>
 
@@ -297,185 +246,496 @@
 </div>
 
 <script>
-let skills = [
-  {name:"미라지 패스", desc:"상대의 시야 사각을 이용해 궤적을 숨기는 패스."},
-  {name:"코트 시야", desc:"코트 전체를 넓게 조망하는 관찰력."}
-];
-let relations = [
-  {name:"세이린 고교 농구부원", desc:"입학과 동시에 가장 먼저 마음을 터놓은 동료들."}
-];
-let quotes = [
-  {text:"패스는 눈에 보이지 않아도, 마음에는 닿아야 하니까.", speaker:"경기 중, 팀원에게"}
-];
-let imageData = null;
-
 function uid(){ return Math.random().toString(36).slice(2,9); }
 
-function handleImage(e){
-  const file = e.target.files[0];
-  if(!file) return;
+let profiles = [
+  {label:"취미", value:"독서"},
+  {label:"특기", value:"미라지 패스"},
+  {label:"좋아하는 음식", value:"딸기 다이후쿠"},
+  {label:"좌우명", value:"보이지 않아도 닿는다"}
+];
+
+let basicInfo = [
+  {label:"생일", value:"4월 5일 (양자리)"},
+  {label:"신장/체중", value:"175cm/63kg"},
+  {label:"혈액형", value:"O형"},
+  {label:"포지션", value:"포인트 가드(PG)"},
+  {label:"등번호", value:"10번"},
+  {label:"성우", value:"(미정)"}
+];
+let stats = [
+  {label:"신체능력", value:6},
+  {label:"기술", value:7},
+  {label:"스태미나", value:6},
+  {label:"정신력", value:7},
+  {label:"특수능력", value:7}
+];
+let profileExpanded = false;
+let statsExpanded = false;
+
+let tocItems = [
+  {id:uid(), type:"main", title:"개요", content:"만화 《쿠로코의 농구》 세계관을 바탕으로 한 오리지널 캐릭터. 세이린 고교 농구부 소속."},
+  {id:uid(), type:"main", title:"특징", content:"조용하고 무뚝뚝해 보이지만 동료를 향한 신뢰가 깊다.\n경기 중에는 냉정한 지휘관형으로 돌변해 팀을 이끈다.[[주석:설정 초안 단계로 세부 내용은 추후 보완 예정.]]"},
+  {id:uid(), type:"main", title:"작중 행적", content:"입학과 동시에 주전 포인트 가드로 발탁되어 팀의 사령탑 역할을 맡는다."},
+  {id:uid(), type:"main", title:"플레이스타일", content:"넓은 시야와 정확한 패스를 앞세운 정통파 포인트 가드다.\n\n[[대사:패스는 눈에 보이지 않아도, 마음에는 닿아야 하니까.|경기 중, 팀원에게]]"},
+  {id:uid(), type:"sub", title:"기술", content:"**미라지 패스**\n상대의 시야 사각을 이용해 궤적을 숨기는 패스.\n\n**코트 시야**\n코트 전체를 넓게 조망하는 관찰력."},
+  {id:uid(), type:"main", title:"기타", content:"애칭은 '사쿠라 선배'.\n좋아하는 음식은 딸기 다이후쿠.[[출처:설정집 기준]]"}
+];
+
+let images = []; // {id, dataUrl}
+let infoboxImage = null;
+let rosterExpanded = true;
+let tocExpanded = true;
+function toggleToc(){ tocExpanded = !tocExpanded; render(); }
+
+const rosterData = {
+  "세이린 고교": {
+    banner: "세이린 (誠凛)",
+    color: "#9c3547",
+    members: [
+      {n:"휴가 준페이", p:"SG·주장"}, {n:"이즈키 슌", p:"PG"}, {n:"코가네이 신지", p:"SF"},
+      {n:"키요시 텟페이", p:"C"}, {n:"미토베 린노스케", p:"C"}, {n:"츠치다 사토시", p:"F"},
+      {n:"카가미 타이가", p:"PF"}, {n:"쿠로코 테츠야", p:"식스맨"}, {n:"후리하타 코우키", p:"PG"}
+    ],
+    staff: [{role:"감독", n:"아이다 리코"}, {role:"고문", n:"타케다 카마치"}]
+  },
+  "카이조 고교": {
+    banner: "카이조 (海常)",
+    color: "#1d4e89",
+    members: [
+      {n:"카사마츠 유키오", p:"PG·주장"}, {n:"키세 료타", p:"SF"},
+      {n:"모리야마 요시타카", p:"SG"}, {n:"하야카와 마사히로", p:"PF"}
+    ],
+    staff: []
+  },
+  "슈토쿠 고교": {
+    banner: "슈토쿠 (秀徳)",
+    color: "#2e7d32",
+    members: [
+      {n:"미도리마 신타로", p:"SG"}, {n:"타카오 카즈나리", p:"PG"}, {n:"오오츠보 타이스케", p:"C·주장"}
+    ],
+    staff: []
+  },
+  "토오 학원": {
+    banner: "토오 (桃園)",
+    color: "#37474f",
+    members: [
+      {n:"아오미네 다이키", p:"SG"}, {n:"이마요시 쇼이치", p:"PG·주장"},
+      {n:"와카마츠 코사쿠", p:"C"}, {n:"모모이 사츠키", p:"매니저"}
+    ],
+    staff: []
+  },
+  "요센 고교": {
+    banner: "요센 (陽泉)",
+    color: "#6a1b9a",
+    members: [
+      {n:"무라사키바라 아츠시", p:"C"}, {n:"히무로 타츠야", p:"SF"},
+      {n:"오카무라 켄스케", p:"PF·주장"}
+    ],
+    staff: []
+  },
+  "라쿠잔 고교": {
+    banner: "라쿠잔 (洛山)",
+    color: "#161616",
+    members: [
+      {n:"아카시 세이쥬로", p:"PG·주장"}, {n:"네부야 에이키치", p:"C"},
+      {n:"미부치 레오", p:"SF"}, {n:"하야마 코타로", p:"SG"}, {n:"마유즈미 치하야", p:"SG"}
+    ],
+    staff: []
+  },
+  "테이코 중학교": {
+    banner: "테이코 (帝光) · '기적의 세대'",
+    color: "#3d7fc4",
+    members: [
+      {n:"아카시 세이쥬로", p:"PG·주장"}, {n:"무라사키바라 아츠시", p:"C"}, {n:"아오미네 다이키", p:"PF"},
+      {n:"미도리마 신타로", p:"SG"}, {n:"키세 료타", p:"SF"}, {n:"쿠로코 테츠야", p:"식스맨"},
+      {n:"모모이 사츠키", p:"매니저"}
+    ],
+    staff: [{role:"전 주장", n:"니지무라 슈조"}]
+  }
+};
+function toggleRoster(){ rosterExpanded = !rosterExpanded; render(); }
+
+/* ---------------- 인포박스 이미지 ---------------- */
+function handleInfoboxImage(e){
+  const file = e.target.files[0]; if(!file) return;
   const reader = new FileReader();
-  reader.onload = function(ev){
-    imageData = ev.target.result;
+  reader.onload = ev => { infoboxImage = ev.target.result; render(); };
+  reader.readAsDataURL(file);
+}
+function clearInfoboxImage(){ infoboxImage = null; document.getElementById('imgFile').value = ""; render(); }
+
+/* ---------------- 기본 정보 항목 ---------------- */
+function addBasicInfo(){ basicInfo.push({label:"", value:""}); renderBasicInfoEditor(); render(); }
+function removeBasicInfo(i){ basicInfo.splice(i,1); renderBasicInfoEditor(); render(); }
+function renderBasicInfoEditor(){
+  document.getElementById('basicInfoList').innerHTML = basicInfo.map((p,i)=>`
+    <div class="repeat-item">
+      <button class="del" type="button" onclick="removeBasicInfo(${i})">✕</button>
+      <div class="row">
+        <div class="field"><label>항목명</label>
+          <input type="text" value="${escAttr(p.label)}" oninput="basicInfo[${i}].label=this.value; render()"></div>
+        <div class="field"><label>내용</label>
+          <input type="text" value="${escAttr(p.value)}" oninput="basicInfo[${i}].value=this.value; render()"></div>
+      </div>
+    </div>`).join('');
+}
+function toggleProfile(){ profileExpanded = !profileExpanded; render(); }
+function toggleStats(){ statsExpanded = !statsExpanded; render(); }
+
+/* ---------------- 능력치 파라미터 ---------------- */
+function addStat(){ stats.push({label:"", value:5}); renderStatEditor(); render(); }
+function removeStat(i){ stats.splice(i,1); renderStatEditor(); render(); }
+function renderStatEditor(){
+  document.getElementById('statList').innerHTML = stats.map((s,i)=>`
+    <div class="repeat-item">
+      <button class="del" type="button" onclick="removeStat(${i})">✕</button>
+      <div class="row">
+        <div class="field"><label>항목명</label>
+          <input type="text" value="${escAttr(s.label)}" oninput="stats[${i}].label=this.value; render()"></div>
+        <div class="field" style="max-width:90px;"><label>수치</label>
+          <input type="number" min="0" max="10" value="${s.value}" oninput="stats[${i}].value=this.value; render()"></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------------- 프로필 더 보기 ---------------- */
+function addProfile(){ profiles.push({label:"", value:""}); renderProfileEditor(); render(); }
+function removeProfile(i){ profiles.splice(i,1); renderProfileEditor(); render(); }
+function renderProfileEditor(){
+  document.getElementById('profileList').innerHTML = profiles.map((p,i)=>`
+    <div class="repeat-item">
+      <button class="del" type="button" onclick="removeProfile(${i})">✕</button>
+      <div class="row">
+        <div class="field"><label>항목명</label>
+          <input type="text" value="${escAttr(p.label)}" oninput="profiles[${i}].label=this.value; render()"></div>
+        <div class="field"><label>내용</label>
+          <input type="text" value="${escAttr(p.value)}" oninput="profiles[${i}].value=this.value; render()"></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------------- 목차 항목 ---------------- */
+function findToc(id){ return tocItems.find(t=>t.id===id); }
+function withNumbers(items){
+  let main=0, sub=0;
+  return items.map(it=>{
+    let number;
+    if(it.type==="main"){ main++; sub=0; number=`${main}`; }
+    else { sub++; number=`${main||1}.${sub}`; }
+    return Object.assign({}, it, {number});
+  });
+}
+function addTocItem(){
+  tocItems.push({id:uid(), type:"main", title:"새 항목", content:""});
+  renderTocEditor(); render();
+}
+function removeTocItem(id){
+  tocItems = tocItems.filter(t=>t.id!==id);
+  renderTocEditor(); render();
+}
+function moveTocItem(id, dir){
+  const idx = tocItems.findIndex(t=>t.id===id);
+  const nIdx = idx+dir;
+  if(nIdx<0 || nIdx>=tocItems.length) return;
+  const tmp = tocItems[idx]; tocItems[idx]=tocItems[nIdx]; tocItems[nIdx]=tmp;
+  renderTocEditor(); render();
+}
+function updateTocTitle(id, val){ const it=findToc(id); if(it) it.title=val; render(); }
+function updateTocType(id, val){ const it=findToc(id); if(it) it.type=val; renderTocEditor(); render(); }
+function updateTocContent(id, val){ const it=findToc(id); if(it) it.content=val; render(); }
+
+function renderTocEditor(){
+  const numbered = withNumbers(tocItems);
+  document.getElementById('tocEditorList').innerHTML = numbered.map(it => `
+    <div class="toc-item">
+      <div class="toc-item-head">
+        <span class="toc-num">${it.number}</span>
+        <input class="toc-title-input" type="text" value="${escAttr(it.title)}" placeholder="목차 제목"
+          oninput="updateTocTitle('${it.id}', this.value)">
+        <select class="toc-type-select" onchange="updateTocType('${it.id}', this.value)">
+          <option value="main" ${it.type==='main'?'selected':''}>대항목</option>
+          <option value="sub" ${it.type==='sub'?'selected':''}>중항목</option>
+        </select>
+        <button class="icon-btn" type="button" title="위로" onclick="moveTocItem('${it.id}',-1)">↑</button>
+        <button class="icon-btn" type="button" title="아래로" onclick="moveTocItem('${it.id}',1)">↓</button>
+        <button class="icon-btn del" type="button" title="삭제" onclick="removeTocItem('${it.id}')">✕</button>
+      </div>
+      <div class="toc-toolbar">
+        <button type="button" onclick="wrapSel('${it.id}','**','**')"><b>B</b></button>
+        <button type="button" onclick="wrapSel('${it.id}','~~','~~')"><s>S</s></button>
+        <button type="button" onclick="wrapSel('${it.id}','__','__')"><u>U</u></button>
+        <button type="button" onclick="wrapToken('${it.id}','주석')">주석</button>
+        <button type="button" onclick="wrapBlockToken('${it.id}','대사','원문 대사|번역 대사')">대사 인용</button>
+        <button type="button" onclick="wrapToken('${it.id}','스포일러')">스포일러</button>
+        <button type="button" onclick="wrapBlockToken('${it.id}','스포일러경고','이 문서가 설명하는 작품이나 인물 등에 대한 줄거리, 결말, 반전 요소 등을 직·간접적으로 포함하고 있습니다.')">스포일러 경고</button>
+        <button type="button" onclick="wrapLink('${it.id}')">링크</button>
+        <button type="button" onclick="wrapToken('${it.id}','출처')">출처</button>
+        <button type="button" onclick="wrapList('${it.id}')">· 목록</button>
+      </div>
+      <textarea id="content-${it.id}" rows="5" placeholder="본문 내용을 입력하세요."
+        oninput="updateTocContent('${it.id}', this.value)">${escHtml(it.content)}</textarea>
+      <div class="toc-tip">링크는 <code>[[링크:URL|텍스트]]</code> 형태로 파란색 표시 · 스포일러는 클릭하면 보임 · 대사 인용/스포일러 경고는 줄 전체를 차지하는 박스로 표시돼요. 박스 아래에 <code>[[이미지:N]]</code>을 추가로 넣을 수 있어요.</div>
+    </div>
+  `).join('');
+}
+
+/* ---- 서식 삽입 헬퍼 ---- */
+function getTa(id){ return document.getElementById('content-'+id); }
+function applyInsert(id, ta, start, end, insertText, caretAtEnd){
+  const value = ta.value;
+  const newValue = value.slice(0,start) + insertText + value.slice(end);
+  ta.value = newValue;
+  const it = findToc(id); if(it) it.content = newValue;
+  const pos = caretAtEnd===false ? start : start+insertText.length;
+  ta.focus(); ta.setSelectionRange(pos,pos);
+  render();
+}
+function wrapSel(id, before, after){
+  const ta=getTa(id); if(!ta) return;
+  const start=ta.selectionStart, end=ta.selectionEnd, value=ta.value;
+  const sel = value.substring(start,end) || "텍스트";
+  applyInsert(id, ta, start, end, before+sel+after);
+}
+function wrapToken(id, name){
+  const ta=getTa(id); if(!ta) return;
+  const start=ta.selectionStart, end=ta.selectionEnd, value=ta.value;
+  const sel = value.substring(start,end) || "내용";
+  applyInsert(id, ta, start, end, `[[${name}:${sel}]]`);
+}
+function wrapBlockToken(id, name, defaultContent){
+  const ta=getTa(id); if(!ta) return;
+  const start=ta.selectionStart, end=ta.selectionEnd, value=ta.value;
+  const sel = value.substring(start,end);
+  const content = sel || defaultContent;
+  const core = `[[${name}:${content}]]`;
+  const needsBeforeNl = start>0 && value[start-1] !== '\n';
+  const needsAfterNl = end<value.length && value[end] !== '\n';
+  applyInsert(id, ta, start, end, (needsBeforeNl?'\n':'') + core + (needsAfterNl?'\n':''));
+}
+function wrapLink(id){
+  const ta=getTa(id); if(!ta) return;
+  const start=ta.selectionStart, end=ta.selectionEnd, value=ta.value;
+  const sel = value.substring(start,end) || "텍스트";
+  applyInsert(id, ta, start, end, `[[링크:URL|${sel}]]`);
+}
+function wrapList(id){
+  const ta=getTa(id); if(!ta) return;
+  const start=ta.selectionStart, end=ta.selectionEnd, value=ta.value;
+  if(start===end){
+    const before = value.slice(0,start);
+    const lineStart = before.lastIndexOf('\n')+1;
+    const newValue = value.slice(0,lineStart) + "- " + value.slice(lineStart);
+    ta.value = newValue;
+    const it=findToc(id); if(it) it.content=newValue;
+    const pos = start+2; ta.focus(); ta.setSelectionRange(pos,pos);
     render();
+  } else {
+    const sel = value.substring(start,end);
+    const prefixed = sel.split('\n').map(l => l.startsWith('- ') ? l : '- '+l).join('\n');
+    applyInsert(id, ta, start, end, prefixed);
+  }
+}
+
+/* ---------------- 이미지 블록 ---------------- */
+function addImageBlock(){ images.push({id:uid(), dataUrl:null}); renderImageBlocks(); render(); }
+function removeImageBlock(id){ images = images.filter(im=>im.id!==id); renderImageBlocks(); render(); }
+function handleImageBlockFile(e, id){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const im = images.find(x=>x.id===id);
+    if(im){ im.dataUrl = ev.target.result; }
+    renderImageBlocks(); render();
   };
   reader.readAsDataURL(file);
 }
-function clearImage(){
-  imageData = null;
-  document.getElementById('imgFile').value = "";
-  render();
-}
-
-function addSkill(){ skills.push({name:"", desc:""}); renderSkillEditor(); render(); }
-function removeSkill(i){ skills.splice(i,1); renderSkillEditor(); render(); }
-function addRelation(){ relations.push({name:"", desc:""}); renderRelationEditor(); render(); }
-function removeRelation(i){ relations.splice(i,1); renderRelationEditor(); render(); }
-function addQuote(){ quotes.push({text:"", speaker:""}); renderQuoteEditor(); render(); }
-function removeQuote(i){ quotes.splice(i,1); renderQuoteEditor(); render(); }
-
-function renderSkillEditor(){
-  const el = document.getElementById('skillList');
-  el.innerHTML = skills.map((s,i)=>`
+function renderImageBlocks(){
+  document.getElementById('imageBlockList').innerHTML = images.map((im,i)=>`
     <div class="repeat-item">
-      <button class="del" type="button" onclick="removeSkill(${i})">✕</button>
-      <div class="field"><label>스킬명</label>
-        <input type="text" value="${escAttr(s.name)}" oninput="skills[${i}].name=this.value; render()"></div>
-      <div class="field"><label>설명</label>
-        <input type="text" value="${escAttr(s.desc)}" oninput="skills[${i}].desc=this.value; render()"></div>
-    </div>`).join('');
-}
-function renderRelationEditor(){
-  const el = document.getElementById('relationList');
-  el.innerHTML = relations.map((r,i)=>`
-    <div class="repeat-item">
-      <button class="del" type="button" onclick="removeRelation(${i})">✕</button>
-      <div class="field"><label>대상</label>
-        <input type="text" value="${escAttr(r.name)}" oninput="relations[${i}].name=this.value; render()"></div>
-      <div class="field"><label>관계 설명</label>
-        <input type="text" value="${escAttr(r.desc)}" oninput="relations[${i}].desc=this.value; render()"></div>
-    </div>`).join('');
-}
-function renderQuoteEditor(){
-  const el = document.getElementById('quoteList');
-  el.innerHTML = quotes.map((q,i)=>`
-    <div class="repeat-item">
-      <button class="del" type="button" onclick="removeQuote(${i})">✕</button>
-      <div class="field"><label>대사</label>
-        <input type="text" value="${escAttr(q.text)}" oninput="quotes[${i}].text=this.value; render()"></div>
-      <div class="field"><label>상황/대상</label>
-        <input type="text" value="${escAttr(q.speaker)}" oninput="quotes[${i}].speaker=this.value; render()"></div>
+      <button class="del" type="button" onclick="removeImageBlock('${im.id}')">✕</button>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span class="img-num-badge">${i+1}</span>
+        ${im.dataUrl
+          ? `<img src="${im.dataUrl}" style="width:44px;height:44px;object-fit:cover;border:1px solid var(--line);">`
+          : `<div class="ph">이미지<br>없음</div>`}
+        <input type="file" accept="image/*" onchange="handleImageBlockFile(event,'${im.id}')">
+      </div>
+      <p class="hint" style="margin:6px 0 0;">본문에 <code>[[이미지:${i+1}]]</code> 입력 시 이 자리에 표시됩니다.</p>
     </div>`).join('');
 }
 
+/* ---------------- 텍스트 유틸 ---------------- */
 function escHtml(str){
   return (str||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 function escAttr(str){ return escHtml(str); }
-function nl2br(str){ return escHtml(str).replace(/\n/g,'<br>'); }
 
+/* 본문 마크업 파서: images / footnotes(누적)를 공유해 [[주석:]] 번호를 문서 전체 순서로 매긴다 */
+function parseBody(text, footnotesAcc){
+  const escaped = escHtml(text || "");
+  const lines = escaped.split(/\n/);
+  let html = "";
+  let paraBuf = [];
+  let listBuf = [];
+
+  function inline(str){
+    // 이미지
+    str = str.replace(/\[\[이미지:(\d+)\]\]/g, (m,n)=>{
+      const im = images[Number(n)-1];
+      return im && im.dataUrl ? `<img class="wiki-img-inline" src="${im.dataUrl}" alt="이미지 ${n}">` : `<span class="wiki-source">[이미지 ${n} 없음]</span>`;
+    });
+    // 각주
+    str = str.replace(/\[\[주석:(.*?)\]\]/g, (m,c)=>{
+      footnotesAcc.push(c);
+      return `<sup class="wiki-fn">[${footnotesAcc.length}]</sup>`;
+    });
+    // 출처
+    str = str.replace(/\[\[출처:(.*?)\]\]/g, (m,c)=> `<cite class="wiki-source">(출처: ${c})</cite>`);
+    // 링크
+    str = str.replace(/\[\[링크:([^|\]]+)\|([^\]]+)\]\]/g, (m,url,label)=> `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`);
+    str = str.replace(/\[\[링크:([^\]]+)\]\]/g, (m,url)=> `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+    // 스포일러
+    str = str.replace(/\[\[스포일러:(.*?)\]\]/g, (m,c)=> `<span class="wiki-spoiler" onclick="this.classList.toggle('revealed')">${c}</span>`);
+    // 굵게/취소선/밑줄
+    str = str.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+    str = str.replace(/~~(.+?)~~/g, "<s>$1</s>");
+    str = str.replace(/__(.+?)__/g, "<u>$1</u>");
+    return str;
+  }
+  function flushPara(){
+    if(paraBuf.length){ html += `<p class="wiki-p">${inline(paraBuf.join(' '))}</p>`; paraBuf = []; }
+  }
+  function flushList(){
+    if(listBuf.length){ html += `<ul class="wiki-list">${listBuf.map(li=>`<li>${inline(li)}</li>`).join('')}</ul>`; listBuf = []; }
+  }
+
+  lines.forEach(raw=>{
+    const line = raw.trim();
+    if(line === ""){ flushPara(); flushList(); return; }
+    const dm = line.match(/^\[\[대사:(.*)\]\]$/);
+    if(dm){
+      flushPara(); flushList();
+      const parts = dm[1].split('|');
+      html += `<div class="wiki-quote-dialogue">${parts.map(p=>`<p>${inline(p.trim())}</p>`).join('')}</div>`;
+      return;
+    }
+    const sw = line.match(/^\[\[스포일러경고:(.*)\]\]$/);
+    if(sw){
+      flushPara(); flushList();
+      html += `<div class="wiki-spoiler-warn"><div class="spoiler-warn-title">이 문서에 스포일러가 포함되어 있습니다.</div><div class="spoiler-warn-desc">${inline(sw[1])}</div></div>`;
+      return;
+    }
+    if(/^-\s+/.test(line)){ flushPara(); listBuf.push(line.replace(/^-\s+/,'')); return; }
+    flushList();
+    paraBuf.push(line);
+  });
+  flushPara(); flushList();
+  return html || `<p class="wiki-p" style="color:var(--sub)">내용이 비어 있습니다.</p>`;
+}
+
+/* ---------------- 전체 위키 HTML 빌드 ---------------- */
 function buildWikiHTML(){
   const color = document.getElementById('themeColor').value;
   const nameKo = document.getElementById('nameKo').value.trim() || "이름 없음";
-  const nameEn = document.getElementById('nameEn').value.trim();
+  const nameOrig = document.getElementById('nameOrig').value;
   const school = document.getElementById('school').value;
-  const position = document.getElementById('position').value;
-  const backNumber = document.getElementById('backNumber').value;
-  const physical = document.getElementById('physical').value;
-  const overview = document.getElementById('overview').value;
-  const appearance = document.getElementById('appearance').value;
-  const personality = document.getElementById('personality').value;
-  const categories = document.getElementById('categories').value
-    .split(',').map(s=>s.trim()).filter(Boolean);
+  const grade = document.getElementById('grade').value;
+  const categories = document.getElementById('categories').value.split(',').map(s=>s.trim()).filter(Boolean);
 
-  const validSkills = skills.filter(s => s.name.trim() || s.desc.trim());
-  const validRelations = relations.filter(r => r.name.trim() || r.desc.trim());
-  const validQuotes = quotes.filter(q => q.text.trim());
+  const validStats = stats.filter(s=>s.label.trim());
+  const statTotal = validStats.reduce((sum,s)=> sum + (Number(s.value)||0), 0);
 
-  const tocItems = ["1. 개요","2. 외형","3. 성격","4. 능력"];
-  if(validRelations.length) tocItems.push("5. 인물 관계");
-  if(validQuotes.length) tocItems.push((validRelations.length?"6":"5")+". 명대사");
+  const validProfiles = profiles.filter(p=>p.label.trim()||p.value.trim());
+  const validBasicInfo = basicInfo.filter(p=>p.label.trim()||p.value.trim());
+  const infoboxImg = infoboxImage ? `<img class="wiki-infobox-img" src="${infoboxImage}" alt="${escAttr(nameKo)}">` : "";
+  const profileRows = validProfiles.map(p=>`<tr><th>${escHtml(p.label)}</th><td>${escHtml(p.value)}</td></tr>`).join('');
+  const basicInfoRows = validBasicInfo.map(p=>`<tr><th>${escHtml(p.label)}</th><td>${escHtml(p.value)}</td></tr>`).join('');
+  const catsHtml = categories.length ? categories.map(c=>`<span class="tag">[${escHtml(c)}]</span>`).join(' ') : "";
 
-  const infoboxImg = imageData
-    ? `<img class="wiki-infobox-img" src="${imageData}" alt="${escAttr(nameKo)}">`
+  const roster = rosterData[school];
+  const rosterHtml = roster ? `
+    <div class="wiki-roster">
+      <div class="wiki-roster-header" style="background:${roster.color}">${escHtml(nameKo)}의 소속</div>
+      <div class="wiki-roster-toggle" onclick="toggleRoster()">[ 펼치기 · 접기 ]</div>
+      <div class="wiki-roster-body ${rosterExpanded ? '' : 'collapsed'}">
+        <div class="wiki-roster-banner" style="background:${roster.color}">${roster.banner}</div>
+        <div class="wiki-roster-members">
+          ${roster.members.map(m=>`${escHtml(m.n)}<span class="pos">(${escHtml(m.p)})</span>`).join(' · ')}
+        </div>
+        ${roster.staff.length ? `<div class="wiki-roster-staff">${roster.staff.map(s=>`${escHtml(s.role)} ${escHtml(s.n)}`).join(' · ')}</div>` : ""}
+      </div>
+    </div>` : "";
+
+  const numbered = withNumbers(tocItems);
+  const tocHtml = numbered.map(it =>
+    it.type==='main'
+      ? `<li>${it.number}. ${escHtml(it.title)||'(제목 없음)'}</li>`
+      : `<li class="sub">${it.number} ${escHtml(it.title)||'(제목 없음)'}</li>`
+  ).join('');
+
+  const footnotesAcc = [];
+  const contentHtml = numbered.map(it => {
+    const heading = it.type==='main'
+      ? `<h2 class="wiki-h2">${it.number}. ${escHtml(it.title)||'(제목 없음)'}</h2>`
+      : `<h3 class="wiki-h3">${it.number}. ${escHtml(it.title)||'(제목 없음)'}</h3>`;
+    return heading + parseBody(it.content, footnotesAcc);
+  }).join('');
+
+  const fnHtml = footnotesAcc.length
+    ? `<div class="wiki-footnotes">${footnotesAcc.map((f,i)=>`<div>[${i+1}] ${f}</div>`).join('')}</div>`
     : "";
 
-  let n = 1;
-  const skillBlock = validSkills.map(s =>
-    `<h3 class="wiki-h3">4.${validSkills.indexOf(s)+1} ${escHtml(s.name)||"(이름 없음)"}</h3>
-     <p class="wiki-p">${escHtml(s.desc)}</p>`).join('');
-
-  const relationBlock = validRelations.length ? `
-    <h2 class="wiki-h2">5. 인물 관계</h2>
-    ${validRelations.map(r=>`
-      <div class="wiki-relation">
-        <div class="rname">${escHtml(r.name)||"(이름 없음)"}</div>
-        <div class="rdesc">${escHtml(r.desc)}</div>
-      </div>`).join('')}` : "";
-
-  const quoteHeadNum = validRelations.length ? 6 : 5;
-  const quoteBlock = validQuotes.length ? `
-    <h2 class="wiki-h2">${quoteHeadNum}. 명대사</h2>
-    ${validQuotes.map(q=>`
-      <div class="wiki-quote">
-        "${escHtml(q.text)}"
-        ${q.speaker ? `<div class="qspeaker">— ${escHtml(q.speaker)}</div>` : ""}
-      </div>`).join('')}` : "";
-
-  const catsBlock = categories.length ? `
-    <div class="wiki-cats">${categories.map(c=>`<span>${escHtml(c)}</span>`).join('')}</div>` : "";
-
   return `
-    <div class="clearfix">
+    <div class="wiki-cats"><b>분류</b> ${catsHtml}</div>
+    ${rosterHtml}
+
+    <div class="wiki-top">
       <div class="wiki-toc">
-        <div class="wiki-toc-head">목차</div>
-        <ol>${tocItems.map(t=>`<li>${t}</li>`).join('')}</ol>
+        <div class="wiki-toc-head" onclick="toggleToc()">목차 <span class="chev ${tocExpanded ? '' : 'closed'}">⌄</span></div>
+        ${tocExpanded ? `<ol>${tocHtml}</ol>` : ""}
       </div>
-      <div class="wiki-infobox" style="--accent-c:${color}">
-        <div class="wiki-infobox-header" style="background:${color}">${escHtml(nameKo)}</div>
-        <div class="wiki-infobox-sub">${escHtml(nameEn)}</div>
+      <div class="wiki-infobox" style="--accent-c:${color}; --th-bg:${color};">
+        <div class="wiki-infobox-header" style="background:${color}">${escHtml(school)} 소속 등장인물</div>
+        <div class="wiki-infobox-name">
+          <div class="ko">${escHtml(nameKo)}</div>
+          <div class="orig">${escHtml(nameOrig)}</div>
+        </div>
         ${infoboxImg}
         <table>
-          <tr><th>소속</th><td>${escHtml(school)}</td></tr>
-          <tr><th>학년/포지션</th><td>${escHtml(position)}</td></tr>
-          <tr><th>등번호</th><td>${escHtml(backNumber)}</td></tr>
-          <tr><th>신체사이즈</th><td>${escHtml(physical)}</td></tr>
+          <tr><th>학교</th><td>${escHtml(school)} ${escHtml(grade)}</td></tr>
+          ${basicInfoRows}
         </table>
+        ${validProfiles.length ? `
+        <div class="wiki-infobox-toggle" style="background:${color}1f; color:${color};" onclick="toggleProfile()">[ 프로필 ${profileExpanded ? '접기' : '더 보기'} ]</div>
+        <div style="display:${profileExpanded ? 'block' : 'none'}"><table>${profileRows}</table></div>` : ""}
+        ${validStats.length ? `
+        <div class="wiki-infobox-toggle" style="background:${color}1f; color:${color};" onclick="toggleStats()">[ 공식 팬북 능력치 파라미터 ${statsExpanded ? '접기' : '보기'} ]</div>
+        <div style="display:${statsExpanded ? 'block' : 'none'}">
+          <table class="wiki-stats">
+            <tr>${validStats.map(s=>`<th>${escHtml(s.label)}</th>`).join('')}<th>총합</th></tr>
+            <tr>${validStats.map(s=>`<td>${escHtml(String(s.value))}</td>`).join('')}<td><b>${statTotal}</b></td></tr>
+          </table>
+        </div>` : ""}
       </div>
-      <h1 class="wiki-title">${escHtml(nameKo)}</h1>
-      <p class="wiki-title-sub">${escHtml(nameEn)}</p>
-      <p class="wiki-lead"><b>${escHtml(nameKo)}</b>${nameEn ? `(${escHtml(nameEn)})` : ""}는 만화 《쿠로코의 농구》 세계관을 바탕으로 한 오리지널 캐릭터이다.</p>
     </div>
 
+    <h1 class="wiki-title">${escHtml(nameKo)}</h1>
+    <p class="wiki-meta">${escHtml(nameOrig)}</p>
+
     <div class="wiki-content">
-      <h2 class="wiki-h2">1. 개요</h2>
-      <p class="wiki-p">${nl2br(overview)}</p>
-
-      <h2 class="wiki-h2">2. 외형</h2>
-      <p class="wiki-p">${nl2br(appearance)}</p>
-
-      <h2 class="wiki-h2">3. 성격</h2>
-      <p class="wiki-p">${nl2br(personality)}</p>
-
-      <h2 class="wiki-h2">4. 능력</h2>
-      <p class="wiki-p">${escHtml(school)}의 ${escHtml(position)}로서 활약하며 아래와 같은 특기를 지녔다.</p>
-      ${skillBlock || '<p class="wiki-p" style="color:var(--sub)">등록된 스킬이 없습니다.</p>'}
-
-      ${relationBlock}
-      ${quoteBlock}
-
-      <div class="wiki-footer">
-        이 문서는 오리지널 캐릭터 위키 생성기로 작성되었습니다.
-        ${catsBlock}
+      ${contentHtml}
+      ${fnHtml}
+      <div class="wiki-license">
+        이 문서는 오리지널 캐릭터 위키 생성기로 작성된 팬 창작 문서이며, 실제 원작 설정과 무관합니다.
       </div>
     </div>
   `;
 }
 
 function render(){
-  const color = document.getElementById('themeColor').value;
-  document.getElementById('imgPreviewWrap').innerHTML = imageData
-    ? `<img src="${imageData}" alt="preview">`
+  document.getElementById('imgPreviewWrap').innerHTML = infoboxImage
+    ? `<img src="${infoboxImage}" alt="preview">`
     : `<div class="ph">이미지<br>없음</div>`;
   document.getElementById('wikiOutput').innerHTML = buildWikiHTML();
 }
@@ -486,20 +746,20 @@ function downloadPage(){
   const full = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">
   <title>${escHtml(nameKo)}</title>${styleTag}
   <style>body{display:block;height:auto;overflow:visible;background:#fffefb;}
-  .preview-wrap{display:block;} .preview-page{max-width:760px;margin:0 auto;}</style>
+  .preview-wrap{display:block;} .preview-page{max-width:800px;margin:0 auto;}</style>
   </head><body><div class="preview-wrap"><div class="preview-page">${buildWikiHTML()}</div></div></body></html>`;
   const blob = new Blob([full], {type:"text/html"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `${nameKo}_위키문서.html`;
-  a.click();
+  a.href = url; a.download = `${nameKo}_위키문서.html`; a.click();
   URL.revokeObjectURL(url);
 }
 
-renderSkillEditor();
-renderRelationEditor();
-renderQuoteEditor();
+renderProfileEditor();
+renderBasicInfoEditor();
+renderStatEditor();
+renderTocEditor();
+renderImageBlocks();
 render();
 </script>
 </body>
