@@ -1,766 +1,2294 @@
+
+
+쿠로코의농구 캐릭터 코드생성기 · HTML
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>오리지널 캐릭터 위키 생성기</title>
+<title>캐릭터 문서 코드 생성기</title>
 <style>
-  :root{
-    --accent:#1a73e8;
-    --ink:#1c1c1c;
-    --sub:#6b6b6b;
-    --line:#e2e0d8;
-    --paper:#fffefb;
-    --panel:#f6f4ee;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0; height:100vh; display:flex; overflow:hidden;
-    font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
-    color:var(--ink); background:var(--panel);
-  }
-  .editor{
-    width:460px; flex-shrink:0; background:var(--panel);
-    border-right:1px solid var(--line); overflow-y:auto; padding:28px 24px 90px;
-  }
-  .editor-title{ font-size:1rem; font-weight:700; letter-spacing:-0.01em; margin:0 0 4px; }
-  .editor-sub{ font-size:0.78rem; color:var(--sub); margin:0 0 22px; line-height:1.5; }
-  .block{ background:var(--paper); border:1px solid var(--line); border-radius:2px; padding:16px 16px 18px; margin-bottom:14px; }
-  .block h3{ margin:0 0 4px; font-size:0.82rem; font-weight:700; color:var(--accent); }
-  .block .hint{ font-size:0.7rem; color:var(--sub); margin:0 0 12px; line-height:1.5; }
-  .field{margin-bottom:10px;}
-  .field:last-child{margin-bottom:0;}
-  .field label{ display:block; font-size:0.72rem; color:var(--sub); margin-bottom:4px; }
-  .row{display:flex; gap:8px;}
-  .row .field{flex:1;}
-  input[type=text], select, textarea, input[type=number]{
-    width:100%; padding:7px 9px; border:1px solid var(--line);
-    border-radius:2px; font-size:0.83rem; font-family:inherit; background:#fff; color:var(--ink);
-  }
-  input:focus, select:focus, textarea:focus{ outline:none; border-color:var(--accent); }
-  textarea{resize:vertical; line-height:1.5; font-family:inherit;}
-  input[type=color]{ width:44px; height:30px; padding:2px; border:1px solid var(--line); border-radius:2px; background:#fff; cursor:pointer; }
-  .color-row{display:flex; align-items:center; gap:10px;}
-  .color-row span{font-size:0.78rem; color:var(--sub);}
-  code{ background:#f0efe8; padding:1px 5px; border-radius:3px; font-size:0.78rem; }
-
-  .img-drop{ border:1px dashed var(--line); border-radius:2px; padding:10px; display:flex; align-items:center; gap:10px; background:#fff; }
-  .img-drop img{ width:48px; height:48px; object-fit:cover; border:1px solid var(--line); }
-  .img-drop .ph{ width:44px; height:44px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
-    font-size:0.6rem; color:var(--sub); text-align:center; background:var(--panel); flex-shrink:0; }
-  .img-drop input[type=file]{font-size:0.7rem; flex:1;}
-  .btn-mini{ border:1px solid var(--line); background:#fff; color:var(--sub); font-size:0.7rem; padding:3px 8px; border-radius:2px; cursor:pointer; }
-  .btn-mini:hover{border-color:var(--accent); color:var(--accent);}
-
-  .repeat-item{ border:1px solid var(--line); border-radius:2px; padding:10px; margin-bottom:8px; background:#fbfaf7; position:relative; }
-  .repeat-item .del{ position:absolute; top:6px; right:6px; border:none; background:none; color:var(--sub); font-size:0.85rem; cursor:pointer; line-height:1; }
-  .repeat-item .del:hover{color:#c0392b;}
-  .add-btn{ width:100%; padding:8px; border:1px dashed var(--line); background:#fff; color:var(--accent); font-size:0.8rem; border-radius:2px; cursor:pointer; font-weight:600; }
-  .add-btn:hover{background:var(--panel);}
-  .stat-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
-  .stat-grid .field label{ font-size:0.68rem; }
-
-  /* ---- 목차 항목 카드 ---- */
-  .toc-item{ border:1px solid var(--line); border-radius:2px; margin-bottom:10px; background:#fbfaf7; overflow:hidden; }
-  .toc-item-head{ display:flex; align-items:center; gap:6px; padding:8px 8px; background:#f0efe6; border-bottom:1px solid var(--line); }
-  .toc-num{ font-size:0.78rem; font-weight:700; color:var(--accent); width:34px; flex-shrink:0; }
-  .toc-title-input{ flex:1; padding:5px 7px; font-size:0.83rem; border:1px solid var(--line); border-radius:2px; }
-  .toc-type-select{ width:80px; flex-shrink:0; padding:5px 4px; font-size:0.74rem; }
-  .icon-btn{ width:24px; height:24px; border:1px solid var(--line); background:#fff; border-radius:2px; cursor:pointer; font-size:0.75rem; color:var(--sub); flex-shrink:0; }
-  .icon-btn:hover{ border-color:var(--accent); color:var(--accent); }
-  .icon-btn.del:hover{ border-color:#c0392b; color:#c0392b; }
-  .toc-toolbar{ display:flex; flex-wrap:wrap; gap:4px; padding:7px 8px; border-bottom:1px solid var(--line); background:#fff; }
-  .toc-toolbar button{ border:1px solid var(--line); background:#fff; border-radius:2px; font-size:0.72rem; padding:3px 7px; cursor:pointer; color:#444; }
-  .toc-toolbar button:hover{ border-color:var(--accent); color:var(--accent); }
-  .toc-item textarea{ border:none; border-radius:0; padding:10px 10px; min-height:90px; font-size:0.84rem; }
-  .toc-tip{ font-size:0.68rem; color:var(--sub); padding:6px 10px 8px; background:#fff; line-height:1.6; }
-  .img-num-badge{ display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%;
-    background:var(--accent); color:#fff; font-size:0.68rem; font-weight:700; flex-shrink:0; }
-
-  .download-bar{ position:fixed; bottom:0; left:0; width:460px; padding:14px 24px; background:var(--panel); border-top:1px solid var(--line); }
-  .download-btn{ width:100%; padding:11px; border:none; border-radius:2px; background:var(--accent); color:#fff; font-size:0.85rem; font-weight:700; cursor:pointer; }
-  .download-btn:hover{opacity:0.92;}
-
-  /* ---------- 우측 미리보기 ---------- */
-  .preview-wrap{ flex:1; overflow-y:auto; background:var(--paper); display:flex; justify-content:center; }
-  .preview-page{ width:100%; max-width:800px; padding:36px 36px 80px; }
-
-  .wiki-cats{ font-size:0.75rem; color:var(--sub); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--line); }
-  .wiki-cats b{ color:var(--ink); font-weight:600; }
-  .wiki-cats .tag{ color:var(--accent); margin-right:4px; }
-
-  .wiki-roster{ border:1px solid var(--line); margin-bottom:20px; }
-  .wiki-roster-header{ color:#fff; text-align:center; font-weight:700; padding:10px; font-size:0.92rem; }
-  .wiki-roster-toggle{ text-align:center; font-size:0.76rem; padding:6px; color:var(--accent); cursor:pointer; border-bottom:1px solid var(--line); background:#fafafa; }
-  .wiki-roster-body.collapsed{ display:none; }
-  .wiki-roster-banner{ color:#fff; text-align:center; font-weight:700; padding:8px; font-size:0.9rem; }
-  .wiki-roster-members{ padding:12px 16px; font-size:0.85rem; line-height:2; text-align:center; border-bottom:1px solid var(--line); }
-  .wiki-roster-members .pos{ font-size:0.68rem; color:var(--sub); font-style:italic; margin-left:1px; }
-  .wiki-roster-staff{ padding:8px; text-align:center; font-size:0.82rem; color:#333; }
-
-  .wiki-top{ display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-bottom:20px; }
-
-  .wiki-toc{ flex:1 1 220px; min-width:200px; border:1px solid var(--line); background:#fff; font-size:0.85rem; }
-  .wiki-toc-head{ display:flex; align-items:center; justify-content:space-between; padding:10px 14px; font-weight:700;
-    border-bottom:1px solid var(--line); cursor:pointer; font-size:0.95rem; }
-  .wiki-toc-head .chev{ color:var(--sub); font-size:0.8rem; transition:transform .15s; }
-  .wiki-toc-head .chev.closed{ transform:rotate(-90deg); }
-  .wiki-toc ol{ margin:0; padding:14px 14px 14px 30px; line-height:2; }
-  .wiki-toc li{ margin-bottom:2px; color:var(--accent); }
-  .wiki-toc li.sub{ list-style:none; margin-left:16px; color:#555; }
-
-  .wiki-infobox{ flex:0 0 280px; width:280px; border:1px solid var(--line); font-size:0.82rem; background:#fff; }
-  .wiki-infobox-header{ background:var(--accent-c, var(--accent)); color:#fff; text-align:center; padding:6px 8px; font-size:0.78rem; opacity:0.95; }
-  .wiki-infobox-name{ text-align:center; padding:8px 8px 10px; border-bottom:1px solid var(--line); }
-  .wiki-infobox-name .ko{ font-size:1.15rem; font-weight:800; }
-  .wiki-infobox-name .orig{ font-size:0.76rem; color:var(--sub); margin-top:2px; }
-  .wiki-infobox-img{ width:100%; aspect-ratio:1; object-fit:cover; display:block; border-bottom:1px solid var(--line); }
-  .wiki-infobox table{width:100%; border-collapse:collapse;}
-  .wiki-infobox th, .wiki-infobox td{ padding:6px 9px; border-bottom:1px solid #eee; font-size:0.78rem; text-align:left; vertical-align:top; }
-  .wiki-infobox th{ width:34%; background:var(--th-bg, #f7f7f5); color:#fff; font-weight:600; }
-  .wiki-infobox-toggle{ text-align:center; font-size:0.74rem; color:var(--accent); padding:7px; border-bottom:1px solid var(--line); background:#fafafa; cursor:pointer; }
-  .wiki-infobox-toggle:hover{ filter:brightness(0.94); }
-  .wiki-stats-title{ text-align:center; font-size:0.72rem; color:var(--sub); padding:6px; background:#fafafa; border-bottom:1px solid var(--line); }
-  .wiki-stats th, .wiki-stats td{ text-align:center; }
-
-  .wiki-title{ font-size:1.7rem; font-weight:800; margin:0 0 2px; letter-spacing:-0.02em; }
-  .wiki-meta{ font-size:0.76rem; color:var(--sub); margin:0 0 18px; }
-
-  .wiki-content{ clear:none; }
-  .wiki-h2{ font-size:1.1rem; font-weight:700; border-bottom:2px solid var(--ink); padding-bottom:6px; margin:26px 0 10px; }
-  .wiki-h3{ font-size:0.98rem; font-weight:700; margin:18px 0 6px; padding-top:8px; border-top:1px dashed var(--line); }
-  .wiki-p{ line-height:1.85; font-size:0.9rem; margin:0 0 10px; color:#2a2a2a; }
-  .wiki-content a{ color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; }
-  .wiki-content a:hover{ border-bottom-color:var(--accent); }
-  .wiki-list{ margin:0 0 10px; padding-left:20px; font-size:0.9rem; line-height:1.8; color:#2a2a2a; }
-  .wiki-fn{ font-size:0.72rem; color:var(--accent); }
-  .wiki-source{ font-size:0.78rem; color:var(--sub); font-style:normal; }
-  .wiki-spoiler{ background:#1c1c1c; color:#1c1c1c; border-radius:3px; padding:0 3px; cursor:pointer; transition:color .15s; }
-  .wiki-spoiler.revealed{ background:#f0efe6; color:inherit; }
-  .wiki-img-inline{ max-width:100%; display:block; margin:10px 0; border:1px solid var(--line); }
-  .wiki-quote-dialogue{ border-left:4px solid #4caf50; background:#f4faf4; padding:12px 16px; margin:10px 0 14px; border-radius:2px; }
-  .wiki-quote-dialogue p{ margin:0 0 4px; font-size:0.88rem; color:#2a2a2a; line-height:1.7; }
-  .wiki-quote-dialogue p:last-child{ margin-bottom:0; }
-  .wiki-spoiler-warn{ border-top:3px solid #f5a623; background:#fffdf7; padding:14px 16px; margin:10px 0 14px; }
-  .wiki-spoiler-warn .spoiler-warn-title{ font-weight:700; font-size:0.95rem; margin-bottom:8px; color:var(--ink); }
-  .wiki-spoiler-warn .spoiler-warn-desc{ font-size:0.85rem; color:#444; line-height:1.7; }
-
-  .wiki-footnotes{ margin-top:28px; padding-top:12px; border-top:1px solid var(--line); font-size:0.74rem; color:var(--sub); line-height:1.9; }
-  .wiki-license{ margin-top:20px; padding-top:14px; border-top:1px solid var(--line); font-size:0.7rem; color:var(--sub); line-height:1.8; }
-  .clearfix::after{ content:""; display:table; clear:both; }
-  ::-webkit-scrollbar{ width:9px; }
-  ::-webkit-scrollbar-thumb{ background:#d7d4c8; border-radius:5px; }
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f6f2f1;
+  --panel:#ffffff;
+  --well:#faf7f6;
+  --line:#eae0de;
+  --line-2:#d9cbc8;
+  --ink:#2a2223;
+  --ink-2:#6d5f5f;
+  --ink-3:#a89a9a;
+  --coral:#3273dc;
+  --coral-deep:#2159b8;
+  --coral-tint:#eaf1fd;
+  --dark:#1f1d22;
+  --dark-2:#2a272e;
+  --dark-line:#3a363f;
+  --r-s:5px;--r-m:8px;--r-l:12px;
+  --focus:0 0 0 3px rgba(50,115,220,.18);
+}
+html{-webkit-text-size-adjust:100%;}
+body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:13px;letter-spacing:-.01em;}
+button,input,select,textarea{font-family:inherit;letter-spacing:inherit;}
+button{cursor:pointer;}
+:focus-visible{outline:none;box-shadow:var(--focus);}
+ 
+header{
+  background:var(--panel);
+  border-bottom:1px solid var(--line);
+  padding:0 22px;height:52px;
+  display:flex;align-items:center;gap:12px;
+  position:sticky;top:0;z-index:200;
+}
+.hmark{width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;}
+header h1{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.02em;}
+.hbadge{font-size:11px;color:var(--ink-2);border:1px solid var(--line);border-radius:20px;padding:2px 10px;font-weight:500;background:var(--well);}
+ 
+.app{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);height:calc(100vh - 52px);}
+.left{overflow-y:auto;background:var(--bg);border-right:1px solid var(--line);padding:18px 18px 90px;min-width:0;}
+.right{display:flex;flex-direction:column;background:var(--dark);min-width:0;}
+.left::-webkit-scrollbar{width:6px;}
+.left::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px;}
+.left::-webkit-scrollbar-track{background:transparent;}
+ 
+.notice-banner{
+  display:flex;align-items:center;gap:14px;
+  background:var(--coral-tint);
+  border:1px solid #cfe0fb;
+  border-left:3px solid var(--coral);
+  border-radius:var(--r-m);padding:12px 16px;
+  margin-bottom:18px;cursor:pointer;
+  transition:background .15s;
+}
+.notice-banner:hover{background:#dce9fc;}
+.notice-banner-text .title{font-size:12.5px;font-weight:700;color:var(--coral-deep);}
+.notice-banner-text .sub{font-size:11px;color:var(--ink-2);margin-top:2px;line-height:1.5;}
+.notice-banner-arrow{margin-left:auto;color:var(--coral);font-size:20px;flex-shrink:0;line-height:1;}
+ 
+.sec{
+  margin-bottom:14px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--r-l);
+  padding:16px 16px 14px;
+  min-width:0;
+}
+.sec-hd{display:flex;align-items:center;margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--line);}
+.sec-hd span{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.02em;}
+ 
+.card{background:var(--well);border-radius:var(--r-m);padding:10px 12px;}
+.card+.card{margin-top:8px;}
+ 
+.frow{display:flex;gap:8px;align-items:center;margin-bottom:6px;min-width:0;}
+.frow:last-child{margin-bottom:0;}
+.frow label{font-size:11px;font-weight:600;color:var(--ink-2);white-space:nowrap;min-width:58px;}
+.fi{flex:1;min-width:0;border:1px solid var(--line-2);border-radius:var(--r-s);padding:6px 9px;font-size:12px;color:var(--ink);background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;}
+.fi:focus{border-color:var(--coral);box-shadow:var(--focus);}
+.fi::placeholder{color:var(--ink-3);}
+textarea.fi{resize:vertical;min-height:50px;line-height:1.5;}
+select.fi{cursor:pointer;}
+ 
+.cpick{display:flex;align-items:center;gap:6px;border:1px solid var(--line-2);border-radius:var(--r-s);padding:3px 8px;background:#fff;}
+.cpick input[type=color]{width:22px;height:22px;border:none;background:none;cursor:pointer;padding:0;border-radius:4px;}
+.cpick input[type=text]{border:none;outline:none;font-size:12px;font-family:'JetBrains Mono',monospace;width:72px;color:var(--ink);background:transparent;}
+ 
+.ri input,.pri input.pk,.pri textarea,.sr input[type=text],.ti-head input,.ti-head select,.ro-row input{
+  border:1px solid var(--line-2);border-radius:var(--r-s);background:#fff;outline:none;font-size:12px;color:var(--ink);
+  transition:border-color .15s,box-shadow .15s;
+}
+.ri input:focus,.pri input.pk:focus,.pri textarea:focus,.sr input[type=text]:focus,.ti-head input:focus,.ti-head select:focus{border-color:var(--coral);box-shadow:var(--focus);}
+.xbtn{border:none;background:none;color:var(--ink-3);font-size:14px;padding:2px 5px;line-height:1;flex-shrink:0;border-radius:4px;transition:color .12s,background .12s;}
+.xbtn:hover{color:var(--coral-deep);background:var(--coral-tint);}
+.sep{color:var(--ink-3);font-size:10px;flex-shrink:0;}
+ 
+.ri{display:flex;align-items:center;gap:6px;margin-bottom:6px;min-width:0;}
+.ri input{padding:5px 8px;flex:1;min-width:0;}
+ 
+.pri{display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;min-width:0;}
+.pri input.pk{flex:0 0 76px;padding:5px 7px;margin-top:1px;}
+.pri .sep{margin-top:8px;}
+.pri textarea{flex:1;min-width:0;padding:5px 8px;resize:vertical;line-height:1.5;min-height:30px;}
+.pri .xbtn{margin-top:3px;}
+.pri .nbtn{border:1px solid var(--line-2);background:#fff;color:var(--ink-2);font-size:10px;padding:3px 7px;flex-shrink:0;border-radius:var(--r-s);margin-top:3px;white-space:nowrap;font-weight:600;transition:all .12s;}
+.pri .nbtn:hover{border-color:var(--coral);color:var(--coral-deep);background:var(--coral-tint);}
+ 
+.stat-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;}
+.stat-wrap{background:var(--well);border-radius:var(--r-m);padding:10px;min-width:0;}
+.stat-hd{font-size:11px;font-weight:700;color:var(--ink-2);margin-bottom:8px;}
+.sr{display:flex;align-items:center;gap:4px;margin-bottom:4px;min-width:0;}
+.sr input[type=text]{flex:1 1 0;width:0;min-width:0;padding:4px 6px;}
+.sr .sv{flex:0 0 44px!important;text-align:center;}
+.sr input[type=checkbox]{width:14px;height:14px;accent-color:var(--coral);flex-shrink:0;cursor:pointer;}
+.sr .xbtn{font-size:12px;padding:2px 4px;}
+.sab{width:100%;background:none;border:1px dashed var(--line-2);color:var(--ink-2);border-radius:var(--r-s);padding:5px;font-size:11px;margin-top:6px;transition:all .15s;font-weight:600;}
+.sab:hover{border-color:var(--coral);color:var(--coral-deep);background:#fff;}
+ 
+.chk{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-2);cursor:pointer;user-select:none;font-weight:500;}
+.chk input{width:14px;height:14px;accent-color:var(--coral);cursor:pointer;}
+.pick-btn{flex:0 0 auto;border:1px solid var(--line-2);background:#fff;color:var(--ink-2);border-radius:var(--r-s);padding:5px 9px;font-size:11px;font-weight:600;white-space:nowrap;transition:all .15s;}
+.pick-btn:hover{border-color:var(--coral);color:var(--coral-deep);background:var(--coral-tint);}
+.img-sz{flex:0 0 auto;font-size:10.5px;color:var(--ink-2);background:var(--well);border:1px solid var(--line);border-radius:var(--r-s);padding:3px 7px;white-space:nowrap;}
+.img-sz.warn{color:var(--coral-deep);border-color:#f3ccce;background:var(--coral-tint);}
+.code-size{font-size:11px;color:#7d7885;font-weight:500;font-family:'JetBrains Mono',monospace;}
+.code-size.warn{color:#e2606a;}
+.add-btn{display:flex;align-items:center;justify-content:center;border:1px dashed var(--line-2);background:transparent;color:var(--ink-2);border-radius:var(--r-m);padding:7px 10px;font-size:11.5px;width:100%;margin-top:8px;transition:all .15s;font-weight:600;}
+.add-btn:hover{border-color:var(--coral);color:var(--coral-deep);background:var(--coral-tint);}
+.gen-btn{display:block;width:100%;background:var(--coral);color:#fff;border:none;border-radius:var(--r-m);padding:13px;font-size:14px;font-weight:700;transition:background .15s;margin-top:8px;letter-spacing:-.01em;}
+.gen-btn:hover{background:var(--coral-deep);}
+.import-btn{display:block;width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line-2);border-radius:var(--r-m);padding:10px;font-size:13px;font-weight:600;transition:all .15s;margin-top:4px;}
+.import-btn:hover{border-color:var(--ink-2);}
+ 
+.nb{background:var(--well);border-left:3px solid var(--line-2);border-radius:0 var(--r-s) var(--r-s) 0;padding:8px 12px;font-size:11.5px;color:var(--ink-2);line-height:1.7;margin-bottom:10px;}
+.nb code{background:#fff;border:1px solid var(--line);padding:1px 5px;border-radius:3px;font-size:10.5px;font-family:'JetBrains Mono',monospace;color:var(--ink);}
+.nb b{color:var(--ink);font-weight:600;}
+ 
+.toc-rows{display:flex;flex-direction:column;gap:10px;}
+.ti{border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden;background:#fff;}
+.ti-head{display:flex;align-items:center;gap:6px;padding:8px 10px;background:var(--well);border-bottom:1px solid var(--line);}
+.ti-num{font-size:11px;font-weight:700;color:var(--coral-deep);font-family:'JetBrains Mono',monospace;min-width:34px;flex-shrink:0;}
+.ti-head input{flex:1;min-width:0;padding:5px 8px;}
+.ti-head select{flex:0 0 68px;padding:5px 4px;font-size:11px;cursor:pointer;}
+.ti-body{padding:10px;}
+.mvbtn{border:1px solid var(--line);background:#fff;color:var(--ink-2);border-radius:var(--r-s);padding:3px 6px;font-size:11px;line-height:1.2;flex-shrink:0;transition:all .12s;}
+.mvbtn:hover{border-color:var(--coral);color:var(--coral-deep);background:var(--coral-tint);}
+.mvbtn:disabled{opacity:.3;cursor:default;}
+ 
+.tb{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;}
+.tb button{border:1px solid var(--line);background:var(--well);color:var(--ink-2);border-radius:var(--r-s);padding:3px 8px;font-size:11px;line-height:1.6;transition:all .12s;white-space:nowrap;font-weight:600;}
+.tb button:hover{border-color:var(--coral);color:var(--coral-deep);background:var(--coral-tint);}
+.tb .sep-tb{width:1px;background:var(--line);margin:3px 3px;align-self:stretch;}
+.tb-colors{display:inline-flex;align-items:center;gap:3px;padding:0 2px;}
+.tb .tb-sw{width:17px;height:17px;padding:0;border:1px solid rgba(0,0,0,.14);border-radius:4px;transition:transform .1s;}
+.tb .tb-sw:hover{transform:scale(1.18);}
+.tb .tb-sw-none{background:#fff;color:var(--ink-3);font-size:9px;line-height:1;display:flex;align-items:center;justify-content:center;}
+.tb .tb-sw-none:hover{background:#fff;color:var(--coral-deep);}
+.tb .tb-cpick{width:19px;height:19px;padding:0;border:1px solid var(--line-2);border-radius:4px;background:#fff;cursor:pointer;}
+.tb .tb-cpick::-webkit-color-swatch-wrapper{padding:2px;}
+.tb .tb-cpick::-webkit-color-swatch{border:none;border-radius:2px;}
+ 
+.bta-ce{width:100%;border:1px solid var(--line-2);border-radius:var(--r-s);padding:9px 11px;font-size:12.5px;min-height:96px;line-height:1.8;outline:none;background:#fff;color:var(--ink);word-break:break-word;white-space:pre-wrap;cursor:text;transition:border-color .15s,box-shadow .15s;}
+.bta-ce:focus{border-color:var(--coral);box-shadow:var(--focus);}
+.bta-ce:empty::before{content:attr(data-placeholder);color:var(--ink-3);pointer-events:none;}
+.ce-chip-link{color:#1a73e8;text-decoration:none;background:#eef4ff;border-radius:4px;padding:0 5px;font-size:inherit;cursor:default;user-select:none;white-space:nowrap;border:1px solid #cfe0ff;}
+.ce-chip-note{background:#eef4ff;border:1px solid #cfe0ff;border-radius:4px;padding:0 5px;font-size:.86em;color:#1a56b8;cursor:pointer;user-select:none;}
+.ce-chip-note:hover{background:#dfeaff;}
+.ce-chip-src{display:inline-flex;align-items:center;gap:2px;background:#eef8f0;border:1px solid #bfe3c6;border-radius:4px;padding:0 5px;font-size:10.5px;color:#2e7d32;cursor:default;user-select:none;vertical-align:middle;white-space:nowrap;}
+.ce-chip-color{border-radius:3px;padding:0 1px;font-size:inherit;cursor:default;user-select:none;}
+.ce-chip-img{width:fit-content!important;max-width:200px!important;}
+.ce-chip-img img{max-width:200px!important;height:auto!important;}
+.ce-sel-hold{background:rgba(50,115,220,.14);border-radius:2px;}
+ 
+.roster-row{background:var(--well);border-radius:var(--r-m);padding:10px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;}
+.roster-row .rr-remove{align-self:flex-end;}
+ 
+.rh{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--dark-2);border-bottom:1px solid var(--dark-line);}
+.rh-title{font-size:12px;color:#a7a2ad;display:flex;align-items:center;gap:8px;font-weight:600;}
+.live-badge{font-size:10px;background:#2ea866;color:#fff;border-radius:3px;padding:1px 6px;font-weight:700;}
+.rh-right{display:flex;align-items:center;gap:10px;}
+.live-toggle{display:flex;align-items:center;gap:5px;font-size:11px;color:#a7a2ad;cursor:pointer;user-select:none;}
+.live-toggle input{width:12px;height:12px;accent-color:var(--coral);cursor:pointer;}
+.copy-btn{background:var(--coral);color:#fff;border:none;border-radius:var(--r-s);padding:5px 12px;font-size:11px;font-weight:700;transition:background .15s;}
+.copy-btn:hover{background:var(--coral-deep);}
+.copy-btn.ok{background:#2ea866;}
+.copy-btn.ghost{background:transparent;border:1px solid #4a4653;color:#cfcbd6;}
+.copy-btn.ghost:hover{background:#33303b;}
+.save-opt{display:block;width:100%;text-align:left;background:var(--well);border:1px solid var(--line);border-radius:var(--r-m);padding:11px 13px;margin-bottom:8px;font-size:13px;font-weight:700;color:var(--ink);transition:all .15s;}
+.save-opt:hover{border-color:var(--coral);background:var(--coral-tint);}
+.save-opt span{display:block;font-size:11px;font-weight:500;color:var(--ink-2);margin-top:3px;}
+.save-msg{font-size:11.5px;color:var(--coral-deep);min-height:16px;}
+#card-body.off{opacity:.4;pointer-events:none;}
+#stat-body.off{opacity:.4;pointer-events:none;}
+.rtabs{display:flex;background:var(--dark);border-bottom:1px solid var(--dark-line);}
+.rtab{padding:8px 16px;font-size:12px;color:#7d7885;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all .15s;font-weight:600;}
+.rtab.active{color:#fff;border-bottom-color:var(--coral);}
+.out-area{flex:1;overflow:hidden;position:relative;}
+#code-out{width:100%;height:100%;background:transparent;border:none;outline:none;color:#cfcbd6;font-family:'JetBrains Mono','Consolas',monospace;font-size:10.5px;line-height:1.7;resize:none;padding:14px;overflow:auto;}
+.pframe{width:100%;height:100%;border:none;display:block;background:white;}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#7d7885;gap:6px;}
+.empty .icon{width:10px;height:10px;border-radius:50%;background:var(--coral);margin-bottom:8px;opacity:.8;}
+.empty p{font-size:12.5px;color:#8d8894;}
+.empty strong{color:#cfcbd6;}
+ 
+.pop-overlay{position:fixed;inset:0;background:rgba(42,34,35,.42);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px;}
+.pop{background:var(--panel);border-radius:var(--r-l);padding:20px;width:340px;max-width:100%;border:1px solid var(--line);box-shadow:0 18px 50px -12px rgba(42,34,35,.35);}
+.pop h4{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:14px;}
+.pop .prow{margin-bottom:10px;}
+.pop .prow label{display:block;font-size:11px;font-weight:600;color:var(--ink-2);margin-bottom:5px;}
+.pop .prow input,.pop .prow textarea{width:100%;border:1px solid var(--line-2);border-radius:var(--r-s);padding:7px 10px;font-size:12.5px;outline:none;color:var(--ink);transition:border-color .15s,box-shadow .15s;}
+.pop .prow textarea{resize:vertical;line-height:1.5;}
+.pop .prow input:focus,.pop .prow textarea:focus{border-color:var(--coral);box-shadow:var(--focus);}
+.pop-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;}
+.pop-btn{border:none;border-radius:var(--r-s);padding:8px 16px;font-size:12.5px;font-weight:600;transition:background .15s;}
+.pop-btn.confirm{background:var(--coral);color:#fff;}
+.pop-btn.confirm:hover{background:var(--coral-deep);}
+.pop-btn.cancel{background:var(--well);color:var(--ink-2);}
+.pop-btn.cancel:hover{background:var(--line);}
+.notice-pop{width:520px;max-height:82vh;overflow-y:auto;}
+.notice-pop h4{font-size:15px;}
+.notice-body{font-size:12.5px;color:var(--ink-2);line-height:1.8;}
+.notice-body p{margin:0 0 12px;}
+.notice-body p:last-child{margin-bottom:0;}
+.notice-body strong{color:var(--ink);font-weight:700;}
+.import-pop{width:580px;}
+@media(max-width:600px){
+  .pop{width:100%!important;padding:16px;}
+  .notice-pop,.import-pop{width:100%!important;max-height:78vh;}
+  .notice-body{font-size:13px;}
+}
+ 
+@media(max-width:767px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto 1fr;height:auto;min-height:calc(100vh - 52px);}
+  .left{height:auto;padding:14px 12px 20px;border-right:none;border-bottom:1px solid var(--line);}
+  .right{height:60vh;min-height:300px;}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
 </style>
 </head>
 <body>
-
-<div class="editor">
-  <p class="editor-title">🏀 오리지널 캐릭터 위키 생성기</p>
-  <p class="editor-sub">나무위키 등장인물 문서 형식을 따릅니다. 목차 항목은 자유롭게 추가·삭제·순서변경할 수 있고, 각 항목 안에서 굵게·각주·링크·스포일러 등 서식을 직접 넣을 수 있어요.</p>
-
-  <div class="block">
-    <h3>테마 · 분류</h3>
-    <div class="field">
-      <div class="color-row">
-        <input type="color" id="themeColor" value="#1a73e8" oninput="render()">
-        <span>인포박스 색상 (학교 상징색 등)</span>
-      </div>
-    </div>
-    <div class="field">
-      <label>분류 (쉼표로 구분)</label>
-      <input type="text" id="categories" value="쿠로코의 농구/등장인물, 세이린 고등학교, 오리지널 캐릭터" oninput="render()">
-    </div>
+ 
+<header>
+  <span class="hmark"></span>
+  <h1>캐릭터 문서 코드 생성기</h1>
+  <span class="hbadge">나무위키 스타일 · 쿠로코의 농구</span>
+</header>
+ 
+<div class="app">
+<div class="left" id="left">
+ 
+<div class="notice-banner" onclick="openNotice()">
+  <div class="notice-banner-text">
+    <div class="title">사용 전 안내를 확인해주세요!</div>
+    <div class="sub">이미지 저장 방식 · 불러오기 방법 안내 · 클릭하면 열려요</div>
   </div>
-
-  <div class="block">
-    <h3>인포박스 · 기본 정보</h3>
-    <div class="field">
-      <label>인포박스 사진</label>
-      <div class="img-drop">
-        <div id="imgPreviewWrap"><div class="ph">이미지<br>없음</div></div>
-        <input type="file" id="imgFile" accept="image/*" onchange="handleInfoboxImage(event)">
-        <button class="btn-mini" onclick="clearInfoboxImage()" type="button">제거</button>
-      </div>
-    </div>
-    <div class="row">
-      <div class="field"><label>이름 (한글)</label><input type="text" id="nameKo" value="쿠로바 사쿠라" oninput="render()"></div>
-      <div class="field"><label>이름 (원어/한자·영문)</label><input type="text" id="nameOrig" value="黒羽 桜 ｜ Kuroba Sakura" oninput="render()"></div>
-    </div>
-    <div class="row">
-      <div class="field"><label>학교</label>
-        <select id="school" onchange="render()">
-          <option selected>세이린 고교</option><option>카이조 고교</option><option>슈토쿠 고교</option>
-          <option>토오 학원</option><option>요센 고교</option><option>라쿠잔 고교</option>
-          <option>테이코 중학교</option>
-        </select>
-      </div>
-      <div class="field"><label>학년/반</label><input type="text" id="grade" value="1학년 A반" oninput="render()"></div>
-    </div>
-  </div>
-
-  <div class="block">
-    <h3>기본 정보 항목</h3>
-    <p class="hint">생일·신체·혈액형처럼 인포박스 표에 들어갈 항목을 자유롭게 추가·수정·삭제하세요. 미리보기에서 통째로 접고 펼 수 있어요.</p>
-    <div id="basicInfoList"></div>
-    <button class="add-btn" onclick="addBasicInfo()" type="button">+ 항목 추가</button>
-  </div>
-
-  <div class="block">
-    <h3>프로필 더 보기</h3>
-    <p class="hint">취미·특기 등 세부 항목</p>
-    <div id="profileList"></div>
-    <button class="add-btn" onclick="addProfile()" type="button">+ 세부 항목 추가</button>
-  </div>
-
-  <div class="block">
-    <h3>능력치 파라미터</h3>
-    <p class="hint">항목명과 수치를 자유롭게 추가·수정·삭제하세요.</p>
-    <div id="statList"></div>
-    <button class="add-btn" onclick="addStat()" type="button">+ 항목 추가</button>
-  </div>
-
-  <div class="block">
-    <h3>목차 &amp; 본문 작성</h3>
-    <p class="hint">
-      <b>대항목</b>은 1, 2, 3…으로, <b>중항목</b>은 직전 대항목 아래 4.1, 4.2…로 자동 번호가 매겨져요.<br>
-      본문 툴바로 서식을 넣거나, 직접 <code>**굵게**</code> <code>~~취소선~~</code> <code>__밑줄__</code> <code>[[주석:내용]]</code> <code>[[링크:URL|텍스트]]</code> 처럼 입력해도 됩니다.
-    </p>
-    <div id="tocEditorList"></div>
-    <button class="add-btn" onclick="addTocItem()" type="button">+ 목차 항목 추가</button>
-  </div>
-
-  <div class="block">
-    <h3>이미지 블록</h3>
-    <p class="hint">본문에 <code>[[이미지:N]]</code>을 넣으면 그 자리에 사진이 나와요. 이미지를 올리면 번호가 자동 부여됩니다.</p>
-    <div id="imageBlockList"></div>
-    <button class="add-btn" onclick="addImageBlock()" type="button">+ 이미지 블록 추가</button>
+  <div class="notice-banner-arrow">›</div>
+</div>
+ 
+<div class="sec">
+  <div class="sec-hd"><span>색상 설정</span></div>
+  <div class="card">
+    <div class="frow"><label>메인 컬러</label><div class="cpick"><input type="color" id="c-main" value="#1966e1"><input type="text" id="c-main-hex" value="#1966e1" maxlength="7"></div></div>
   </div>
 </div>
-
-<div class="download-bar">
-  <button class="download-btn" onclick="downloadPage()" type="button">📄 위키 문서 HTML로 다운로드</button>
+ 
+<div class="sec">
+  <div class="sec-hd"><span>페이지 헤더</span></div>
+  <div class="card">
+    <div class="frow"><label>이름(KO)</label><input class="fi" id="name-ko" value="유메미야 유메" placeholder="한국어 이름"></div>
+    <div class="frow"><label>이름(JP)</label><input class="fi" id="name-jp" value="夢宮 ユメ" placeholder="일본어"><input class="fi" id="name-ruby" value="ゆめみや ゆめ" placeholder="히라가나" style="font-size:10px;"></div>
+    <div class="frow"><label>이름(EN)</label><input class="fi" id="name-en" value="Yume Yumemiya" placeholder="영어"></div>
+    <div class="frow"><label>수정 시각</label><input class="fi" id="page-date" value="2026-09-11 00:00:00"></div>
+    <div class="frow"><label>맨 위 안내</label><label class="chk"><input type="checkbox" id="top-spoiler"> 스포일러 안내문을 문서 맨 위에 넣기</label></div>
+  </div>
+  <div id="cat-rows" style="margin-top:4px;">
+    <div class="ri"><input class="cat-n" placeholder="분류명" value="카이조 고등학교"><span class="sep">→</span><input class="cat-u" placeholder="URL" value="https://namu.wiki/w/%EB%B6%84%EB%A5%98:%EC%B9%B4%EC%9D%B4%EC%A1%B0%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90"><button class="xbtn" onclick="this.closest('.ri').remove()">✕</button></div>
+  </div>
+  <button class="add-btn" onclick="addCat()">＋ 분류 추가</button>
 </div>
-
-<div class="preview-wrap">
-  <div class="preview-page" id="wikiOutput"></div>
+ 
+<div class="sec">
+  <div class="sec-hd"><span>소속 카드 (나무위키 스타일)</span></div>
+  <div class="card" style="margin-bottom:10px;">
+    <label class="chk"><input type="checkbox" id="use-card" checked onchange="toggleCard()"> 문서에 소속 카드 넣기</label>
+    <label class="chk" style="margin-top:6px;"><input type="checkbox" id="aff-open" checked> 소속 카드를 기본으로 펼쳐서 보여주기</label>
+  </div>
+  <div id="card-body">
+  <div class="nb">실제 나무위키 캐릭터 문서의 "○○의 소속" 박스와 같은 형식이에요. 학교를 고르면 번호·이름·포지션이 자동으로 채워지고(이미지는 저작권 때문에 직접 채워야 해요), 이 캐릭터 본인 항목은 체크박스로 표시하면 링크 없이 굵은 글씨로 나가요. 중학교 소속처럼 소속팀이 여러 개면 "+ 소속팀 추가"로 늘려주세요.</div>
+  <div id="team-blocks"></div>
+  <button class="add-btn" id="team-block-add" onclick="addTeamBlock()">＋ 소속팀 추가</button>
+  </div>
 </div>
-
+ 
+<div class="sec">
+  <div class="sec-hd"><span>프로필</span></div>
+  <div class="card">
+    <div class="frow"><label>이미지</label><input class="fi" id="prof-img" value="https://pbs.twimg.com/media/HJk7mHfagAAif2E?format=png&amp;name=360x360" placeholder="주소를 붙여넣거나 파일을 첨부하세요"><button class="pick-btn" onclick="pickImageFor(document.getElementById('prof-img'),600)">파일 첨부</button></div>
+  </div>
+  <div class="nb">각 항목의 <b>더보기</b>를 체크하면 "[프로필 더 보기]"를 눌러야 보이는 접힌 영역으로 들어가요. 실제 나무위키처럼 이름·학교·생일 같은 핵심 정보만 바로 보이게 할 수 있어요.</div>
+  <div id="prof-rows" style="margin-top:4px;"></div>
+  <button class="add-btn" onclick="addProfRow()">＋ 항목 추가</button>
+  <div class="card" style="margin-top:8px;">
+    <label class="chk"><input type="checkbox" id="prof-more-open"> "프로필 더 보기" 영역을 기본으로 펼쳐서 보여주기</label>
+  </div>
+</div>
+ 
+<div class="sec">
+  <div class="sec-hd"><span>공식 팬북 능력치 패러미터</span></div>
+  <div class="card" style="margin-bottom:10px;">
+    <label class="chk"><input type="checkbox" id="use-stat" checked onchange="toggleStat()"> 문서에 능력치 패러미터 넣기</label>
+    <label class="chk" style="margin-top:6px;"><input type="checkbox" id="stat-open"> 기본으로 펼쳐서 보여주기</label>
+  </div>
+  <div id="stat-body">
+  <div class="nb">항목명·수치를 자유롭게 편집·추가·삭제할 수 있어요. <b>총합계</b>는 나머지 수치를 자동으로 더해서 보여줘요.</div>
+  <div id="stat-rows"></div>
+  <button class="add-btn" onclick="addStatCol()">＋ 항목 추가</button>
+  </div>
+</div>
+ 
+<div class="sec">
+  <div class="sec-hd"><span>목차 & 본문 작성</span></div>
+  <div class="nb">
+    <b>에디터 활용 팁</b><br>
+    위의 <b>버튼</b>들로 편하게 삽입할 수 있지만, <b>주석 <u>안에</u> 굵은 글씨, 색상, 링크, 출처</b>를 섞어 쓰고 싶다면?<br>
+    팝업창(버튼)에서는 서식 지정이 안 되니, 본문에 <b>키보드로 직접 괄호를 입력</b>해 보세요! 괄호 안의 글씨를 드래그해서 버튼을 눌러도 그대로 적용됩니다.<br>
+    <br>
+    <b>주석 섞어 쓰기:</b> <code>[주석: 여기에 <b>굵게</b> 또는 링크 적용]</code><br>
+  </div>
+  <div id="toc-rows" class="toc-rows"></div>
+  <button class="add-btn" onclick="addTocRow()">＋ 목차 항목 추가</button>
+</div>
+ 
+<div class="sec">
+  <div class="sec-hd"><span>이미지 블록</span></div>
+  <div class="nb">본문에 <code>[[이미지:N]]</code>을 넣으면 그 자리에 사진이 나와요.<br>
+<b>사진은 되도록 imgbb 같은 이미지 호스팅 사이트에 올린 뒤 이미지 주소를 붙여넣어 주세요.</b> 파일 첨부는 사진을 코드 안에 통째로 담는 방식이라 코드가 수십 배로 길어지고, 티스토리에서 저장이 안 되거나 잘릴 수 있어요. 주소를 도저히 못 쓰는 경우에만 써주세요.</div>
+  <div id="ib-rows"></div>
+  <button class="add-btn" onclick="addIB()">＋ 이미지 블록 추가</button>
+</div>
+ 
+<button class="import-btn" onclick="openImport()">HTML 코드 불러오기</button>
+<button class="gen-btn" onclick="generateCode()">코드 생성하기</button>
+</div><div class="right">
+  <div class="rh">
+    <div class="rh-title">
+      출력
+      <span class="live-badge" id="live-badge" style="display:none">● LIVE</span>
+      <span class="code-size" id="code-size"></span>
+    </div>
+    <div class="rh-right">
+      <label class="live-toggle"><input type="checkbox" id="live-chk" onchange="toggleLive(this.checked)"> 실시간</label>
+      <button class="copy-btn ghost" onclick="openSave()">저장</button>
+      <button class="copy-btn" id="copy-btn" onclick="copyCode()">복사</button>
+    </div>
+  </div>
+  <div class="rtabs">
+    <button class="rtab" id="tab-code" onclick="switchTab('code')">HTML 코드</button>
+    <button class="rtab active" id="tab-prev" onclick="switchTab('prev')">미리보기</button>
+  </div>
+  <div class="out-area" id="out-area">
+    <div class="empty"><div class="icon"></div><p>내용을 입력한 뒤</p><p><strong>코드 생성하기</strong>를 눌러주세요</p></div>
+  </div>
+</div>
+</div>
+ 
+<div class="pop-overlay" id="notice-overlay" style="display:none" onclick="closeNotice(event)">
+  <div class="pop notice-pop" onclick="event.stopPropagation()">
+    <h4>사용 전 꼭 읽어주세요</h4>
+    <div class="notice-body">
+<p>왼쪽에서 값을 채우고 <strong>코드 생성하기</strong>를 누르면 오른쪽에 나무위키풍 HTML 코드가 만들어져요. 개인홈, 티스토리 등 HTML을 넣을 수 있는 곳에 그 코드를 복붙하면 그대로 출력됩니다.</p>
+<p><strong>이미지는 되도록 imgbb 등 이미지 호스팅 사이트에 올려서 이미지 주소(링크)를 넣어주세요.</strong> 파일 첨부 기능도 있지만 사진이 코드 안에 통째로 들어가는 방식이라 코드가 수십 배로 길어집니다. 티스토리에 붙여넣을 때 저장이 안 되거나 글이 잘릴 수 있고, 메모장에 보관해뒀다가 다시 불러오기도 어려워집니다. 주소를 쓸 수 없는 경우에만 사용해주세요.</p>
+<p><strong>소속 카드</strong>는 실제 나무위키 캐릭터 문서의 "OO의 소속" 박스와 같은 형식이에요. 학교를 고르면 번호·이름·포지션이 자동으로 채워지고, "이 캐릭터" 체크박스를 켠 항목은 링크 없이 굵게 표시돼요. "직접 입력"을 고르면 빈칸에서 시작해 다른 작품에도 쓸 수 있고, "+ 소속팀 추가"로 중학교 소속 등 여러 팀을 함께 넣을 수 있어요.</p>
+<p><strong>자동저장 같은 기능은 없습니다.</strong> 날아가지 않도록 미리 써두고 복붙하는 방식을 추천합니다. <strong>코드를 메모장에 가지고 있으면 이 프로그램에 다시 불러올 수 있습니다.</strong> 그때 이어서 조금씩 편집하면 되는데, 파일로 첨부했던 이미지는 복원되지 않아요. 코드를 전혀 모르신다면 처음부터 수정하지 않을 생각으로 완벽하게 적어두신 후 이 프로그램을 쓰는 것을 추천합니다.</p>
+</div>
+    <div class="pop-btns" style="margin-top:14px;">
+      <button class="pop-btn confirm" onclick="closeNotice()">확인했어요</button>
+    </div>
+  </div>
+</div>
+ 
+<div class="pop-overlay" id="pop-overlay" style="display:none" onclick="closePop(event)">
+  <div class="pop" id="pop-box" onclick="event.stopPropagation()">
+    <h4 id="pop-title">링크 삽입</h4>
+    <div id="pop-content"></div>
+    <div class="pop-btns">
+      <button class="pop-btn cancel" onclick="closePop()">취소</button>
+      <button class="pop-btn confirm" id="pop-ok">삽입</button>
+    </div>
+  </div>
+</div>
+ 
 <script>
-function uid(){ return Math.random().toString(36).slice(2,9); }
-
-let profiles = [
-  {label:"취미", value:"독서"},
-  {label:"특기", value:"미라지 패스"},
-  {label:"좋아하는 음식", value:"딸기 다이후쿠"},
-  {label:"좌우명", value:"보이지 않아도 닿는다"}
-];
-
-let basicInfo = [
-  {label:"생일", value:"4월 5일 (양자리)"},
-  {label:"신장/체중", value:"175cm/63kg"},
-  {label:"혈액형", value:"O형"},
-  {label:"포지션", value:"포인트 가드(PG)"},
-  {label:"등번호", value:"10번"},
-  {label:"성우", value:"(미정)"}
-];
-let stats = [
-  {label:"신체능력", value:6},
-  {label:"기술", value:7},
-  {label:"스태미나", value:6},
-  {label:"정신력", value:7},
-  {label:"특수능력", value:7}
-];
-let profileExpanded = false;
-let statsExpanded = false;
-
-let tocItems = [
-  {id:uid(), type:"main", title:"개요", content:"만화 《쿠로코의 농구》 세계관을 바탕으로 한 오리지널 캐릭터. 세이린 고교 농구부 소속."},
-  {id:uid(), type:"main", title:"특징", content:"조용하고 무뚝뚝해 보이지만 동료를 향한 신뢰가 깊다.\n경기 중에는 냉정한 지휘관형으로 돌변해 팀을 이끈다.[[주석:설정 초안 단계로 세부 내용은 추후 보완 예정.]]"},
-  {id:uid(), type:"main", title:"작중 행적", content:"입학과 동시에 주전 포인트 가드로 발탁되어 팀의 사령탑 역할을 맡는다."},
-  {id:uid(), type:"main", title:"플레이스타일", content:"넓은 시야와 정확한 패스를 앞세운 정통파 포인트 가드다.\n\n[[대사:패스는 눈에 보이지 않아도, 마음에는 닿아야 하니까.|경기 중, 팀원에게]]"},
-  {id:uid(), type:"sub", title:"기술", content:"**미라지 패스**\n상대의 시야 사각을 이용해 궤적을 숨기는 패스.\n\n**코트 시야**\n코트 전체를 넓게 조망하는 관찰력."},
-  {id:uid(), type:"main", title:"기타", content:"애칭은 '사쿠라 선배'.\n좋아하는 음식은 딸기 다이후쿠.[[출처:설정집 기준]]"}
-];
-
-let images = []; // {id, dataUrl}
-let infoboxImage = null;
-let rosterExpanded = true;
-let tocExpanded = true;
-function toggleToc(){ tocExpanded = !tocExpanded; render(); }
-
-const rosterData = {
-  "세이린 고교": {
-    banner: "세이린 (誠凛)",
-    color: "#9c3547",
-    members: [
-      {n:"휴가 준페이", p:"SG·주장"}, {n:"이즈키 슌", p:"PG"}, {n:"코가네이 신지", p:"SF"},
-      {n:"키요시 텟페이", p:"C"}, {n:"미토베 린노스케", p:"C"}, {n:"츠치다 사토시", p:"F"},
-      {n:"카가미 타이가", p:"PF"}, {n:"쿠로코 테츠야", p:"식스맨"}, {n:"후리하타 코우키", p:"PG"}
+/* ════════ 상태 ════════ */
+let currentCode='', liveOn=false, liveTimer=null;
+let ibCount=0;
+let _popCb=null;
+ 
+/* ════════ 이스케이프 ════════ */
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+ 
+/* ════════ 공지 팝업 ════════ */
+function openNotice(){document.getElementById('notice-overlay').style.display='flex';}
+function closeNotice(e){if(!e||e.target===document.getElementById('notice-overlay'))document.getElementById('notice-overlay').style.display='none';}
+ 
+/* ════════ 색상 동기화 ════════ */
+['main'].forEach(k=>{
+  const c=document.getElementById('c-'+k), h=document.getElementById('c-'+k+'-hex');
+  c.addEventListener('input',()=>{h.value=c.value; liveRegen();});
+  h.addEventListener('input',()=>{if(/^#[0-9A-Fa-f]{6}$/.test(h.value)){c.value=h.value; liveRegen();}});
+});
+function getHex(id,fallback){
+  const v=(document.getElementById(id).value||'').trim();
+  return /^#[0-9A-Fa-f]{6}$/.test(v)?v:fallback;
+}
+ 
+/* ════════ 소속 카드 (나무위키 실제 형식) ════════ */
+/* 나무위키 각 학교 문서에서 확인한 실제 등번호·포지션 데이터 (2026-09 기준) */
+const TEAM_PRESETS={
+  kaijo:{name:'카이조 (海常)',link:'https://namu.wiki/w/%EC%B9%B4%EC%9D%B4%EC%A1%B0%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
+    logo:'https://i.namu.wiki/i/c3LUxiRSLAwNJAfGaI4Ubhxthh5E_RzDGZ-dlDzRTeKJn4bl-PDXJOiH35QiNUlapqwwLBG4EgqRL_Zi6ozdFg.webp',
+    members:[
+      {num:'4',name:'카사마츠 유키오',pos:'PG'},
+      {num:'5',name:'모리야마 요시타카',pos:'SG'},
+      {num:'7',name:'키세 료타',pos:'SF'},
+      {num:'8',name:'코보리 코우지',pos:'C'},
+      {num:'9',name:'나카무라 신야',pos:'SG'},
+      {num:'10',name:'하야카와 미츠히로',pos:'PF'}
     ],
-    staff: [{role:"감독", n:"아이다 리코"}, {role:"고문", n:"타케다 카마치"}]
-  },
-  "카이조 고교": {
-    banner: "카이조 (海常)",
-    color: "#1d4e89",
-    members: [
-      {n:"카사마츠 유키오", p:"PG·주장"}, {n:"키세 료타", p:"SF"},
-      {n:"모리야마 요시타카", p:"SG"}, {n:"하야카와 마사히로", p:"PF"}
+    staff:[{name:'타케우치 겐타',role:'감독'}]},
+  seirin:{name:'세이린 (誠凛)',link:'https://namu.wiki/w/%EC%84%B8%EC%9D%B4%EB%A6%B0%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
+    logo:'',
+    members:[
+      {num:'4',name:'휴가 준페이',pos:'SG'},
+      {num:'5',name:'이즈키 슌',pos:'PG'},
+      {num:'6',name:'코가네이 신지',pos:'SF'},
+      {num:'7',name:'키요시 텟페이',pos:'C/PG'},
+      {num:'8',name:'미토베 린노스케',pos:'C'},
+      {num:'9',name:'츠치다 사토시',pos:'F'},
+      {num:'10',name:'카가미 타이가',pos:'PF'},
+      {num:'11',name:'쿠로코 테츠야',pos:'??'},
+      {num:'12',name:'후리하타 코우키',pos:'PG'}
     ],
-    staff: []
-  },
-  "슈토쿠 고교": {
-    banner: "슈토쿠 (秀徳)",
-    color: "#2e7d32",
-    members: [
-      {n:"미도리마 신타로", p:"SG"}, {n:"타카오 카즈나리", p:"PG"}, {n:"오오츠보 타이스케", p:"C·주장"}
+    staff:[{name:'아이다 리코',role:'감독'},{name:'타케다',role:'고문'}]},
+  too:{name:'토오 (桐皇)',link:'https://namu.wiki/w/%ED%86%A0%EC%98%A4%20%ED%95%99%EC%9B%90%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
+    logo:'',
+    members:[
+      {num:'4',name:'이마요시 쇼이치',pos:'PG · 주장'},
+      {num:'5',name:'아오미네 다이키',pos:'PF'},
+      {num:'6',name:'와카마츠 코스케',pos:'C'},
+      {num:'7',name:'스사 요시노리',pos:'SF'},
+      {num:'9',name:'사쿠라이 료',pos:'SG'}
     ],
-    staff: []
-  },
-  "토오 학원": {
-    banner: "토오 (桃園)",
-    color: "#37474f",
-    members: [
-      {n:"아오미네 다이키", p:"SG"}, {n:"이마요시 쇼이치", p:"PG·주장"},
-      {n:"와카마츠 코사쿠", p:"C"}, {n:"모모이 사츠키", p:"매니저"}
+    staff:[{name:'모모이 사츠키',role:'매니저'},{name:'하라사와 카츠노리',role:'감독'}]},
+  yosen:{name:'요세이 (陽泉)',link:'https://namu.wiki/w/%EC%9A%94%EC%84%BC%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
+    logo:'',
+    members:[
+      {num:'',name:'오카무라 켄이치',pos:'PF · 주장'},
+      {num:'',name:'무라사키바라 아츠시',pos:'C'},
+      {num:'',name:'히무로 타츠야',pos:'SG'}
     ],
-    staff: []
-  },
-  "요센 고교": {
-    banner: "요센 (陽泉)",
-    color: "#6a1b9a",
-    members: [
-      {n:"무라사키바라 아츠시", p:"C"}, {n:"히무로 타츠야", p:"SF"},
-      {n:"오카무라 켄스케", p:"PF·주장"}
+    staff:[]},
+  rakuzan:{name:'라쿠잔 (洛山)',link:'https://namu.wiki/w/%EB%9D%BC%EC%BF%A0%EC%9E%94%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
+    logo:'',
+    members:[
+      {num:'4',name:'아카시 세이주로',pos:'PG · 주장'},
+      {num:'5',name:'마유즈미 치히로',pos:'PF'},
+      {num:'6',name:'미부치 레오',pos:'SG'},
+      {num:'7',name:'하야마 코타로',pos:'SF'},
+      {num:'8',name:'네부야 에이키치',pos:'C'}
     ],
-    staff: []
-  },
-  "라쿠잔 고교": {
-    banner: "라쿠잔 (洛山)",
-    color: "#161616",
-    members: [
-      {n:"아카시 세이쥬로", p:"PG·주장"}, {n:"네부야 에이키치", p:"C"},
-      {n:"미부치 레오", p:"SF"}, {n:"하야마 코타로", p:"SG"}, {n:"마유즈미 치하야", p:"SG"}
+    staff:[{name:'히구치 쇼타',role:'매니저'},{name:'시로가네 에이지',role:'감독'}]},
+  shutoku:{name:'슈토쿠 (秀徳)',link:'https://namu.wiki/w/%EC%8A%88%ED%86%A0%EC%BF%A0%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
+    logo:'',
+    members:[
+      {num:'4',name:'오츠보 타이스케',pos:'C · 주장'},
+      {num:'5',name:'키무라 신스케',pos:'PF'},
+      {num:'6',name:'미도리마 신타로',pos:'SG'},
+      {num:'8',name:'미야지 키요시',pos:'SF'},
+      {num:'10',name:'타카오 카즈나리',pos:'PG'}
     ],
-    staff: []
-  },
-  "테이코 중학교": {
-    banner: "테이코 (帝光) · '기적의 세대'",
-    color: "#3d7fc4",
-    members: [
-      {n:"아카시 세이쥬로", p:"PG·주장"}, {n:"무라사키바라 아츠시", p:"C"}, {n:"아오미네 다이키", p:"PF"},
-      {n:"미도리마 신타로", p:"SG"}, {n:"키세 료타", p:"SF"}, {n:"쿠로코 테츠야", p:"식스맨"},
-      {n:"모모이 사츠키", p:"매니저"}
-    ],
-    staff: [{role:"전 주장", n:"니지무라 슈조"}]
+    staff:[{name:'나카타니 마사아키',role:'감독'}]},
+  custom:{name:'',link:'',logo:'',members:[],staff:[]}
+};
+let tbCount=0;
+ 
+function mkPlayerRow(m){
+  m=m||{};
+  const el=document.createElement('div');
+  el.className='ri';
+  el.innerHTML=`<input class="pl-num" style="flex:0 0 40px;" value="${esc(m.num||'')}" placeholder="번호">
+    <input class="pl-name" style="flex:1.4;" value="${esc(m.name||'')}" placeholder="이름">
+    <input class="pl-pos" style="flex:0 0 62px;" value="${esc(m.pos||'')}" placeholder="포지션">
+    <label class="chk" style="flex:0 0 auto;"><input type="checkbox" class="pl-self" ${m.isSelf?'checked':''}> 이 캐릭터</label>
+    <button class="xbtn" onclick="this.closest('.ri').remove();liveRegen()">✕</button>`;
+  return el;
+}
+function mkStaffRow(s){
+  s=s||{};
+  const el=document.createElement('div');
+  el.className='ri';
+  el.innerHTML=`<input class="sf-name" value="${esc(s.name||'')}" placeholder="이름">
+    <span class="sep">·</span>
+    <input class="sf-role" style="flex:0 0 80px;" value="${esc(s.role||'')}" placeholder="역할(감독 등)">
+    <button class="xbtn" onclick="this.closest('.ri').remove();liveRegen()">✕</button>`;
+  return el;
+}
+ 
+function addTeamBlock(preset){
+  tbCount++;
+  const id='tb-'+tbCount;
+  const box=document.getElementById('team-blocks');
+  const wrap=document.createElement('div');
+  wrap.className='card';
+  wrap.style.marginBottom='10px';
+  wrap.id=id;
+  wrap.innerHTML=`
+    <div class="frow"><label>학교</label>
+      <select class="fi tb-preset">
+        <option value="kaijo">카이조 고교</option>
+        <option value="seirin">세이린 고교</option>
+        <option value="too">토오 학원</option>
+        <option value="yosen">요세이 고교</option>
+        <option value="rakuzan">라쿠잔 고교</option>
+        <option value="shutoku">슈토쿠 고교</option>
+        <option value="custom" selected>직접 입력</option>
+      </select>
+      <button class="xbtn" title="이 소속 삭제" onclick="this.closest('.card').remove();liveRegen()">✕</button>
+    </div>
+    <div class="frow"><label>팀 표시명</label><input class="fi tb-name" placeholder="예: 세이린 (誠凛)"></div>
+    <div class="frow"><label>팀 링크</label><input class="fi tb-link" placeholder="https://namu.wiki/w/..."></div>
+    <div class="frow"><label>로고</label><input class="fi tb-logo" placeholder="로고 이미지 주소 (선택)"><button class="pick-btn" onclick="pickImageFor(this.previousElementSibling,140)">파일 첨부</button></div>
+    <div class="hint" style="margin:6px 0 2px;">선수 명단 (번호·이름·포지션, "이 캐릭터"는 링크 없이 굵게 표시)</div>
+    <div class="tb-players"></div>
+    <button class="add-btn" onclick="addPlayerRowTo('${id}')" style="margin-top:2px;">＋ 선수 추가</button>
+    <div class="hint" style="margin:10px 0 2px;">스태프 (감독·코치·매니저 등, "---" 아래에 표시)</div>
+    <div class="tb-staff"></div>
+    <button class="add-btn" onclick="addStaffRowTo('${id}')" style="margin-top:2px;">＋ 스태프 추가</button>
+  `;
+  box.appendChild(wrap);
+  const selectEl=wrap.querySelector('.tb-preset');
+  selectEl.addEventListener('change',()=>applyPresetToBlock(id,selectEl.value));
+  wrap.addEventListener('input',liveRegen);
+  if(preset){
+    selectEl.value=preset;
+    applyPresetToBlock(id,preset,true);
+  }
+  return id;
+}
+function addPlayerRowTo(id,m){
+  const el=document.getElementById(id).querySelector('.tb-players');
+  el.appendChild(mkPlayerRow(m));
+}
+function addStaffRowTo(id,s){
+  const el=document.getElementById(id).querySelector('.tb-staff');
+  el.appendChild(mkStaffRow(s));
+}
+function applyPresetToBlock(id,key,silent){
+  const preset=TEAM_PRESETS[key]||TEAM_PRESETS.custom;
+  const wrap=document.getElementById(id);
+  wrap.querySelector('.tb-name').value=preset.name;
+  wrap.querySelector('.tb-link').value=preset.link;
+  wrap.querySelector('.tb-logo').value=preset.logo;
+  wrap.querySelector('.tb-players').innerHTML='';
+  wrap.querySelector('.tb-staff').innerHTML='';
+  preset.members.forEach(m=>addPlayerRowTo(id,m));
+  preset.staff.forEach(s=>addStaffRowTo(id,s));
+  if(!silent)liveRegen();
+}
+function toggleCard(){
+  const on=document.getElementById('use-card').checked;
+  document.getElementById('card-body').classList.toggle('off',!on);
+  liveRegen();
+}
+function readTeamBlocks(){
+  return [...document.querySelectorAll('#team-blocks .card')].map(wrap=>({
+    name:wrap.querySelector('.tb-name').value.trim(),
+    link:wrap.querySelector('.tb-link').value.trim(),
+    logo:wrap.querySelector('.tb-logo').value.trim(),
+    players:[...wrap.querySelectorAll('.tb-players .ri')].map(r=>({
+      num:r.querySelector('.pl-num').value.trim(),
+      name:r.querySelector('.pl-name').value.trim(),
+      pos:r.querySelector('.pl-pos').value.trim(),
+      isSelf:r.querySelector('.pl-self').checked
+    })).filter(p=>p.name),
+    staff:[...wrap.querySelectorAll('.tb-staff .ri')].map(r=>({
+      name:r.querySelector('.sf-name').value.trim(),
+      role:r.querySelector('.sf-role').value.trim()
+    })).filter(s=>s.name)
+  })).filter(t=>t.name||t.players.length);
+}
+function buildAffiliationCard(mc,charName,openDefault){
+  const teams=readTeamBlocks();
+  if(!teams.length)return '';
+  const teamTables=teams.map(t=>{
+    const logoRow=t.logo?`<tr><td style="text-align:center;padding:10px 10px 4px;"><a href="${esc(t.link||'#')}" target="_blank"><img src="${esc(t.logo)}" style="height:44px;width:auto;display:inline-block;"></a></td></tr>`:'';
+    const nameRow=`<tr><td style="text-align:center;padding:6px 10px;font-weight:700;font-size:13.5px;">${t.link?`<a href="${esc(t.link)}" target="_blank" style="color:#000;text-decoration:none;">${esc(t.name)}</a>`:esc(t.name)}</td></tr>`;
+    const playerHtml=t.players.map(p=>{
+      const num=p.num?esc(p.num)+'. ':'';
+      if(p.isSelf){
+        return `${num}<b>${esc(p.name)}</b>${p.pos?`<i>(${esc(p.pos)})</i>`:''}`;
+      }
+      const link='https://namu.wiki/w/'+encodeURIComponent(p.name);
+      const posHtml=p.pos?`<i>(<a href="${'https://namu.wiki/w/'+encodeURIComponent(p.pos)}" target="_blank" style="color:inherit;text-decoration:none;">${esc(p.pos)}</a>)</i>`:'';
+      return `${num}<a href="${link}" target="_blank" style="color:#1a73e8;text-decoration:none;">${esc(p.name)}</a>${posHtml}`;
+    }).join(' · ');
+    const playerRow=playerHtml?`<tr><td style="padding:8px 12px;font-size:12.5px;line-height:2.0;">${playerHtml}</td></tr>`:'';
+    const staffHtml=t.staff.map(s=>`${esc(s.name)}${s.role?`<i>(${esc(s.role)})</i>`:''}`).join(' · ');
+    const staffRow=staffHtml?`<tr><td style="border-top:1px solid #e5e5e5;padding:8px 12px;font-size:11.5px;color:#666;text-align:center;">${staffHtml}</td></tr>`:'';
+    return `<table style="border-collapse:collapse;width:100%;max-width:380px;margin:0 auto 10px;border:1px solid #ddd;background:#fff;"><tbody>${logoRow}${nameRow}${playerRow}${staffRow}</tbody></table>`;
+  }).join('');
+ 
+  return `<details${openDefault?' open':''} id="aff-det" style="border:1px solid #ddd;border-radius:4px;margin:0 0 20px;overflow:hidden;">
+<summary onclick="tgDet('aff-det')" style="cursor:pointer;list-style:none;-webkit-appearance:none;background:#fafafa;padding:8px 12px;font-size:12.5px;font-weight:700;color:#333;border-bottom:1px solid #eee;">${esc(charName||'이 캐릭터')}의 소속 <span style="font-weight:400;color:#999;">[ 펼치기 · 접기 ]</span></summary>
+<div class="aff-det-body" style="overflow:hidden;max-height:${openDefault?'99999px':'0'};opacity:${openDefault?'1':'0'};transition:max-height .4s ease,opacity .3s ease;">
+<div style="padding:12px;">${teamTables}</div>
+</div>
+</details>`;
+}
+ 
+/* ════════ 공식 팬북 능력치 패러미터 ════════ */
+const STAT_DEFAULT=[['신체능력','5'],['기술','5'],['스태미너','5'],['정신력','5'],['특수능력','5']];
+function mkStatCol(k,v){
+  const d=document.createElement('div');d.className='ri';
+  d.innerHTML=`<input type="text" class="sk" value="${esc(k)}" placeholder="항목명"><span class="sep">→</span><input type="text" class="sv" style="flex:0 0 60px;text-align:center;" value="${esc(v)}" placeholder="수치"><button class="xbtn" onclick="this.closest('.ri').remove();liveRegen()">✕</button>`;
+  document.getElementById('stat-rows').appendChild(d);
+}
+function addStatCol(){mkStatCol('','0');}
+STAT_DEFAULT.forEach(([k,v])=>mkStatCol(k,v));
+function toggleStat(){
+  const on=document.getElementById('use-stat').checked;
+  document.getElementById('stat-body').classList.toggle('off',!on);
+  liveRegen();
+}
+ 
+/* ════════ Row adders ════════ */
+function addCat(){
+  const c=document.getElementById('cat-rows'),d=document.createElement('div');d.className='ri';
+  d.innerHTML=`<input class="cat-n" placeholder="분류명"><span class="sep">→</span><input class="cat-u" placeholder="URL" value="#"><button class="xbtn" onclick="this.closest('.ri').remove()">✕</button>`;
+  c.appendChild(d);
+}
+function priNote(btn){
+  const ta=btn.closest('.pri').querySelector('textarea');
+  const start=ta.selectionStart,end=ta.selectionEnd;
+  const note=ta.value.substring(start,end)||'';
+  openPop('프로필 주석',
+    `<div class="prow"><label>주석 내용</label><input id="pop-pn" value="${esc(note)}" placeholder="주석 내용"></div>`,
+    ()=>{
+      const n=document.getElementById('pop-pn').value||'';
+      if(!n)return;
+      const insert=`[주석: ${n}]`;
+      ta.value=ta.value.slice(0,start)+insert+ta.value.slice(end);
+      ta.selectionStart=ta.selectionEnd=start+insert.length;
+      ta.focus();closePop();liveRegen();
+    }
+  );
+}
+function addProfRow(k,v,more){
+  const c=document.getElementById('prof-rows'),d=document.createElement('div');d.className='pri';
+  d.innerHTML=`<input class="pk" placeholder="항목" value="${esc(k||'')}"><span class="sep">│</span><textarea rows="1" placeholder="내용 (엔터=줄바꿈)">${esc(v||'')}</textarea><button class="nbtn" onclick="priNote(this)" title="주석 삽입">주석</button><label class="chk" style="margin-top:4px;white-space:nowrap;" title="체크하면 [프로필 더 보기]를 눌러야 보여요"><input type="checkbox" class="pr-more" ${more?'checked':''}> 더보기</label><button class="xbtn" onclick="this.closest('.pri').remove()">✕</button>`;
+  c.appendChild(d);
+}
+[['학교','카이조 고교 1학년',false],['생일','3월 13일',false],['신장 / 체중','165cm / 45kg',false],['취미','게임 [주석: 오락실 게임 주력이지만 다른 게임도 다 잘한다.]',true],['특기','(메이크업, 코디 등) 꾸미기',true],['가족관계','어머니, 아버지, 오빠 [주석: 농구를 했었으며, 엄청난 시스콤이다.]',true],['좋아하는 음식','과일 디저트, 매운 라멘 [주석: 도전적일 정도의 매운 맛을 추구한다고 한다.]',true]]
+  .forEach(([k,v,more])=>addProfRow(k,v,more));
+ 
+/* ════════ 사진 첨부 (파일을 코드 안에 담기) ════════ */
+function pickImageFor(input,maxW){
+  if(!input)return;
+  const f=document.createElement('input');
+  f.type='file';f.accept='image/*';
+  f.onchange=()=>{
+    const file=f.files&&f.files[0];if(!file)return;
+    if(/gif/i.test(file.type))alert('움직이는 GIF는 첫 장면만 저장돼요.');
+    fileToDataURL(file,maxW,url=>{
+      input.value=url;
+      showImgSize(input,url,file.name);
+      liveRegen();
+    });
+  };
+  f.click();
+}
+function fileToDataURL(file,maxW,cb){
+  const fr=new FileReader();
+  fr.onerror=()=>alert('파일을 읽지 못했어요.');
+  fr.onload=()=>{
+    const img=new Image();
+    img.onerror=()=>alert('이미지를 읽지 못했어요. 다른 파일로 해보세요.');
+    img.onload=()=>{
+      const scale=Math.min(1,maxW/img.naturalWidth);
+      const w=Math.max(1,Math.round(img.naturalWidth*scale));
+      const h=Math.max(1,Math.round(img.naturalHeight*scale));
+      const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      let out='';
+      try{out=cv.toDataURL('image/webp',0.85);}catch(e){}
+      if(!/^data:image\/webp/.test(out)){
+        out=/png|gif|webp|svg/i.test(file.type)?cv.toDataURL('image/png'):cv.toDataURL('image/jpeg',0.85);
+      }
+      if(scale===1&&fr.result.length<out.length)out=fr.result;
+      cb(out);
+    };
+    img.src=fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+function showImgSize(input,url,name){
+  const kb=Math.round(new Blob([url]).size/1024);
+  let b=input.parentElement.querySelector('.img-sz');
+  if(!b){
+    b=document.createElement('span');b.className='img-sz';
+    input.parentElement.appendChild(b);
+  }
+  b.textContent=kb+'KB';
+  b.title=(name||'')+' · 사진이 코드 안에 담겼어요';
+  b.classList.toggle('warn',kb>300);
+  input.title=name||'';
+}
+document.getElementById('left').addEventListener('input',e=>{
+  const t=e.target;
+  if(t.classList&&t.classList.contains('fi')&&t.parentElement){
+    const b=t.parentElement.querySelector('.img-sz');
+    if(b&&!/^data:/.test(t.value))b.remove();
+  }
+});
+ 
+/* ════════ 이미지 블록 ════════ */
+function addIB(){
+  ibCount++;const n=ibCount;
+  const c=document.getElementById('ib-rows'),d=document.createElement('div');d.className='ib-item';d.dataset.n=n;
+  d.innerHTML=`<div class="ib-hd"><span class="ib-tag">#${n}</span><span class="ib-code">[[이미지:${n}]]</span><button class="xbtn" style="margin-left:auto;" onclick="this.closest('.ib-item').remove()">✕</button></div>
+  <div class="frow"><label>이미지</label><input class="fi ib-url" placeholder="주소를 붙여넣거나 파일을 첨부하세요"><button class="pick-btn" onclick="pickImageFor(this.previousElementSibling,800)">파일 첨부</button></div>
+  <div class="frow"><label>설명</label><input class="fi ib-cap" placeholder="이미지 설명 (선택)"><select class="fi ib-tc" style="flex:0 0 65px;padding:2px 4px;"><option value="#ffffff">흰색</option><option value="#000000">검정</option></select></div>`;
+  d.className='card';d.style.marginBottom='8px';
+  c.appendChild(d);
+}
+function buildIBMap(){
+  const m={};
+  document.querySelectorAll('#ib-rows .card').forEach(el=>{
+    const n=el.dataset.n,url=el.querySelector('.ib-url').value,cap=el.querySelector('.ib-cap').value;
+    const tc=el.querySelector('.ib-tc')?el.querySelector('.ib-tc').value:'#ffffff';
+    if(url)m[n]={url,cap,tc};
+  });
+  return m;
+}
+ 
+/* ════════ 목차/본문 ════════ */
+function addTocRow(title,lv,bodyText,collapsed){
+  const c=document.getElementById('toc-rows');
+  const d=document.createElement('div');d.className='ti';
+  d.innerHTML=`
+  <div class="ti-head">
+    <span class="ti-num">1</span>
+    <input type="text" class="ti-title" placeholder="목차 제목" value="${esc(title||'')}">
+    <select class="ti-lv">
+      <option value="h1">대항목</option>
+      <option value="h2">중항목</option>
+      <option value="h3">소항목</option>
+    </select>
+    <label class="chk" style="flex:0 0 auto;white-space:nowrap;" title="체크하면 문서를 열었을 때 이 문단이 접혀 있어요"><input type="checkbox" class="ti-collapsed" ${collapsed?'checked':''}> 접어두기</label>
+    <button class="mvbtn" title="위로 옮기기" onclick="moveTi(this,-1)">↑</button>
+    <button class="mvbtn" title="아래로 옮기기" onclick="moveTi(this,1)">↓</button>
+    <button class="xbtn" onclick="this.closest('.ti').remove();renumToc();liveRegen()">✕</button>
+  </div>
+  <div class="ti-body">
+    <div class="tb">
+      <button onmousedown="event.preventDefault();ceFmt('b')" title="굵게"><b>B</b></button>
+      <button onmousedown="event.preventDefault();ceFmt('s')" title="취소선"><s>S</s></button>
+      <button onmousedown="event.preventDefault();ceFmt('u')" title="밑줄"><u>U</u></button>
+      <div class="sep-tb"></div>
+      <button onmousedown="event.preventDefault();ceNote(this)" title="주석">주석</button>
+      <button onmousedown="event.preventDefault();ceQuote(this,1)" title="인용①">인용①</button>
+      <button onmousedown="event.preventDefault();ceQuote(this,2)" title="인용②">인용②</button>
+      <button onmousedown="event.preventDefault();popNotice(this)" title="스포일러 안내 상자 넣기">스포일러</button>
+      <div class="sep-tb"></div>
+      <button class="btn-link" onmousedown="event.preventDefault();popLink(this)" title="링크">링크</button>
+      <button class="btn-src" onmousedown="event.preventDefault();popSrc(this)" title="출처">출처</button>
+      <span class="tb-colors" title="글자를 드래그한 뒤 색을 누르세요">
+        <button class="tb-sw" style="background:#1a73e8" title="#1a73e8" onmousedown="event.preventDefault();applyColorNow(this,'#1a73e8')"></button><button class="tb-sw" style="background:#e53935" title="#e53935" onmousedown="event.preventDefault();applyColorNow(this,'#e53935')"></button><button class="tb-sw" style="background:#2e7d32" title="#2e7d32" onmousedown="event.preventDefault();applyColorNow(this,'#2e7d32')"></button><button class="tb-sw" style="background:#f57c00" title="#f57c00" onmousedown="event.preventDefault();applyColorNow(this,'#f57c00')"></button><button class="tb-sw" style="background:#7b1fa2" title="#7b1fa2" onmousedown="event.preventDefault();applyColorNow(this,'#7b1fa2')"></button><button class="tb-sw" style="background:#0097a7" title="#0097a7" onmousedown="event.preventDefault();applyColorNow(this,'#0097a7')"></button><button class="tb-sw" style="background:#666666" title="#666666" onmousedown="event.preventDefault();applyColorNow(this,'#666666')"></button><button class="tb-sw tb-sw-none" title="색 지우기" onmousedown="event.preventDefault();clearColorNow(this)">✕</button>
+        <input type="color" class="tb-cpick" value="#1a73e8" title="색 직접 고르기" onmousedown="captureForColor(this)" onchange="applySavedColor(this.value)">
+      </span>
+      <div class="sep-tb"></div>
+      <button onmousedown="event.preventDefault();popList(this,'ul')" title="비순서 목록">• 목록</button>
+      <button onmousedown="event.preventDefault();popList(this,'ol')" title="순서 목록">1. 목록</button>
+      <button onmousedown="event.preventDefault();popIB(this)" title="이미지블록">이미지</button>
+    </div>
+    <div class="bta-ce" contenteditable="true" data-placeholder="본문 내용을 입력하세요."></div>
+  </div>`;
+  c.appendChild(d);
+  const ce=d.querySelector('.bta-ce');
+  if(bodyText)ce.innerText=bodyText;
+  ce.addEventListener('paste',handlePaste);
+  ce.addEventListener('keydown',ceKeydown);
+  ce.addEventListener('click',e=>{
+    const note=e.target.closest('.ce-chip-note');
+    if(note&&ce.contains(note)){editNoteChip(note,ce);return;}
+    const nt=e.target.closest('.ce-chip-notice');
+    if(nt&&ce.contains(nt))popNotice(ce.closest('.ti-body').querySelector('.bta-ce'),nt);
+  });
+  d.querySelector('.ti-title').addEventListener('input',liveRegen);
+  if(lv)d.querySelector('.ti-lv').value=lv;
+  d.querySelector('.ti-lv').addEventListener('change',()=>{renumToc();liveRegen();});
+  ce.addEventListener('input',liveRegen);
+  renumToc();
+}
+const TI_LV={h1:1,h2:2,h3:3};
+function tiLevel(ti){return TI_LV[ti.querySelector('.ti-lv').value]||1;}
+function tiGroup(ti){
+  const g=[ti],lv=tiLevel(ti);
+  let n=ti.nextElementSibling;
+  while(n&&tiLevel(n)>lv){g.push(n);n=n.nextElementSibling;}
+  return g;
+}
+function moveTi(btn,dir){
+  const ti=btn.closest('.ti');
+  const g=tiGroup(ti),lv=tiLevel(ti);
+  if(dir<0){
+    let head=g[0].previousElementSibling;
+    if(!head)return;
+    while(head&&tiLevel(head)>lv)head=head.previousElementSibling;
+    if(!head||tiLevel(head)!==lv)return;
+    head.before(...g);
+  }else{
+    const next=g[g.length-1].nextElementSibling;
+    if(!next||tiLevel(next)!==lv)return;
+    const ng=tiGroup(next);
+    ng[ng.length-1].after(...g);
+  }
+  renumToc();liveRegen();
+  ti.scrollIntoView({block:'nearest'});
+}
+function refreshMoveBtns(){
+  const rows=[...document.querySelectorAll('#toc-rows .ti')];
+  rows.forEach(ti=>{
+    const lv=tiLevel(ti),bs=ti.querySelectorAll('.mvbtn');
+    if(bs.length<2)return;
+    let head=ti.previousElementSibling;
+    while(head&&tiLevel(head)>lv)head=head.previousElementSibling;
+    bs[0].disabled=!(head&&tiLevel(head)===lv);
+    const g=tiGroup(ti),next=g[g.length-1].nextElementSibling;
+    bs[1].disabled=!(next&&tiLevel(next)===lv);
+  });
+}
+function renumToc(){
+  let maj=0,min=0,sub=0;
+  [...document.querySelectorAll('#toc-rows .ti')].forEach(ti=>{
+    const lv=ti.querySelector('.ti-lv').value;
+    if(lv==='h1'){maj++;min=0;sub=0;ti.querySelector('.ti-num').textContent=maj;}
+    else if(lv==='h2'){min++;sub=0;ti.querySelector('.ti-num').textContent=maj+'.'+min;}
+    else{sub++;ti.querySelector('.ti-num').textContent=maj+'.'+min+'.'+sub;}
+  });
+  refreshMoveBtns();
+}
+ 
+/* ════════ CE(contenteditable) 헬퍼 ════════ */
+let _lastCe=null;
+function getCe(btn){return btn.closest('.ti-body').querySelector('.bta-ce');}
+document.addEventListener('focusin',e=>{
+  if(e.target.classList.contains('bta-ce'))_lastCe=e.target;
+});
+ 
+function saveCursorMark(ce){
+  ce.querySelectorAll('.ce-cursor-mark').forEach(m=>m.remove());
+  const mark=document.createElement('span');
+  mark.className='ce-cursor-mark';
+  mark.style.cssText='display:none;width:0;height:0;';
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount){ce.appendChild(mark);return;}
+  const range=sel.getRangeAt(0).cloneRange();
+  range.collapse(true);
+  const container=range.startContainer;
+  if(!ce.contains(container)){ce.appendChild(mark);return;}
+  const el=container.nodeType===Node.TEXT_NODE?container.parentElement:container;
+  const inside=el.closest('.ce-chip-link,.ce-chip-src,.ce-chip-color,.ce-chip-note,.ce-chip-img,.ce-chip-notice');
+  if(inside&&ce.contains(inside)){
+    inside.after(mark);
+    return;
+  }
+  try{range.insertNode(mark);}catch(e){ce.appendChild(mark);}
+}
+ 
+let _holdCe=null;
+function holdSelection(ce){
+  ce.querySelectorAll('.ce-sel-hold').forEach(h=>unwrapEl(h));
+  ce.querySelectorAll('.ce-cursor-mark').forEach(m=>m.remove());
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount)return null;
+  const range=sel.getRangeAt(0);
+  if(range.collapsed||!ce.contains(range.commonAncestorContainer))return null;
+  const hold=document.createElement('span');
+  hold.className='ce-sel-hold';
+  try{
+    hold.appendChild(range.extractContents());
+    range.insertNode(hold);
+  }catch(e){return null;}
+  const mark=document.createElement('span');
+  mark.className='ce-cursor-mark';
+  mark.style.cssText='display:none;width:0;height:0;';
+  hold.after(mark);
+  _holdCe=ce;
+  return hold;
+}
+function unwrapEl(el){
+  const p=el.parentNode;if(!p)return;
+  while(el.firstChild)p.insertBefore(el.firstChild,el);
+  el.remove();
+}
+function restoreHold(){
+  if(!_holdCe)return;
+  _holdCe.querySelectorAll('.ce-sel-hold').forEach(h=>unwrapEl(h));
+  _holdCe=null;
+}
+function dropHold(ce){
+  ce.querySelectorAll('.ce-sel-hold').forEach(h=>h.remove());
+  _holdCe=null;
+}
+ 
+function insertAtMark(ce, node){
+  const mark=ce.querySelector('.ce-cursor-mark');
+  if(mark){
+    mark.parentNode.insertBefore(node, mark);
+    const after=document.createTextNode('\u200B');
+    mark.parentNode.insertBefore(after, mark);
+    mark.remove();
+    try{
+      const newRange=document.createRange();
+      newRange.setStartAfter(after);
+      newRange.collapse(true);
+      const sel=window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+    }catch(e){}
+  } else {
+    ce.appendChild(node);
+    const after=document.createTextNode('\u200B');
+    ce.appendChild(after);
+  }
+  ce.focus();
+}
+ 
+let _savedRange=null,_savedCe=null;
+function captureForColor(el){
+  const ce=getCe(el);if(!ce){_savedRange=null;return false;}
+  const sel=window.getSelection();
+  if(sel&&sel.rangeCount){
+    const r=sel.getRangeAt(0);
+    if(!r.collapsed&&ce.contains(r.commonAncestorContainer)){
+      _savedRange=r.cloneRange();_savedCe=ce;return true;
+    }
+  }
+  _savedRange=null;_savedCe=null;return false;
+}
+function paintRange(ce,range,col){
+  const chip=document.createElement('span');
+  chip.className='ce-chip-color';chip.dataset.color=col;
+  chip.style.color=col;chip.contentEditable='false';
+  try{
+    chip.appendChild(range.extractContents());
+    range.insertNode(chip);
+  }catch(e){return;}
+  chip.querySelectorAll('.ce-chip-color').forEach(c=>unwrapEl(c));
+  const after=document.createTextNode('\u200B');
+  chip.after(after);
+  try{
+    const r=document.createRange();
+    r.setStartAfter(after);r.collapse(true);
+    const sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);
+  }catch(e){}
+  ce.focus();liveRegen();
+}
+function applyColorNow(btn,col){
+  const ce=getCe(btn);if(!ce)return;
+  if(!captureForColor(btn)){flashCe(ce);return;}
+  paintRange(ce,_savedRange,col);_savedRange=null;
+}
+function applySavedColor(col){
+  if(!_savedRange||!_savedCe){if(_lastCe)flashCe(_lastCe);return;}
+  paintRange(_savedCe,_savedRange,col);_savedRange=null;
+}
+function clearColorNow(btn){
+  const ce=getCe(btn);if(!ce)return;
+  if(!captureForColor(btn)){flashCe(ce);return;}
+  const range=_savedRange;_savedRange=null;
+  const frag=range.extractContents();
+  const box=document.createElement('span');
+  box.appendChild(frag);
+  box.querySelectorAll('.ce-chip-color').forEach(c=>unwrapEl(c));
+  range.insertNode(box);
+  unwrapEl(box);
+  ce.focus();liveRegen();
+}
+function flashCe(ce){
+  ce.style.borderColor='var(--coral)';
+  setTimeout(()=>{ce.style.borderColor='';},450);
+}
+ 
+function handlePaste(e){
+  const dt=e.clipboardData;if(!dt)return;
+  e.preventDefault();
+  const html=dt.getData('text/html');
+  let frag;
+  if(html){
+    const box=document.createElement('div');
+    box.innerHTML=html;
+    frag=document.createDocumentFragment();
+    (function walk(src,dest){
+      [...src.childNodes].forEach(n=>{
+        if(n.nodeType===Node.TEXT_NODE){dest.appendChild(document.createTextNode(n.textContent));return;}
+        if(n.nodeType!==Node.ELEMENT_NODE)return;
+        const t=n.tagName.toLowerCase();
+        if(t==='script'||t==='style')return;
+        if(t==='br'){dest.appendChild(document.createElement('br'));return;}
+        const st=n.getAttribute('style')||'';
+        let keep=null;
+        if(t==='b'||t==='strong'||/font-weight:\s*(bold|[6-9]00)/.test(st))keep='b';
+        else if(t==='u'||/text-decoration[^;]*underline/.test(st))keep='u';
+        else if(t==='s'||t==='strike'||t==='del'||/line-through/.test(st))keep='s';
+        const target=keep?document.createElement(keep):dest;
+        walk(n,target);
+        if(keep)dest.appendChild(target);
+        if(['p','div','li','tr','h1','h2','h3','h4'].includes(t))dest.appendChild(document.createElement('br'));
+      });
+    })(box,frag);
+  } else {
+    const txt=dt.getData('text/plain')||'';
+    frag=document.createDocumentFragment();
+    txt.split('\n').forEach((line,i)=>{
+      if(i)frag.appendChild(document.createElement('br'));
+      frag.appendChild(document.createTextNode(line));
+    });
+  }
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount)return;
+  const range=sel.getRangeAt(0);
+  range.deleteContents();
+  const last=frag.lastChild;
+  range.insertNode(frag);
+  if(last){
+    try{
+      const r=document.createRange();
+      r.setStartAfter(last);r.collapse(true);
+      sel.removeAllRanges();sel.addRange(r);
+    }catch(err){}
+  }
+  liveRegen();
+}
+ 
+function isRemovableChip(el){
+  if(!el||el.nodeType!==Node.ELEMENT_NODE)return false;
+  if(el.getAttribute&&el.getAttribute('contenteditable')==='false')return true;
+  return /ce-(chip|quote)/.test(el.className||'');
+}
+function skipBlank(node,back){
+  while(node&&node.nodeType===Node.TEXT_NODE&&!node.textContent.replace(/[\u200B]/g,''))
+    node=back?node.previousSibling:node.nextSibling;
+  return node;
+}
+function prevNodeFromCaret(range,ce){
+  const n=range.startContainer,off=range.startOffset;
+  if(n.nodeType===Node.TEXT_NODE){
+    if(n.textContent.slice(0,off).replace(/\u200B/g,'')!=='')return null;
+    let cur=n;
+    while(cur&&cur!==ce&&!cur.previousSibling)cur=cur.parentNode;
+    if(!cur||cur===ce)return null;
+    return skipBlank(cur.previousSibling,true);
+  }
+  if(n.nodeType===Node.ELEMENT_NODE)return skipBlank(n.childNodes[off-1],true);
+  return null;
+}
+function nextNodeFromCaret(range,ce){
+  const n=range.startContainer,off=range.startOffset;
+  if(n.nodeType===Node.TEXT_NODE){
+    if(n.textContent.slice(off).replace(/\u200B/g,'')!=='')return null;
+    let cur=n;
+    while(cur&&cur!==ce&&!cur.nextSibling)cur=cur.parentNode;
+    if(!cur||cur===ce)return null;
+    return skipBlank(cur.nextSibling,false);
+  }
+  if(n.nodeType===Node.ELEMENT_NODE)return skipBlank(n.childNodes[off],false);
+  return null;
+}
+function removeChipNode(ce,el){
+  const parent=el.parentNode;if(!parent)return;
+  const marker=document.createTextNode('');
+  parent.replaceChild(marker,el);
+  [marker.previousSibling,marker.nextSibling].forEach(t=>{
+    if(t&&t.nodeType===Node.TEXT_NODE&&!t.textContent.replace(/[\u200B]/g,''))t.remove();
+  });
+  try{
+    const r=document.createRange();
+    r.setStart(marker,0);r.collapse(true);
+    const sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);
+  }catch(e){}
+  ce.focus();liveRegen();
+}
+function ceKeydown(e){
+  if(e.key!=='Backspace'&&e.key!=='Delete')return;
+  const ce=e.currentTarget;
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount)return;
+  const range=sel.getRangeAt(0);
+  if(!range.collapsed)return;
+  const startEl=range.startContainer.nodeType===Node.ELEMENT_NODE?range.startContainer:range.startContainer.parentElement;
+  const q=startEl&&startEl.closest?startEl.closest('.ce-quote1,.ce-quote2'):null;
+  if(q&&ce.contains(q)){
+    if(!q.textContent.replace(/[\u200B\s]/g,'')){e.preventDefault();removeChipNode(ce,q);}
+    return;
+  }
+  const target=e.key==='Backspace'?prevNodeFromCaret(range,ce):nextNodeFromCaret(range,ce);
+  if(isRemovableChip(target)){e.preventDefault();removeChipNode(ce,target);}
+}
+ 
+function ceFmt(tag){
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount){
+    if(_lastCe)_lastCe.focus();
+    return;
+  }
+  document.execCommand(tag==='b'?'bold':tag==='s'?'strikeThrough':'underline',false,null);
+  liveRegen();
+}
+ 
+function ceNote(btn){
+  const ce=getCe(btn);if(!ce)return;
+  saveCursorMark(ce);
+  const note=window.getSelection().toString()||'';
+  openPop('주석',
+    `<div class="prow"><label>주석 내용</label><input id="pop-note" value="${esc(note)}" placeholder="주석 내용을 입력하세요"></div>`,
+    ()=>{
+      const noteVal=document.getElementById('pop-note').value||'주석';
+      const chip=document.createElement('span');
+      chip.className='ce-chip-note';
+      chip.contentEditable='false';
+      setNoteChip(chip,noteVal);
+      insertAtMark(ce,chip);closePop();liveRegen();
+    }
+  );
+}
+function setNoteChip(chip,note){
+  chip.title=note;chip.dataset.note=note;
+  const short=note.length>34?note.slice(0,34)+'…':note;
+  chip.textContent='주석: '+short;
+}
+function editNoteChip(chip,ce){
+  openPop('주석 수정',
+    `<div class="prow"><label>주석 내용</label><input id="pop-note-edit" value="${esc(chip.dataset.note||'')}"></div>`,
+    ()=>{
+      const v=document.getElementById('pop-note-edit').value||'주석';
+      setNoteChip(chip,v);closePop();liveRegen();
+    }
+  );
+}
+ 
+const NOTICE_PRESETS={
+  spoiler:{
+    label:'스포일러 주의',
+    t:'이 문서에 [[링크:스포일러|https://namu.wiki/w/%EC%8A%A4%ED%8F%AC%EC%9D%BC%EB%9F%AC]]가 포함되어 있습니다.',
+    b:'이 문서가 설명하는 작품이나 인물 등에 대한 줄거리, 결말, 반전 요소 등을 직·간접적으로 포함하고 있습니다.',
+    c:'#ffcc00'},
+  caution:{
+    label:'열람 주의',
+    t:'이 문서는 열람에 주의가 필요합니다.',
+    b:'읽는 사람에 따라 불편하게 느낄 수 있는 내용을 포함하고 있습니다.',
+    c:'#e53935'},
+  setting:{
+    label:'창작 설정',
+    t:'이 문서는 원작에 없는 창작 설정을 다룹니다.',
+    b:'공식 설정과 다를 수 있으니 참고용으로만 봐주세요.',
+    c:'#3273dc'}
+};
+function previewInline(txt){
+  return esc(txt||'')
+    .replace(/\[\[링크:([^\|]+)\|[^\]]+\]\]/g,'<span style="color:#1a73e8;">$1</span>')
+    .replace(/\[\[색상:([^\|]+)\|(#[0-9a-fA-F]{3,8})\]\]/g,'<span style="color:$2;">$1</span>');
+}
+function paintNoticeChip(chip,t,b,c){
+  chip.dataset.t=t;chip.dataset.b=b;chip.dataset.c=c;
+  chip.style.cssText=`display:block;box-sizing:border-box;border:1px solid var(--line);border-top:3px solid ${c};background:#fff;padding:10px 12px;margin:6px 0;cursor:pointer;`;
+  chip.innerHTML=`<div style="font-size:12.5px;color:#212529;line-height:1.6;">${previewInline(t)}</div>`+
+                 (b?`<div style="font-size:11.5px;color:#666;line-height:1.6;margin-top:6px;">${previewInline(b).replace(/\n/g,'<br>')}</div>`:'');
+}
+function popNotice(btn,editChip){
+  const ce=getCe(btn);if(!ce)return;
+  if(!editChip)saveCursorMark(ce);
+  const cur=editChip?{t:editChip.dataset.t||'',b:editChip.dataset.b||'',c:editChip.dataset.c||'#ffcc00'}:NOTICE_PRESETS.spoiler;
+  openPop(editChip?'스포일러 안내 수정':'스포일러 안내 넣기',
+    `<div class="prow"><label>자주 쓰는 문구</label><select id="pop-nt-preset" class="fi" style="width:100%;padding:7px 9px;">
+       <option value="">직접 입력</option>
+       ${Object.keys(NOTICE_PRESETS).map(k=>`<option value="${k}">${NOTICE_PRESETS[k].label}</option>`).join('')}
+     </select></div>
+     <div class="prow"><label>첫 줄</label><textarea id="pop-nt-t" style="min-height:52px;">${esc(cur.t)}</textarea></div>
+     <div class="prow"><label>설명</label><textarea id="pop-nt-b" style="min-height:66px;">${esc(cur.b)}</textarea></div>
+     <div class="prow"><label>윗줄 색</label><div style="display:flex;gap:6px;align-items:center;">
+       <input type="color" id="pop-nt-c" value="${cur.c}" style="width:32px;height:28px;border:none;background:none;padding:0;cursor:pointer;">
+       ${['#ffcc00','#e53935','#3273dc','#2e7d32'].map(c=>`<button type="button" onclick="document.getElementById('pop-nt-c').value='${c}'" style="width:22px;height:22px;background:${c};border:1px solid rgba(0,0,0,.14);border-radius:4px;padding:0;"></button>`).join('')}
+     </div></div>`,
+    ()=>{
+      const t=document.getElementById('pop-nt-t').value.trim();
+      const b=document.getElementById('pop-nt-b').value.trim();
+      const c=document.getElementById('pop-nt-c').value||'#ffcc00';
+      if(!t&&!b){closePop();return;}
+      if(editChip){paintNoticeChip(editChip,t,b,c);closePop();liveRegen();return;}
+      const chip=document.createElement('div');
+      chip.className='ce-chip-notice';chip.contentEditable='false';
+      paintNoticeChip(chip,t,b,c);
+      insertAtMark(ce,chip);closePop();liveRegen();
+    }
+  );
+  setTimeout(()=>{
+    const sel=document.getElementById('pop-nt-preset');if(!sel)return;
+    sel.addEventListener('change',()=>{
+      const pre=NOTICE_PRESETS[sel.value];if(!pre)return;
+      document.getElementById('pop-nt-t').value=pre.t;
+      document.getElementById('pop-nt-b').value=pre.b;
+      document.getElementById('pop-nt-c').value=pre.c;
+    });
+  },60);
+}
+ 
+function ceQuote(btn,type){
+  const ce=getCe(btn);if(!ce)return;
+  saveCursorMark(ce);
+  const mc=getHex('c-main-hex','#1966e1');
+  if(type===1){
+    openPop('인용①',
+      `<div class="prow"><label>인용 내용</label><textarea id="pop-q" style="min-height:60px;" placeholder="대사 내용"></textarea></div>`,
+      ()=>{
+        const q=document.getElementById('pop-q').value||'';
+        const div=document.createElement('div');
+        div.className='ce-quote1';
+        div.style.cssText=`display:block;width:fit-content;max-width:100%;box-sizing:border-box;border:1px solid ${mc};border-left:9px solid ${mc};background:#fff;padding:8px 14px;margin:6px 0;font-size:12.5px;color:#212529;line-height:1.7;`;
+        div.contentEditable='true';
+        div.textContent=q;
+        insertAtMark(ce,div);closePop();liveRegen();
+      }
+    );
+  } else {
+    openPop('인용②',
+      `<div class="prow"><label>인용 내용</label><textarea id="pop-q2" style="min-height:60px;" placeholder="대사 내용"></textarea></div>
+       <div class="prow"><label>화자</label><input id="pop-sp" placeholder="이름/장면 등"></div>`,
+      ()=>{
+        const q=document.getElementById('pop-q2').value||'';
+        const sp=document.getElementById('pop-sp').value||'';
+        const outer=document.createElement('div');
+        outer.className='ce-quote2';
+        outer.style.cssText=`display:block;width:fit-content;max-width:100%;box-sizing:border-box;border:1px solid ${mc};border-left:9px solid ${mc};background:#fff;padding:8px 14px;margin:6px 0;font-size:12.5px;color:#212529;line-height:1.7;`;
+        outer.contentEditable='false';
+        const textDiv=document.createElement('div');
+        textDiv.className='ce-q2-text';
+        textDiv.contentEditable='true';
+        textDiv.innerHTML=esc(q).replace(/\n/g,'<br>');
+        outer.appendChild(textDiv);
+        if(sp){
+          const spDiv=document.createElement('div');
+          spDiv.className='ce-q2-speaker';
+          spDiv.contentEditable='true';
+          spDiv.style.cssText='font-size:11px;color:#777;margin-top:6px;';
+          spDiv.textContent='— '+sp;
+          outer.appendChild(spDiv);
+        }
+        insertAtMark(ce,outer);closePop();liveRegen();
+      }
+    );
+  }
+}
+ 
+function nodeToRaw(node){
+  if(node.nodeType===Node.TEXT_NODE)return node.textContent.replace(/\u200B/g,'');
+  if(node.nodeType!==Node.ELEMENT_NODE)return '';
+  const el=node;const tag=el.tagName.toLowerCase();
+  if(el.classList.contains('ce-cursor-mark'))return '';
+  if(el.classList.contains('ce-sel-hold'))return [...el.childNodes].map(nodeToRaw).join('');
+  if(el.classList.contains('ce-chip-link'))return `[[링크:${el.dataset.txt||el.textContent}|${el.dataset.url||'#'}]]`;
+  if(el.classList.contains('ce-chip-src'))return `[[출처:${el.dataset.txt||''}|${el.dataset.url||'#'}]]`;
+  if(el.classList.contains('ce-chip-color'))return `[[색상:${el.textContent}|${el.dataset.color||'#000'}]]`;
+  if(el.classList.contains('ce-chip-note'))return `[주석: ${el.dataset.note||''}]`;
+  if(el.classList.contains('ce-chip-img'))return `[[이미지:${el.dataset.n||'1'}]]`;
+  if(el.classList.contains('ce-chip-notice'))return `[[안내: ${el.dataset.t||''}|${el.dataset.b||''}|${el.dataset.c||'#ffcc00'}]]`;
+  if(el.classList.contains('ce-quote1')){
+    const inner=[...el.childNodes].map(nodeToRaw).join('').replace(/\n+$/,'').replace(/\n+/g,'\n');
+    return `[[인용: ${inner.trim()}]]`;
+  }
+  if(el.classList.contains('ce-quote2')){
+    const textDiv=el.querySelector('.ce-q2-text');
+    const spDiv=el.querySelector('.ce-q2-speaker');
+    const content=textDiv?[...textDiv.childNodes].map(nodeToRaw).join('').trim():[...el.childNodes].map(nodeToRaw).join('').trim();
+    const speaker=spDiv?spDiv.textContent.replace(/^—\s*/,'').trim():'';
+    return `[[인용2: ${content}|${speaker}]]`;
+  }
+  if(tag==='ul')return '\n'+[...el.querySelectorAll('li')].map(li=>`• ${[...li.childNodes].map(nodeToRaw).join('')}`).join('\n')+'\n';
+  if(tag==='ol')return '\n'+[...el.querySelectorAll('li')].map((li,i)=>`${i+1}. ${[...li.childNodes].map(nodeToRaw).join('')}`).join('\n')+'\n';
+  if(tag==='br')return '\n';
+  if(tag==='div'||tag==='p') {
+    const inner = [...node.childNodes].map(nodeToRaw).join('');
+    if(inner === '\n') return '\n';
+    return '\n' + inner;
+  }
+  if(tag==='b'||tag==='strong')return `<b>${[...node.childNodes].map(nodeToRaw).join('')}</b>`;
+  if(tag==='s'||tag==='strike')return `<s>${[...node.childNodes].map(nodeToRaw).join('')}</s>`;
+  if(tag==='u')return `<u>${[...node.childNodes].map(nodeToRaw).join('')}</u>`;
+  return [...node.childNodes].map(nodeToRaw).join('');
+}
+function ceToRaw(ce){
+  return [...ce.childNodes].map(nodeToRaw).join('').replace(/^\n+/, '').replace(/\n+$/, '');
+}
+ 
+/* ════════ 팝업 ════════ */
+function openPop(title,contentHtml,onOk){
+  document.getElementById('pop-title').textContent=title;
+  document.getElementById('pop-content').innerHTML=contentHtml;
+  document.getElementById('pop-ok').onclick=onOk;
+  document.getElementById('pop-ok').textContent='삽입';
+  document.getElementById('pop-box').style.width='';
+  document.getElementById('pop-overlay').style.display='flex';
+  const first=document.querySelector('#pop-content input, #pop-content textarea');
+  if(first)setTimeout(()=>first.focus(),50);
+}
+function closePop(e){
+  if(!e||e.target===document.getElementById('pop-overlay')){
+    restoreHold();
+    document.getElementById('pop-overlay').style.display='none';
+  }
+}
+ 
+function popLink(btn){
+  const ce=getCe(btn);if(!ce)return;
+  _lastCe=ce;
+  const hold=holdSelection(ce);
+  if(!hold)saveCursorMark(ce);
+  const sel=hold?hold.textContent:'텍스트';
+  openPop('링크 삽입',
+    `<div class="prow"><label>표시 텍스트</label><input id="pop-txt" value="${esc(sel)}"></div>
+     <div class="prow"><label>URL</label><input id="pop-url" placeholder="https://namu.wiki/w/..." value="https://namu.wiki/w/"></div>`,
+    ()=>{
+      const txt=document.getElementById('pop-txt').value||'링크';
+      const url=document.getElementById('pop-url').value||'#';
+      const chip=document.createElement('a');
+      chip.className='ce-chip-link';chip.href=url;
+      chip.dataset.txt=txt;chip.dataset.url=url;
+      chip.textContent=txt;chip.contentEditable='false';
+      chip.onclick=e=>e.preventDefault();
+      dropHold(ce);insertAtMark(ce,chip);closePop();liveRegen();
+    }
+  );
+}
+function popSrc(btn){
+  const ce=getCe(btn);if(!ce)return;
+  saveCursorMark(ce);_lastCe=ce;
+  openPop('출처 링크',
+    `<div class="prow"><label>출처 표시 텍스트</label><input id="pop-stxt" placeholder="출처 제목 (선택)"></div>
+     <div class="prow"><label>출처 URL</label><input id="pop-surl" placeholder="https://..."></div>`,
+    ()=>{
+      const txt=document.getElementById('pop-stxt').value||'';
+      const url=document.getElementById('pop-surl').value||'#';
+      const chip=document.createElement('span');
+      chip.className='ce-chip-src';chip.dataset.url=url;chip.dataset.txt=txt;
+      chip.contentEditable='false';chip.textContent='출처: '+(txt||'링크');
+      insertAtMark(ce,chip);closePop();liveRegen();
+    }
+  );
+}
+function popList(btn,type){
+  const ce=getCe(btn);if(!ce)return;
+  saveCursorMark(ce);_lastCe=ce;
+  const isUl=type==='ul';
+  openPop(isUl?'• 비순서 목록 추가':'1. 순서 목록 추가',
+    `<div class="prow"><label>항목 입력 (줄마다 하나씩)</label>
+     <textarea id="pop-list-items" style="min-height:80px;" placeholder="항목1&#10;항목2&#10;항목3"></textarea></div>`,
+    ()=>{
+      const raw=document.getElementById('pop-list-items').value;
+      const items=raw.split('\n').filter(l=>l.trim());
+      if(!items.length){closePop();return;}
+      const list=document.createElement(isUl?'ul':'ol');
+      list.contentEditable='true';
+      list.style.cssText='margin:4px 0;padding:0 0 0 1.4em;';
+      items.forEach(item=>{
+        const li=document.createElement('li');
+        li.style.cssText='list-style:'+(isUl?'disc':'decimal')+';line-height:1.6;font-size:13px;';
+        li.textContent=item;
+        list.appendChild(li);
+      });
+      insertAtMark(ce,list);closePop();liveRegen();
+    }
+  );
+}
+function popIB(btn){
+  const ce=getCe(btn);if(!ce)return;
+  saveCursorMark(ce);_lastCe=ce;
+  openPop('이미지 블록',
+    `<div class="prow"><label>블록 번호</label><input id="pop-ibn" value="1" placeholder="1"></div>`,
+    ()=>{
+      const n=document.getElementById('pop-ibn').value.trim()||'1';
+      const ibMap=buildIBMap();const blk=ibMap[n];
+      const mc2=getHex('c-main-hex','#1966e1');
+      const chip=document.createElement('div');
+      chip.className='ce-chip-img';chip.dataset.n=n;chip.contentEditable='false';
+      if(blk){
+        const tc2=blk.tc||'#ffffff';
+        chip.style.cssText=`display:block;width:fit-content;max-width:200px;margin:6px 0;border:2px solid ${mc2};line-height:0;`;
+        chip.innerHTML=`<img src="${esc(blk.url)}" style="width:100%;max-width:200px;display:block;">${blk.cap?`<div style="background:${mc2};color:${tc2};font-size:10px;padding:4px 6px;text-align:center;word-break:break-word;line-height:1.4;">${esc(blk.cap)}</div>`:''}`;
+      } else {
+        chip.style.cssText='display:inline-block;background:#f5f5f5;border:1px dashed #ccc;border-radius:3px;padding:2px 8px;font-size:11px;color:#888;margin:2px 0;';
+        chip.textContent=`[이미지:${n}]`;
+      }
+      insertAtMark(ce,chip);closePop();liveRegen();
+    }
+  );
+}
+ 
+/* ════════ 본문 처리 ════════ */
+let fnIdx=0,allFn=[];
+function processBody(raw,mc,ibMap){
+  let s=raw.replace(/&(?!amp;|lt;|gt;|quot;)/g,'&amp;');
+ 
+  s=s.replace(/\[\[링크:([^\|]+)\|([^\]]+)\]\]/g,(_,txt,url)=>
+    `<a href="${url.trim()}" style="color:#1a73e8;text-decoration:none;">${txt.trim()}</a>`);
+ 
+  s=s.replace(/\[\[색상:([^\|]+)\|([^\]]+)\]\]/g,(_,txt,col)=>
+    `<span style="color:${col.trim()};">${txt.trim()}</span>`);
+ 
+  s=s.replace(/\[\[출처:([^\|]*)\|([^\]]+)\]\]/g,(_,txt,url)=>{
+    const displayTxt = txt.trim() ? `<span style="color:#0275d8;font-size:12px;font-weight:500;">${esc(txt.trim())}</span>` : '';
+    return `<a href="${url.trim()}" target="_blank" class="src-link" style="display:inline-flex;align-items:center;gap:3px;text-decoration:none;vertical-align:middle;margin:0 2px;" title="${esc(txt.trim()||'출처')}"><span style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;background:#00a468;border-radius:2px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></span>${displayTxt}</a>`;
+  });
+  s=s.replace(/\[\[출처:([^\|\]]+)\]\]/g,(_,url)=>
+    `<a href="${url.trim()}" target="_blank" class="src-link" style="display:inline-flex;align-items:center;text-decoration:none;vertical-align:middle;margin:0 2px;" title="출처"><span style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;background:#00a468;border-radius:2px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></span></a>`);
+ 
+  s=s.replace(/\[주석:\s*([\s\S]*?)\]/g,(_,note)=>{
+    fnIdx++;
+    const fid='fn-'+fnIdx,aid='fna-'+fnIdx;
+    const ne=note.trim();
+    allFn.push({fid,aid,note:ne,idx:fnIdx});
+    return `<sup id="${aid}" style="color:#1a73e8;cursor:pointer;font-size:.8em;" onclick="event.stopPropagation();tfn('${fid}',this)">[${fnIdx}]</sup>`+
+      `<span id="${fid}" class="fnp" style="display:none;position:fixed;background:#fff;border:1px solid #ddd;border-radius:6px;padding:8px 12px;font-size:12px;max-width:260px;z-index:9999;box-shadow:0 3px 14px rgba(0,0,0,.18);color:#333;line-height:1.6;white-space:normal;">${fnIdx}. ${ne}</span>`;
+  });
+ 
+  s=s.replace(/\[\[안내:\s*([\s\S]*?)\|([\s\S]*?)\|(#[0-9a-fA-F]{3,8})\]\]/g,(_,t,b,col)=>
+    `\x02<table class="wiki-notice" style="border-collapse:collapse;border:1px solid #ccc;border-top:3px solid ${col};width:100%;background:#fff;margin:10px 0;"><tbody><tr><td style="padding:12px 14px;color:#212529;"><div class="wn-t" style="font-size:15px;line-height:1.6;">${t.trim().replace(/\n/g,'<br>')}</div>${b.trim()?`<div class="wn-b" style="font-size:13px;color:#555;line-height:1.7;margin-top:8px;">${b.trim().replace(/\n/g,'<br>')}</div>`:''}</td></tr></tbody></table>\x02`);
+ 
+  s=s.replace(/\[\[인용: ((?:[^\]]|\](?!\]))*?)\]\]/g,(_,c)=>
+    `\x02<div style="display:block;width:fit-content;max-width:100%;box-sizing:border-box;border:1px solid ${mc};border-left:9px solid ${mc};background:#fff;padding:9px 16px;margin:8px 0;font-size:14px;color:#212529;line-height:1.75;word-break:break-word;">${(c||'').replace(/\n/g,'<br>')}</div>\x02`);
+ 
+  s=s.replace(/\[\[인용2: ((?:[^\]]|\](?!\]))*?)\|([^\]]*)\]\]/g,(_,content,speaker)=>{
+    const sp=speaker.trim();
+    return `\x02<div style="display:block;width:fit-content;max-width:100%;box-sizing:border-box;border:1px solid ${mc};border-left:9px solid ${mc};background:#fff;padding:9px 16px;margin:8px 0;font-size:14px;color:#212529;line-height:1.75;word-break:break-word;">${content.replace(/\n/g,'<br>')}${sp?`<div style="margin-top:8px;font-size:12px;color:#777;">— ${esc(sp)}</div>`:''}</div>\x02`;
+  });
+  s=s.replace(/\[\[인용2: ((?:[^\]]|\](?!\]))*?)\]\]/g,(_,c)=>
+    `\x02<div style="display:block;width:fit-content;max-width:100%;box-sizing:border-box;border:1px solid ${mc};border-left:9px solid ${mc};background:#fff;padding:9px 16px;margin:8px 0;font-size:14px;color:#212529;line-height:1.75;word-break:break-word;">${(c||'').replace(/\n/g,'<br>')}</div>\x02`);
+ 
+  s=s.replace(/\[\[이미지:(\d+)\]\]/g,(_,n)=>{
+    const blk=ibMap[n];
+    if(!blk)return `<span class="ib-missing" style="color:#aaa;font-size:12px;">[이미지블록 ${n} 미입력]</span>`;
+    const tc = blk.tc || '#ffffff';
+    const capHtml=blk.cap?`<tr><td style="background-color:${mc};color:${tc};font-size:12px;padding:6px 8px;text-align:center;word-break:break-word;line-height:1.5;">${esc(blk.cap)}</td></tr>`:'';
+    return `\x02<table style="border-collapse:collapse;max-width:400px;width:100%;margin:6px auto;border:2px solid ${mc};line-height:0;"><tr><td style="padding:0;text-align:center;line-height:0;"><img src="${esc(blk.url)}" style="max-width:400px;width:100%;display:block;vertical-align:bottom;"></td></tr>${capHtml}</table>\x02`;
+  });
+ 
+  const lines=s.split('\n');
+  const out=[];let ulBuf=[],olBuf=[];
+  function flushUl(){if(!ulBuf.length)return;out.push(`\x02<ul style="margin:4px 0;padding:0;">${ulBuf.map(li=>`<li style="list-style:disc;margin-left:1.4em;line-height:1.6;font-size:10px;"><span style="font-size:14px;">${li}</span></li>`).join('')}</ul>\x02`);ulBuf=[];}
+  function flushOl(){if(!olBuf.length)return;out.push(`\x02<ol style="margin:4px 0;padding:0;">${olBuf.map(li=>`<li style="list-style:decimal;margin-left:1.4em;line-height:1.6;font-size:14px;">${li}</li>`).join('')}</ol>\x02`);olBuf=[];}
+  for(const line of lines){
+    const ulm=line.match(/^[•·\-]\s+(.+)/);
+    const olm=line.match(/^\d+\.\s+(.+)/);
+    if(ulm){flushOl();ulBuf.push(ulm[1]);continue;}
+    if(olm){flushUl();olBuf.push(olm[1]);continue;}
+    flushUl();flushOl();
+    out.push(line);
+  }
+  flushUl();flushOl();
+  const cleaned=[];
+  for(let i=0;i<out.length;i++){
+    const cur=out[i];const isEmpty=cur.trim()==='';
+    if(isEmpty){
+      const prev=cleaned[cleaned.length-1]||'';const next=out[i+1]||'';
+      const prevIsList=/^\x02?<[ou]l/.test(prev.trim());
+      const nextIsList=/^\x02?<[ou]l/.test(next.trim());
+      if(prevIsList||nextIsList)continue;
+    }
+    cleaned.push(cur);
+  }
+  s=cleaned.join('\n');
+ 
+  s=s.replace(/\n/g,'<br>\n');
+  s=s.replace(/<br>\s*\n?\x02/g,'\x02');
+  s=s.replace(/\x02\s*\n?<br>/g,'\x02');
+  s=s.replace(/\x02/g,'');
+ 
+  return s;
+}
+ 
+/* ════════ generateCode ════════ */
+function generateCode(){
+  const mc=getHex('c-main-hex','#1966e1');
+  const nameKo=document.getElementById('name-ko').value||'캐릭터 이름';
+  const nameJp=document.getElementById('name-jp').value||'';
+  const nameRuby=document.getElementById('name-ruby').value||'';
+  const nameEn=document.getElementById('name-en').value||'';
+  const pageDate=document.getElementById('page-date').value||'';
+  const profImg=document.getElementById('prof-img').value||'';
+ 
+  const cats=[...document.querySelectorAll('#cat-rows .ri')].map(el=>{
+    const n=el.querySelector('.cat-n').value,u=el.querySelector('.cat-u').value;
+    return n?`<a href="${esc(u||'#')}" style="color:#1a73e8;text-decoration:none;font-size:13px;">${esc(n)}</a>`:null;
+  }).filter(Boolean);
+ 
+  fnIdx=0;allFn=[];
+  const ibMap=buildIBMap();
+ 
+  function profRowHtml(el){
+    const k=el.querySelector('.pk').value,vRaw=el.querySelector('textarea').value;
+    if(!k&&!vRaw)return '';
+    const v=processBody(vRaw,mc,ibMap);
+    return `<tr><td style="background-color:${mc};color:#000;font-weight:700;padding:7px 12px;border:1px solid #e0e0e0;border-right:1px solid rgba(0,0,0,.15);white-space:nowrap;font-size:13px;text-align:center;">${esc(k)}</td><td style="padding:7px 12px;border:1px solid #e0e0e0;font-size:13px;color:#212529;">${v}</td></tr>`;
+  }
+  const profElsAll=[...document.querySelectorAll('#prof-rows .pri')];
+  const profRows=profElsAll.filter(el=>!el.querySelector('.pr-more').checked).map(profRowHtml).filter(Boolean).join('\n');
+  const profMoreRows=profElsAll.filter(el=>el.querySelector('.pr-more').checked).map(profRowHtml).filter(Boolean).join('\n');
+  const profMoreOpen=document.getElementById('prof-more-open').checked;
+  const profMoreHtml=profMoreRows?`<tr><td colspan="2" style="padding:0;border:1px solid #e0e0e0;">
+<details${profMoreOpen?' open':''} id="prof-more-det" style="overflow:hidden;">
+<summary onclick="tgDet('prof-more-det')" style="cursor:pointer;list-style:none;-webkit-appearance:none;display:block;text-align:center;font-weight:bold;font-size:12.5px;padding:5px;background:#f9f9f9;user-select:none;">[프로필 더 보기▼]</summary>
+<div class="prof-more-det-body" style="overflow:hidden;max-height:${profMoreOpen?'99999px':'0'};transition:max-height .4s ease,opacity .3s ease;opacity:${profMoreOpen?'1':'0'};">
+<table style="border-collapse:collapse;width:100%;"><tbody>${profMoreRows}</tbody></table>
+</div></details>
+</td></tr>`:'';
+ 
+  const statCols=[...document.querySelectorAll('#stat-rows .ri')].map(r=>({
+    k:r.querySelector('.sk').value.trim(),
+    v:r.querySelector('.sv').value.trim()
+  })).filter(c=>c.k||c.v);
+  const statUse=document.getElementById('use-stat').checked&&statCols.length>0;
+  const statOpen=document.getElementById('stat-open').checked;
+  let statHtml='';
+  if(statUse){
+    const cs='border:1px solid #D0D0D0;padding:6px 4px;text-align:center;';
+    const total=statCols.reduce((sum,c)=>{const n=parseFloat(c.v);return sum+(isNaN(n)?0:n);},0);
+    const totalStr=Number.isInteger(total)?String(total):String(Math.round(total*100)/100);
+    const hds=statCols.map(c=>esc(c.k||'항목')).join(`</td><td style="${cs}font-weight:700;background:#f5f5f5;">`);
+    const vals=statCols.map(c=>esc(c.v||'0')).join(`</td><td style="${cs}">`);
+    statHtml=`<details${statOpen?' open':''} id="stat-det" style="overflow:hidden;">
+<summary onclick="tgDet('stat-det')" style="cursor:pointer;list-style:none;-webkit-appearance:none;display:block;text-align:center;font-weight:bold;font-size:13px;padding:6px;border:1px solid #D0D0D0;border-bottom:none;background:#f9f9f9;user-select:none;">[ 공식 팬북 능력치 패러미터 ]</summary>
+<div class="stat-det-body" style="overflow:hidden;max-height:${statOpen?'99999px':'0'};transition:max-height .4s ease,opacity .3s ease;opacity:${statOpen?'1':'0'};">
+<div style="overflow-x:auto;"><table style="border-collapse:collapse;width:100%;border:1px solid #D0D0D0;text-align:center;background:#fff;font-size:13px;"><tbody>
+<tr><td style="${cs}font-weight:700;background:#f5f5f5;">${hds}</td><td style="${cs}font-weight:700;background:#f5f5f5;">총합계</td></tr>
+<tr><td style="${cs}">${vals}</td><td style="${cs}">${totalStr}</td></tr>
+</tbody></table></div>
+</div></details>`;
+  }
+ 
+  const tocItems=[...document.querySelectorAll('#toc-rows .ti')];
+  let tocHtml='',sectHtml='';
+  let n1=0,n2=0,n3=0;
+ 
+  const secStyles={
+    h1:{fs:'1.25em',fw:'700',borderBottom:'1px solid #aaa',pad:'8px 0 5px',mt:'24px',numColor:mc},
+    h2:{fs:'1.1em', fw:'700',borderBottom:'1px solid #ccc',pad:'6px 0 4px',mt:'18px',numColor:mc},
+    h3:{fs:'1.0em', fw:'700',borderBottom:'1px solid #ddd',pad:'4px 0 3px',mt:'14px',numColor:mc},
+  };
+ 
+  tocItems.forEach(item=>{
+    const lv=item.querySelector('.ti-lv').value;
+    let ns;
+    if(lv==='h1'){n1++;n2=0;n3=0;ns=String(n1);}
+    else if(lv==='h2'){n2++;n3=0;ns=n1+'.'+n2;}
+    else{n3++;ns=n1+'.'+n2+'.'+n3;}
+ 
+    const title=esc(item.querySelector('.ti-title').value||`섹션${ns}`);
+    const bodyRaw=ceToRaw(item.querySelector('.bta-ce'));
+    const collapsed=item.querySelector('.ti-collapsed').checked;
+    const lid='h'+ns.replace(/\./g,'_');
+    const sid='s'+ns.replace(/\./g,'_');
+    const tid='ta'+ns.replace(/\./g,'_');
+    const body=processBody(bodyRaw,mc,ibMap);
+    const st=secStyles[lv];
+    const indent=lv==='h2'?'padding-left:1.2em;':lv==='h3'?'padding-left:2.4em;':'';
+    tocHtml+=`<div style="margin:2px 0;${indent}"><a href="#${lid}" id="${tid}" style="text-decoration:none;color:#333;font-size:.9em;line-height:1.7;display:block;"><span style="color:#1a73e8;">${ns}.</span> ${title}</a></div>\n`;
+ 
+    sectHtml+=`
+<details${collapsed?'':' open'} id="${sid}" style="overflow:hidden;">
+  <summary style="cursor:pointer;list-style:none;-webkit-appearance:none;display:block;outline:none;padding:${st.pad};margin-top:${st.mt};border-bottom:${st.borderBottom};transition:border-color .3s,opacity .3s;" onclick="tgSec('${sid}','${lid}','${tid}')">
+    <span id="${lid}-hd" style="font-size:${st.fs};font-weight:${st.fw};color:#1a1a1a;line-height:1.3;display:flex;align-items:center;gap:5px;transition:opacity .3s;">
+      <span class="${sid}-arr" style="font-weight:700;font-size:.9em;color:#555;transition:transform .3s ease;display:inline-block;flex-shrink:0;transform-origin:center 55%;">∨</span>
+      <span id="${lid}"><span style="color:${st.numColor};">${ns}.</span> ${title}</span>
+    </span>
+  </summary>
+  <div class="${sid}-body" style="font-size:14px;line-height:1.9;position:relative;display:flow-root;padding-top:10px;overflow:hidden;max-height:${collapsed?'0':'9999px'};transition:max-height .35s ease,opacity .3s ease;opacity:${collapsed?'0':'1'};">
+${body}
+  </div>
+</details>`;
+  });
+ 
+  const fnHtml=allFn.length?`
+<hr style="border:none;border-top:1px solid #ccc;margin:18px 0 8px;">
+<div style="font-size:13px;">
+  <strong>주석</strong>
+  <ul style="margin:5px 0 0;padding:0;list-style:none;line-height:2.0;">
+${allFn.map(f=>`<li style="margin-bottom:6px;"><a href="#${f.aid}" onclick="document.getElementById('${f.aid}').scrollIntoView({behavior:'smooth', block:'center'}); return false;" style="color:#0275d8;text-decoration:none;">[${f.idx}]</a> ${f.note}</li>`).join('\n')}
+  </ul>
+</div>`:'';
+ 
+  const jpHtml=nameJp?(nameRuby?`<ruby>${esc(nameJp)}<rt style="font-size:9px;letter-spacing:1px;">${esc(nameRuby)}</rt></ruby>`:`${esc(nameJp)}`):'';
+  const subParts=[jpHtml,nameEn?esc(nameEn):''].filter(Boolean).join(' ｜ ');
+  const nameSubHtml=subParts?`<br><span style="font-size:12px;font-weight:400;color:#000;">${subParts}</span>`:'';
+ 
+  const profileHtml=`<div style="overflow-x:auto;margin-bottom:18px;text-align:right;">
+<table style="border-collapse:collapse;width:100%;max-width:430px;border:2px solid ${mc};display:inline-table;text-align:left;">
+<tbody>
+<tr><td colspan="2" style="background-color:${mc};color:#000;text-align:center;padding:8px;border:1px solid ${mc};font-size:14px;font-weight:700;">${esc(nameKo)}${nameSubHtml}</td></tr>
+${profImg?`<tr><td colspan="2" style="text-align:center;padding:0;border:1px solid ${mc};"><img src="${esc(profImg)}" style="width:100%;max-width:430px;display:block;height:auto;"></td></tr>`:''}
+${profRows}
+${profMoreHtml}
+${statHtml?`<tr><td colspan="2" style="padding:0;border:1px solid #e0e0e0;">${statHtml}</td></tr>`:''}
+</tbody></table></div>`;
+ 
+  const topSpoiler=document.getElementById('top-spoiler').checked?`<table class="wiki-notice top-spoiler" style="border-collapse:collapse;border:1px solid #ccc;border-top:3px solid #ffcc00;width:100%;background:#fff;margin:10px 0;">
+<tbody><tr><td style="padding:12px 14px;color:#212529;">
+<div class="wn-t" style="font-size:15px;line-height:1.6;">이 문서에 <a href="https://namu.wiki/w/%EC%8A%A4%ED%8F%AC%EC%9D%BC%EB%9F%AC" style="color:#1a73e8;text-decoration:none;">스포일러</a>가 포함되어 있습니다.</div>
+<div class="wn-b" style="font-size:13px;color:#555;line-height:1.7;margin-top:8px;">이 문서가 설명하는 작품이나 인물 등에 대한 줄거리, 결말, 반전 요소 등을 직·간접적으로 포함하고 있습니다.</div>
+</td></tr></tbody></table>
+ 
+<br>
+ 
+`:'';
+ 
+  const cardHtml=document.getElementById('use-card').checked?buildAffiliationCard(mc,nameKo,document.getElementById('aff-open').checked):'';
+ 
+  const pageHeader=`<div style="font-family:'Noto Sans KR',sans-serif;padding-bottom:10px;border-bottom:1px solid #e0e0e0;margin-bottom:12px;">
+<h1 style="font-size:26px;font-weight:700;color:#1a1a1a;line-height:1.3;margin-bottom:3px;">${esc(nameKo)}</h1>
+${pageDate?`<div style="font-size:12px;color:#888;margin-bottom:8px;">최근 수정 시각: ${esc(pageDate)}</div>`:''}
+</div>
+${cats.length?`<div style="border:1px solid #e0e0e0;border-radius:4px;padding:7px 12px;font-size:13px;margin-bottom:12px;background:#fafafa;"><span style="color:#888;margin-right:5px;">분류:</span>${cats.join('<span style="color:#ccc;margin:0 4px;">|</span>')}</div>`:''}`;
+ 
+  const tocBlock=`<table style="border-collapse:collapse;width:100%;max-width:250px;border:1px solid #ccc;margin-bottom:10px;line-height:1.8;">
+<tbody><tr><td style="padding:12px 20px 18px 20px;font-size:.9rem;line-height:1.5;">
+<div style="font-size:1.1em;font-weight:bold;margin-bottom:4px;">목차</div>
+<div style="margin:0;padding:0;">
+${tocHtml}</div>
+</td></tr></tbody></table>`;
+ 
+  const layoutBlock=`
+<div class="wiki-layout-block" style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;margin-bottom:18px;">
+  <div style="flex:1 1 250px;min-width:0;">${tocBlock}</div>
+  <div style="flex:1 1 430px;min-width:0;">${profileHtml}</div>
+</div>`;
+ 
+  const code=`${pageHeader}
+${cardHtml?`
+${cardHtml}
+ 
+<br>
+`:''}
+${topSpoiler}${layoutBlock}
+ 
+${sectHtml}
+${fnHtml}
+ 
+<style>
+details summary::-webkit-details-marker{display:none;}
+details summary::marker{display:none;content:'';}
+@media (max-width:600px){
+  .wiki-layout-block>div:first-child{flex-basis:100%!important;}
+  .wiki-layout-block>div:last-child{flex-basis:100%!important;}
+}
+</style>
+<script>
+(function(){
+window.tgSec=function(sid,lid,tid){
+  var details=document.getElementById(sid);
+  var body=details.querySelector('.'+sid+'-body');
+  var arr=details.querySelector('.'+sid+'-arr');
+  var hd=document.getElementById(lid+'-hd');
+  setTimeout(function(){
+    var isOpen=details.hasAttribute('open');
+    if(arr)arr.style.transform=isOpen?'rotate(0deg)':'rotate(-90deg)';
+    if(hd)hd.style.opacity=isOpen?'1':'0.4';
+    if(body){
+      if(isOpen){body.style.maxHeight='99999px';body.style.opacity='1';}
+      else{body.style.maxHeight='0';body.style.opacity='0';}
+    }
+  },10);
+};
+window.tgDet=function(did){
+  var det=document.getElementById(did);
+  var body=det.querySelector('.'+did+'-body');
+  if(!body)return;
+  setTimeout(function(){
+    var isOpen=det.hasAttribute('open');
+    if(isOpen){
+      body.style.maxHeight='0px';
+      body.style.opacity='0';
+      body.offsetHeight;
+      body.style.maxHeight=body.scrollHeight+'px';
+      body.style.opacity='1';
+      setTimeout(function(){body.style.maxHeight='99999px';},420);
+    } else {
+      body.style.maxHeight=body.scrollHeight+'px';
+      body.offsetHeight;
+      body.style.opacity='0';
+      setTimeout(function(){body.style.maxHeight='0px';},10);
+    }
+  },10);
+};
+document.querySelectorAll('details[open]').forEach(function(det){
+  var sid=det.id;if(!sid)return;
+  var body=det.querySelector('.'+sid+'-body');
+  var arr=det.querySelector('.'+sid+'-arr');
+  var hd=document.getElementById('h'+sid.slice(1)+'-hd');
+  if(body){body.style.maxHeight='99999px';body.style.opacity='1';}
+  if(arr)arr.style.transform='rotate(0deg)';
+  if(hd)hd.style.opacity='1';
+});
+document.querySelectorAll('details:not([open])').forEach(function(det){
+  var sid=det.id;if(!sid)return;
+  var body=det.querySelector('.'+sid+'-body');
+  var arr=det.querySelector('.'+sid+'-arr');
+  if(body){body.style.maxHeight='0';body.style.opacity='0';}
+  if(arr)arr.style.transform='rotate(-90deg)';
+});
+window.tfn=function(fid,el){
+  var sp=document.getElementById(fid);if(!sp)return;
+  var v=sp.style.display!=='none';
+  document.querySelectorAll('.fnp').forEach(function(e){e.style.display='none';});
+  if(!v){
+    var r=el.getBoundingClientRect();
+    sp.style.display='inline-block';
+    var left=r.left,top=r.bottom+4;
+    if(left+sp.offsetWidth>window.innerWidth-8)left=window.innerWidth-sp.offsetWidth-8;
+    if(top+sp.offsetHeight>window.innerHeight-8)top=r.top-sp.offsetHeight-4;
+    sp.style.left=Math.max(4,left)+'px';sp.style.top=Math.max(4,top)+'px';
   }
 };
-function toggleRoster(){ rosterExpanded = !rosterExpanded; render(); }
-
-/* ---------------- 인포박스 이미지 ---------------- */
-function handleInfoboxImage(e){
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => { infoboxImage = ev.target.result; render(); };
-  reader.readAsDataURL(file);
+document.addEventListener('click',function(e){
+  if(!e.target.closest('sup')&&!e.target.closest('.fnp'))
+    document.querySelectorAll('.fnp').forEach(function(el){el.style.display='none';});
+});
+})();
+<\/script>`;
+ 
+  setOutput(code);
 }
-function clearInfoboxImage(){ infoboxImage = null; document.getElementById('imgFile').value = ""; render(); }
-
-/* ---------------- 기본 정보 항목 ---------------- */
-function addBasicInfo(){ basicInfo.push({label:"", value:""}); renderBasicInfoEditor(); render(); }
-function removeBasicInfo(i){ basicInfo.splice(i,1); renderBasicInfoEditor(); render(); }
-function renderBasicInfoEditor(){
-  document.getElementById('basicInfoList').innerHTML = basicInfo.map((p,i)=>`
-    <div class="repeat-item">
-      <button class="del" type="button" onclick="removeBasicInfo(${i})">✕</button>
-      <div class="row">
-        <div class="field"><label>항목명</label>
-          <input type="text" value="${escAttr(p.label)}" oninput="basicInfo[${i}].label=this.value; render()"></div>
-        <div class="field"><label>내용</label>
-          <input type="text" value="${escAttr(p.value)}" oninput="basicInfo[${i}].value=this.value; render()"></div>
-      </div>
-    </div>`).join('');
-}
-function toggleProfile(){ profileExpanded = !profileExpanded; render(); }
-function toggleStats(){ statsExpanded = !statsExpanded; render(); }
-
-/* ---------------- 능력치 파라미터 ---------------- */
-function addStat(){ stats.push({label:"", value:5}); renderStatEditor(); render(); }
-function removeStat(i){ stats.splice(i,1); renderStatEditor(); render(); }
-function renderStatEditor(){
-  document.getElementById('statList').innerHTML = stats.map((s,i)=>`
-    <div class="repeat-item">
-      <button class="del" type="button" onclick="removeStat(${i})">✕</button>
-      <div class="row">
-        <div class="field"><label>항목명</label>
-          <input type="text" value="${escAttr(s.label)}" oninput="stats[${i}].label=this.value; render()"></div>
-        <div class="field" style="max-width:90px;"><label>수치</label>
-          <input type="number" min="0" max="10" value="${s.value}" oninput="stats[${i}].value=this.value; render()"></div>
-      </div>
-    </div>`).join('');
-}
-
-/* ---------------- 프로필 더 보기 ---------------- */
-function addProfile(){ profiles.push({label:"", value:""}); renderProfileEditor(); render(); }
-function removeProfile(i){ profiles.splice(i,1); renderProfileEditor(); render(); }
-function renderProfileEditor(){
-  document.getElementById('profileList').innerHTML = profiles.map((p,i)=>`
-    <div class="repeat-item">
-      <button class="del" type="button" onclick="removeProfile(${i})">✕</button>
-      <div class="row">
-        <div class="field"><label>항목명</label>
-          <input type="text" value="${escAttr(p.label)}" oninput="profiles[${i}].label=this.value; render()"></div>
-        <div class="field"><label>내용</label>
-          <input type="text" value="${escAttr(p.value)}" oninput="profiles[${i}].value=this.value; render()"></div>
-      </div>
-    </div>`).join('');
-}
-
-/* ---------------- 목차 항목 ---------------- */
-function findToc(id){ return tocItems.find(t=>t.id===id); }
-function withNumbers(items){
-  let main=0, sub=0;
-  return items.map(it=>{
-    let number;
-    if(it.type==="main"){ main++; sub=0; number=`${main}`; }
-    else { sub++; number=`${main||1}.${sub}`; }
-    return Object.assign({}, it, {number});
-  });
-}
-function addTocItem(){
-  tocItems.push({id:uid(), type:"main", title:"새 항목", content:""});
-  renderTocEditor(); render();
-}
-function removeTocItem(id){
-  tocItems = tocItems.filter(t=>t.id!==id);
-  renderTocEditor(); render();
-}
-function moveTocItem(id, dir){
-  const idx = tocItems.findIndex(t=>t.id===id);
-  const nIdx = idx+dir;
-  if(nIdx<0 || nIdx>=tocItems.length) return;
-  const tmp = tocItems[idx]; tocItems[idx]=tocItems[nIdx]; tocItems[nIdx]=tmp;
-  renderTocEditor(); render();
-}
-function updateTocTitle(id, val){ const it=findToc(id); if(it) it.title=val; render(); }
-function updateTocType(id, val){ const it=findToc(id); if(it) it.type=val; renderTocEditor(); render(); }
-function updateTocContent(id, val){ const it=findToc(id); if(it) it.content=val; render(); }
-
-function renderTocEditor(){
-  const numbered = withNumbers(tocItems);
-  document.getElementById('tocEditorList').innerHTML = numbered.map(it => `
-    <div class="toc-item">
-      <div class="toc-item-head">
-        <span class="toc-num">${it.number}</span>
-        <input class="toc-title-input" type="text" value="${escAttr(it.title)}" placeholder="목차 제목"
-          oninput="updateTocTitle('${it.id}', this.value)">
-        <select class="toc-type-select" onchange="updateTocType('${it.id}', this.value)">
-          <option value="main" ${it.type==='main'?'selected':''}>대항목</option>
-          <option value="sub" ${it.type==='sub'?'selected':''}>중항목</option>
-        </select>
-        <button class="icon-btn" type="button" title="위로" onclick="moveTocItem('${it.id}',-1)">↑</button>
-        <button class="icon-btn" type="button" title="아래로" onclick="moveTocItem('${it.id}',1)">↓</button>
-        <button class="icon-btn del" type="button" title="삭제" onclick="removeTocItem('${it.id}')">✕</button>
-      </div>
-      <div class="toc-toolbar">
-        <button type="button" onclick="wrapSel('${it.id}','**','**')"><b>B</b></button>
-        <button type="button" onclick="wrapSel('${it.id}','~~','~~')"><s>S</s></button>
-        <button type="button" onclick="wrapSel('${it.id}','__','__')"><u>U</u></button>
-        <button type="button" onclick="wrapToken('${it.id}','주석')">주석</button>
-        <button type="button" onclick="wrapBlockToken('${it.id}','대사','원문 대사|번역 대사')">대사 인용</button>
-        <button type="button" onclick="wrapToken('${it.id}','스포일러')">스포일러</button>
-        <button type="button" onclick="wrapBlockToken('${it.id}','스포일러경고','이 문서가 설명하는 작품이나 인물 등에 대한 줄거리, 결말, 반전 요소 등을 직·간접적으로 포함하고 있습니다.')">스포일러 경고</button>
-        <button type="button" onclick="wrapLink('${it.id}')">링크</button>
-        <button type="button" onclick="wrapToken('${it.id}','출처')">출처</button>
-        <button type="button" onclick="wrapList('${it.id}')">· 목록</button>
-      </div>
-      <textarea id="content-${it.id}" rows="5" placeholder="본문 내용을 입력하세요."
-        oninput="updateTocContent('${it.id}', this.value)">${escHtml(it.content)}</textarea>
-      <div class="toc-tip">링크는 <code>[[링크:URL|텍스트]]</code> 형태로 파란색 표시 · 스포일러는 클릭하면 보임 · 대사 인용/스포일러 경고는 줄 전체를 차지하는 박스로 표시돼요. 박스 아래에 <code>[[이미지:N]]</code>을 추가로 넣을 수 있어요.</div>
-    </div>
-  `).join('');
-}
-
-/* ---- 서식 삽입 헬퍼 ---- */
-function getTa(id){ return document.getElementById('content-'+id); }
-function applyInsert(id, ta, start, end, insertText, caretAtEnd){
-  const value = ta.value;
-  const newValue = value.slice(0,start) + insertText + value.slice(end);
-  ta.value = newValue;
-  const it = findToc(id); if(it) it.content = newValue;
-  const pos = caretAtEnd===false ? start : start+insertText.length;
-  ta.focus(); ta.setSelectionRange(pos,pos);
-  render();
-}
-function wrapSel(id, before, after){
-  const ta=getTa(id); if(!ta) return;
-  const start=ta.selectionStart, end=ta.selectionEnd, value=ta.value;
-  const sel = value.substring(start,end) || "텍스트";
-  applyInsert(id, ta, start, end, before+sel+after);
-}
-function wrapToken(id, name){
-  const ta=getTa(id); if(!ta) return;
-  const start=ta.selectionStart, end=ta.selectionEnd, value=ta.value;
-  const sel = value.substring(start,end) || "내용";
-  applyInsert(id, ta, start, end, `[[${name}:${sel}]]`);
-}
-function wrapBlockToken(id, name, defaultContent){
-  const ta=getTa(id); if(!ta) return;
-  const start=ta.selectionStart, end=ta.selectionEnd, value=ta.value;
-  const sel = value.substring(start,end);
-  const content = sel || defaultContent;
-  const core = `[[${name}:${content}]]`;
-  const needsBeforeNl = start>0 && value[start-1] !== '\n';
-  const needsAfterNl = end<value.length && value[end] !== '\n';
-  applyInsert(id, ta, start, end, (needsBeforeNl?'\n':'') + core + (needsAfterNl?'\n':''));
-}
-function wrapLink(id){
-  const ta=getTa(id); if(!ta) return;
-  const start=ta.selectionStart, end=ta.selectionEnd, value=ta.value;
-  const sel = value.substring(start,end) || "텍스트";
-  applyInsert(id, ta, start, end, `[[링크:URL|${sel}]]`);
-}
-function wrapList(id){
-  const ta=getTa(id); if(!ta) return;
-  const start=ta.selectionStart, end=ta.selectionEnd, value=ta.value;
-  if(start===end){
-    const before = value.slice(0,start);
-    const lineStart = before.lastIndexOf('\n')+1;
-    const newValue = value.slice(0,lineStart) + "- " + value.slice(lineStart);
-    ta.value = newValue;
-    const it=findToc(id); if(it) it.content=newValue;
-    const pos = start+2; ta.focus(); ta.setSelectionRange(pos,pos);
-    render();
+ 
+/* ════════ 출력 ════════ */
+function setOutput(code){
+  currentCode=code;
+  const sz=document.getElementById('code-size');
+  if(sz){
+    const kb=Math.round(new Blob([code]).size/1024);
+    sz.textContent=kb+'KB';
+    sz.classList.toggle('warn',kb>700);
+    sz.title=kb>700?'코드가 커서 붙여넣기가 느리거나 막힐 수 있어요. 첨부한 사진 수를 줄여보세요.':'';
+  }
+  if(document.getElementById('tab-prev').classList.contains('active')){
+    renderPrev();
   } else {
-    const sel = value.substring(start,end);
-    const prefixed = sel.split('\n').map(l => l.startsWith('- ') ? l : '- '+l).join('\n');
-    applyInsert(id, ta, start, end, prefixed);
+    const ta=document.getElementById('code-out');
+    if(ta)ta.value=code;
   }
 }
-
-/* ---------------- 이미지 블록 ---------------- */
-function addImageBlock(){ images.push({id:uid(), dataUrl:null}); renderImageBlocks(); render(); }
-function removeImageBlock(id){ images = images.filter(im=>im.id!==id); renderImageBlocks(); render(); }
-function handleImageBlockFile(e, id){
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const im = images.find(x=>x.id===id);
-    if(im){ im.dataUrl = ev.target.result; }
-    renderImageBlocks(); render();
+function renderPrev(){
+  const area=document.getElementById('out-area');
+  if(!area.querySelector('iframe')){
+    area.innerHTML='<iframe class="pframe" id="prev-frame" style="width:100%;height:100%;border:none;display:block;"></iframe>';
+  }
+  const iframe=document.getElementById('prev-frame');
+  const doc=iframe.contentDocument||iframe.contentWindow.document;
+  doc.open();
+  doc.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet"><style>body{font-family:'Noto Sans KR',sans-serif;padding:16px;font-size:14px;color:#333;}a{text-decoration:none;}</style></head><body>${currentCode}</body></html>`);
+  doc.close();
+}
+function copyCode(){
+  if(!currentCode)return;
+  const done=()=>{
+    const btn=document.getElementById('copy-btn');
+    btn.textContent='복사됨!';btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='복사';btn.classList.remove('ok');},2000);
   };
-  reader.readAsDataURL(file);
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(currentCode).then(done).catch(()=>fallbackCopy(done));
+  } else fallbackCopy(done);
 }
-function renderImageBlocks(){
-  document.getElementById('imageBlockList').innerHTML = images.map((im,i)=>`
-    <div class="repeat-item">
-      <button class="del" type="button" onclick="removeImageBlock('${im.id}')">✕</button>
-      <div style="display:flex; align-items:center; gap:10px;">
-        <span class="img-num-badge">${i+1}</span>
-        ${im.dataUrl
-          ? `<img src="${im.dataUrl}" style="width:44px;height:44px;object-fit:cover;border:1px solid var(--line);">`
-          : `<div class="ph">이미지<br>없음</div>`}
-        <input type="file" accept="image/*" onchange="handleImageBlockFile(event,'${im.id}')">
-      </div>
-      <p class="hint" style="margin:6px 0 0;">본문에 <code>[[이미지:${i+1}]]</code> 입력 시 이 자리에 표시됩니다.</p>
-    </div>`).join('');
+function fallbackCopy(done){
+  const ta=document.createElement('textarea');
+  ta.value=currentCode;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');done();}catch(e){alert('복사에 실패했어요. HTML 코드 탭에서 직접 복사해주세요.');}
+  document.body.removeChild(ta);
 }
-
-/* ---------------- 텍스트 유틸 ---------------- */
-function escHtml(str){
-  return (str||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function escAttr(str){ return escHtml(str); }
-
-/* 본문 마크업 파서: images / footnotes(누적)를 공유해 [[주석:]] 번호를 문서 전체 순서로 매긴다 */
-function parseBody(text, footnotesAcc){
-  const escaped = escHtml(text || "");
-  const lines = escaped.split(/\n/);
-  let html = "";
-  let paraBuf = [];
-  let listBuf = [];
-
-  function inline(str){
-    // 이미지
-    str = str.replace(/\[\[이미지:(\d+)\]\]/g, (m,n)=>{
-      const im = images[Number(n)-1];
-      return im && im.dataUrl ? `<img class="wiki-img-inline" src="${im.dataUrl}" alt="이미지 ${n}">` : `<span class="wiki-source">[이미지 ${n} 없음]</span>`;
-    });
-    // 각주
-    str = str.replace(/\[\[주석:(.*?)\]\]/g, (m,c)=>{
-      footnotesAcc.push(c);
-      return `<sup class="wiki-fn">[${footnotesAcc.length}]</sup>`;
-    });
-    // 출처
-    str = str.replace(/\[\[출처:(.*?)\]\]/g, (m,c)=> `<cite class="wiki-source">(출처: ${c})</cite>`);
-    // 링크
-    str = str.replace(/\[\[링크:([^|\]]+)\|([^\]]+)\]\]/g, (m,url,label)=> `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`);
-    str = str.replace(/\[\[링크:([^\]]+)\]\]/g, (m,url)=> `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
-    // 스포일러
-    str = str.replace(/\[\[스포일러:(.*?)\]\]/g, (m,c)=> `<span class="wiki-spoiler" onclick="this.classList.toggle('revealed')">${c}</span>`);
-    // 굵게/취소선/밑줄
-    str = str.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
-    str = str.replace(/~~(.+?)~~/g, "<s>$1</s>");
-    str = str.replace(/__(.+?)__/g, "<u>$1</u>");
-    return str;
-  }
-  function flushPara(){
-    if(paraBuf.length){ html += `<p class="wiki-p">${inline(paraBuf.join(' '))}</p>`; paraBuf = []; }
-  }
-  function flushList(){
-    if(listBuf.length){ html += `<ul class="wiki-list">${listBuf.map(li=>`<li>${inline(li)}</li>`).join('')}</ul>`; listBuf = []; }
-  }
-
-  lines.forEach(raw=>{
-    const line = raw.trim();
-    if(line === ""){ flushPara(); flushList(); return; }
-    const dm = line.match(/^\[\[대사:(.*)\]\]$/);
-    if(dm){
-      flushPara(); flushList();
-      const parts = dm[1].split('|');
-      html += `<div class="wiki-quote-dialogue">${parts.map(p=>`<p>${inline(p.trim())}</p>`).join('')}</div>`;
-      return;
-    }
-    const sw = line.match(/^\[\[스포일러경고:(.*)\]\]$/);
-    if(sw){
-      flushPara(); flushList();
-      html += `<div class="wiki-spoiler-warn"><div class="spoiler-warn-title">이 문서에 스포일러가 포함되어 있습니다.</div><div class="spoiler-warn-desc">${inline(sw[1])}</div></div>`;
-      return;
-    }
-    if(/^-\s+/.test(line)){ flushPara(); listBuf.push(line.replace(/^-\s+/,'')); return; }
-    flushList();
-    paraBuf.push(line);
+ 
+/* ════════ 저장 (HTML · PNG · PDF) ════════ */
+const LIB_H2C='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+const LIB_PDF='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+function loadScript(src){
+  return new Promise((ok,fail)=>{
+    const t=document.createElement('script');
+    t.src=src;t.onload=ok;t.onerror=()=>fail(new Error('스크립트를 불러오지 못했어요'));
+    document.head.appendChild(t);
   });
-  flushPara(); flushList();
-  return html || `<p class="wiki-p" style="color:var(--sub)">내용이 비어 있습니다.</p>`;
 }
-
-/* ---------------- 전체 위키 HTML 빌드 ---------------- */
-function buildWikiHTML(){
-  const color = document.getElementById('themeColor').value;
-  const nameKo = document.getElementById('nameKo').value.trim() || "이름 없음";
-  const nameOrig = document.getElementById('nameOrig').value;
-  const school = document.getElementById('school').value;
-  const grade = document.getElementById('grade').value;
-  const categories = document.getElementById('categories').value.split(',').map(s=>s.trim()).filter(Boolean);
-
-  const validStats = stats.filter(s=>s.label.trim());
-  const statTotal = validStats.reduce((sum,s)=> sum + (Number(s.value)||0), 0);
-
-  const validProfiles = profiles.filter(p=>p.label.trim()||p.value.trim());
-  const validBasicInfo = basicInfo.filter(p=>p.label.trim()||p.value.trim());
-  const infoboxImg = infoboxImage ? `<img class="wiki-infobox-img" src="${infoboxImage}" alt="${escAttr(nameKo)}">` : "";
-  const profileRows = validProfiles.map(p=>`<tr><th>${escHtml(p.label)}</th><td>${escHtml(p.value)}</td></tr>`).join('');
-  const basicInfoRows = validBasicInfo.map(p=>`<tr><th>${escHtml(p.label)}</th><td>${escHtml(p.value)}</td></tr>`).join('');
-  const catsHtml = categories.length ? categories.map(c=>`<span class="tag">[${escHtml(c)}]</span>`).join(' ') : "";
-
-  const roster = rosterData[school];
-  const rosterHtml = roster ? `
-    <div class="wiki-roster">
-      <div class="wiki-roster-header" style="background:${roster.color}">${escHtml(nameKo)}의 소속</div>
-      <div class="wiki-roster-toggle" onclick="toggleRoster()">[ 펼치기 · 접기 ]</div>
-      <div class="wiki-roster-body ${rosterExpanded ? '' : 'collapsed'}">
-        <div class="wiki-roster-banner" style="background:${roster.color}">${roster.banner}</div>
-        <div class="wiki-roster-members">
-          ${roster.members.map(m=>`${escHtml(m.n)}<span class="pos">(${escHtml(m.p)})</span>`).join(' · ')}
-        </div>
-        ${roster.staff.length ? `<div class="wiki-roster-staff">${roster.staff.map(s=>`${escHtml(s.role)} ${escHtml(s.n)}`).join(' · ')}</div>` : ""}
-      </div>
-    </div>` : "";
-
-  const numbered = withNumbers(tocItems);
-  const tocHtml = numbered.map(it =>
-    it.type==='main'
-      ? `<li>${it.number}. ${escHtml(it.title)||'(제목 없음)'}</li>`
-      : `<li class="sub">${it.number} ${escHtml(it.title)||'(제목 없음)'}</li>`
-  ).join('');
-
-  const footnotesAcc = [];
-  const contentHtml = numbered.map(it => {
-    const heading = it.type==='main'
-      ? `<h2 class="wiki-h2">${it.number}. ${escHtml(it.title)||'(제목 없음)'}</h2>`
-      : `<h3 class="wiki-h3">${it.number}. ${escHtml(it.title)||'(제목 없음)'}</h3>`;
-    return heading + parseBody(it.content, footnotesAcc);
-  }).join('');
-
-  const fnHtml = footnotesAcc.length
-    ? `<div class="wiki-footnotes">${footnotesAcc.map((f,i)=>`<div>[${i+1}] ${f}</div>`).join('')}</div>`
-    : "";
-
-  return `
-    <div class="wiki-cats"><b>분류</b> ${catsHtml}</div>
-    ${rosterHtml}
-
-    <div class="wiki-top">
-      <div class="wiki-toc">
-        <div class="wiki-toc-head" onclick="toggleToc()">목차 <span class="chev ${tocExpanded ? '' : 'closed'}">⌄</span></div>
-        ${tocExpanded ? `<ol>${tocHtml}</ol>` : ""}
-      </div>
-      <div class="wiki-infobox" style="--accent-c:${color}; --th-bg:${color};">
-        <div class="wiki-infobox-header" style="background:${color}">${escHtml(school)} 소속 등장인물</div>
-        <div class="wiki-infobox-name">
-          <div class="ko">${escHtml(nameKo)}</div>
-          <div class="orig">${escHtml(nameOrig)}</div>
-        </div>
-        ${infoboxImg}
-        <table>
-          <tr><th>학교</th><td>${escHtml(school)} ${escHtml(grade)}</td></tr>
-          ${basicInfoRows}
-        </table>
-        ${validProfiles.length ? `
-        <div class="wiki-infobox-toggle" style="background:${color}1f; color:${color};" onclick="toggleProfile()">[ 프로필 ${profileExpanded ? '접기' : '더 보기'} ]</div>
-        <div style="display:${profileExpanded ? 'block' : 'none'}"><table>${profileRows}</table></div>` : ""}
-        ${validStats.length ? `
-        <div class="wiki-infobox-toggle" style="background:${color}1f; color:${color};" onclick="toggleStats()">[ 공식 팬북 능력치 파라미터 ${statsExpanded ? '접기' : '보기'} ]</div>
-        <div style="display:${statsExpanded ? 'block' : 'none'}">
-          <table class="wiki-stats">
-            <tr>${validStats.map(s=>`<th>${escHtml(s.label)}</th>`).join('')}<th>총합</th></tr>
-            <tr>${validStats.map(s=>`<td>${escHtml(String(s.value))}</td>`).join('')}<td><b>${statTotal}</b></td></tr>
-          </table>
-        </div>` : ""}
-      </div>
-    </div>
-
-    <h1 class="wiki-title">${escHtml(nameKo)}</h1>
-    <p class="wiki-meta">${escHtml(nameOrig)}</p>
-
-    <div class="wiki-content">
-      ${contentHtml}
-      ${fnHtml}
-      <div class="wiki-license">
-        이 문서는 오리지널 캐릭터 위키 생성기로 작성된 팬 창작 문서이며, 실제 원작 설정과 무관합니다.
-      </div>
-    </div>
-  `;
+function fileBase(){
+  const n=(document.getElementById('name-ko').value||'나무위키').trim();
+  return n.replace(/[\\/:*?"<>|]/g,'_').slice(0,40);
 }
-
-function render(){
-  document.getElementById('imgPreviewWrap').innerHTML = infoboxImage
-    ? `<img src="${infoboxImage}" alt="preview">`
-    : `<div class="ph">이미지<br>없음</div>`;
-  document.getElementById('wikiOutput').innerHTML = buildWikiHTML();
+function dlBlob(blob,name){
+  const u=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),5000);
 }
-
-function downloadPage(){
-  const styleTag = document.querySelector('style').outerHTML;
-  const nameKo = document.getElementById('nameKo').value.trim() || "character";
-  const full = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">
-  <title>${escHtml(nameKo)}</title>${styleTag}
-  <style>body{display:block;height:auto;overflow:visible;background:#fffefb;}
-  .preview-wrap{display:block;} .preview-page{max-width:800px;margin:0 auto;}</style>
-  </head><body><div class="preview-wrap"><div class="preview-page">${buildWikiHTML()}</div></div></body></html>`;
-  const blob = new Blob([full], {type:"text/html"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `${nameKo}_위키문서.html`; a.click();
-  URL.revokeObjectURL(url);
+function saveMsg(t){
+  const el=document.getElementById('save-msg');
+  if(el)el.textContent=t||'';
 }
-
-renderProfileEditor();
-renderBasicInfoEditor();
-renderStatEditor();
-renderTocEditor();
-renderImageBlocks();
-render();
+function openSave(){
+  if(!currentCode)generateCode();
+  openPop('저장하기',
+    `<div>
+       <button class="save-opt" onclick="saveHTML()">HTML 파일로 저장<span>브라우저로 바로 열어볼 수 있는 파일</span></button>
+       <button class="save-opt" onclick="savePNG('long')">PNG 한 장으로 저장<span>문서 전체를 긴 이미지 하나로</span></button>
+       <button class="save-opt" onclick="savePNG('a4')">PNG A4로 나눠 저장<span>A4 비율로 잘라 여러 장으로</span></button>
+       <button class="save-opt" onclick="savePDF()">PDF로 저장<span>A4 여러 쪽짜리 문서</span></button>
+       <div class="save-msg" id="save-msg"></div>
+     </div>`,
+    ()=>closePop());
+  document.getElementById('pop-ok').textContent='닫기';
+}
+function saveHTML(){
+  if(!currentCode)generateCode();
+  const doc='<!DOCTYPE html>\n<html lang="ko"><head><meta charset="UTF-8">'+
+    '<meta name="viewport" content="width=device-width,initial-scale=1">'+
+    '<title>'+esc(document.getElementById('name-ko').value||'문서')+'</title>'+
+    '<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">'+
+    '<style>body{font-family:\'Noto Sans KR\',sans-serif;max-width:1000px;margin:0 auto;padding:24px 16px;font-size:14px;color:#333;}a{text-decoration:none;}</style>'+
+    '</head><body>\n'+currentCode+'\n</body></html>';
+  dlBlob(new Blob([doc],{type:'text/html;charset=utf-8'}),fileBase()+'.html');
+  closePop();
+}
+function buildExportNode(){
+  const wrap=document.createElement('div');
+  wrap.style.cssText='position:fixed;left:-12000px;top:0;width:860px;background:#fff;padding:24px;box-sizing:border-box;font-family:\'Pretendard\',\'Noto Sans KR\',sans-serif;font-size:14px;color:#333;line-height:1.7;';
+  wrap.innerHTML=currentCode;
+  wrap.querySelectorAll('details').forEach(d=>d.setAttribute('open',''));
+  wrap.querySelectorAll('[class$="-body"]').forEach(b=>{
+    b.style.maxHeight='none';b.style.opacity='1';b.style.overflow='visible';
+  });
+  wrap.querySelectorAll('.fnp').forEach(e=>e.remove());
+  wrap.querySelectorAll('a').forEach(a=>a.style.textDecoration='none');
+  document.body.appendChild(wrap);
+  return wrap;
+}
+async function renderCanvas(){
+  if(!currentCode)generateCode();
+  if(!window.html2canvas)await loadScript(LIB_H2C);
+  const node=buildExportNode();
+  try{
+    return await html2canvas(node,{scale:2,useCORS:true,backgroundColor:'#ffffff',imageTimeout:20000,logging:false});
+  }finally{node.remove();}
+}
+function sliceCanvas(cv){
+  const pageH=Math.round(cv.width*297/210);
+  const pages=Math.max(1,Math.ceil(cv.height/pageH));
+  const out=[];
+  for(let i=0;i<pages;i++){
+    const h=Math.min(pageH,cv.height-i*pageH);
+    const c=document.createElement('canvas');
+    c.width=cv.width;c.height=pageH;
+    const cx=c.getContext('2d');
+    cx.fillStyle='#ffffff';cx.fillRect(0,0,c.width,c.height);
+    cx.drawImage(cv,0,i*pageH,cv.width,h,0,0,cv.width,h);
+    out.push(c);
+  }
+  return out;
+}
+function exportError(e){
+  saveMsg('');
+  alert('만들지 못했어요.\n외부 사이트에 올린 사진이 캡처를 막고 있을 수 있어요. 그런 사진은 파일 첨부로 바꾸면 저장돼요.\n\n'+((e&&e.message)||''));
+}
+async function savePNG(mode){
+  try{
+    saveMsg('이미지를 만드는 중이에요… 사진이 많으면 조금 걸려요.');
+    const cv=await renderCanvas();
+    const base=fileBase();
+    if(mode==='long'){
+      await new Promise(r=>cv.toBlob(b=>{dlBlob(b,base+'.png');r();},'image/png'));
+      saveMsg('');closePop();return;
+    }
+    const pages=sliceCanvas(cv);
+    for(let i=0;i<pages.length;i++){
+      saveMsg(`${pages.length}장 중 ${i+1}장째 저장 중…`);
+      await new Promise(r=>pages[i].toBlob(b=>{dlBlob(b,`${base}_${i+1}.png`);setTimeout(r,400);},'image/png'));
+    }
+    saveMsg('');closePop();
+  }catch(e){exportError(e);}
+}
+async function savePDF(){
+  try{
+    saveMsg('PDF를 만드는 중이에요… 사진이 많으면 조금 걸려요.');
+    const cv=await renderCanvas();
+    if(!window.jspdf)await loadScript(LIB_PDF);
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
+    const pages=sliceCanvas(cv);
+    pages.forEach((c,i)=>{
+      if(i)pdf.addPage();
+      pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,210,297);
+    });
+    pdf.save(fileBase()+'.pdf');
+    saveMsg('');closePop();
+  }catch(e){exportError(e);}
+}
+ 
+function switchTab(tab){
+  document.getElementById('tab-code').classList.toggle('active',tab==='code');
+  document.getElementById('tab-prev').classList.toggle('active',tab==='prev');
+  const area=document.getElementById('out-area');
+  if(tab==='code'){
+    if(!currentCode){area.innerHTML='<div class="empty"><div class="icon"></div><p>코드를 생성해주세요</p></div>';return;}
+    area.innerHTML='<textarea id="code-out" spellcheck="false"></textarea>';
+    document.getElementById('code-out').value=currentCode;
+  } else {
+    if(!currentCode){area.innerHTML='<div class="empty"><div class="icon"></div><p>코드를 생성해주세요</p></div>';return;}
+    renderPrev();
+  }
+}
+ 
+function toggleLive(on){
+  liveOn=on;
+  document.getElementById('live-badge').style.display=on?'inline':'none';
+  if(on){generateCode();switchTab('prev');}
+}
+ 
+/* ════════ HTML 불러오기 ════════ */
+function openImport(){
+  document.getElementById('pop-title').textContent='HTML 코드 불러오기';
+  document.getElementById('pop-content').innerHTML=
+    '<div class="prow"><label>생성된 HTML 코드를 붙여넣으세요</label>'+
+    '<textarea id="pop-import" class="fi" style="height:180px;font-family:monospace;font-size:11px;" placeholder="여기에 HTML 코드를 붙여넣으세요..."></textarea></div>'+
+    '<div style="font-size:10px;color:var(--ink-3);margin-top:4px;">⚠️ 이 생성기로 만든 HTML만 불러올 수 있어요. 이미지 블록은 불러오지 않아요.</div>';
+  document.getElementById('pop-ok').textContent='불러오기';
+  document.getElementById('pop-ok').onclick=()=>{
+    const html=document.getElementById('pop-import').value.trim();
+    if(!html)return;
+    try{importFromHTML(html);closePop();liveRegen();}
+    catch(e){alert('불러오기 오류: '+e.message);}
+  };
+  document.getElementById('pop-overlay').style.display='flex';
+  const pop=document.getElementById('pop-box');
+  if(pop)pop.style.width='min(580px,96vw)';
+  setTimeout(()=>{const ta=document.getElementById('pop-import');if(ta)ta.focus();},50);
+}
+ 
+function htmlBodyToRaw(el){
+  const fnMap={};
+  [...el.querySelectorAll('span.fnp')].forEach(sp=>{
+    fnMap[sp.id]=sp.textContent.replace(/^\d+\.\s*/,'').trim();
+  });
+ 
+  function toRaw(node){
+    if(node.nodeType===Node.TEXT_NODE){
+      let t=node.textContent;
+      const prev=node.previousSibling;
+      if(prev&&prev.nodeType===Node.ELEMENT_NODE&&prev.tagName.toLowerCase()==='br')t=t.replace(/^\n/,'');
+      return t;
+    }
+    if(node.nodeType!==Node.ELEMENT_NODE)return '';
+    const tag=node.tagName.toLowerCase();
+    if(node.classList&&node.classList.contains('fnp'))return '';
+ 
+    const ch=()=>[...node.childNodes].map(toRaw).join('');
+ 
+    if(tag==='br')return '\n';
+    if(tag==='b'||tag==='strong')return `<b>${ch()}</b>`;
+    if(tag==='s'||tag==='strike')return `<s>${ch()}</s>`;
+    if(tag==='u')return `<u>${ch()}</u>`;
+ 
+    if(tag==='sup'){
+      const oc=node.getAttribute('onclick')||'';
+      const m=oc.match(/tfn\('(fn-\d+)'/);
+      if(m&&fnMap[m[1]])return `[주석: ${fnMap[m[1]]}]`;
+      return '';
+    }
+ 
+    if(tag==='a'){
+      const href=node.getAttribute('href')||'#';
+      const isSrc=(node.classList&&node.classList.contains('src-link'))||!!node.querySelector('span[style*="#00a468"]');
+      if(isSrc){
+        const dispSpan=[...node.querySelectorAll('span')].find(s=>!s.querySelector('svg')&&s.textContent.trim());
+        const txt=dispSpan?dispSpan.textContent.trim():'';
+        return `[[출처:${txt}|${href}]]`;
+      }
+      if(href&&href!=='#'&&!href.startsWith('javascript'))return `[[링크:${ch()}|${href}]]`;
+      return ch();
+    }
+ 
+    if(tag==='span'){
+      const st=node.getAttribute('style')||'';
+      if(node.classList&&node.classList.contains('fnp'))return '';
+      if(node.classList&&node.classList.contains('ib-missing')){
+        const m=node.textContent.match(/(\d+)/);
+        return m?`[[이미지:${m[1]}]]`:'';
+      }
+      const cm=st.match(/\bcolor:\s*(#[0-9a-fA-F]{3,8})/);
+      if(cm&&!st.includes('cursor'))return `[[색상:${ch()}|${cm[1]}]]`;
+      return ch();
+    }
+ 
+    if(tag==='div'){
+      const st=node.getAttribute('style')||'';
+      if(st.includes('border-left')){
+        const spDiv=[...node.children].find(c=>c.textContent.trim().startsWith('—'));
+        if(spDiv){
+          const speaker=spDiv.textContent.replace(/^—\s*/,'').trim();
+          const content=[...node.childNodes].filter(n=>n!==spDiv).map(toRaw).join('').trim();
+          return `[[인용2: ${content}|${speaker}]]`;
+        }
+        const c2=ch().trim();
+        return `[[인용: ${c2}]]`;
+      }
+      return ch()+'\n';
+    }
+ 
+    if(tag==='ul'){
+      return '\n'+[...node.querySelectorAll(':scope>li')].map(li=>`• ${toRaw(li)}`).join('\n')+'\n';
+    }
+    if(tag==='ol'){
+      return '\n'+[...node.querySelectorAll(':scope>li')].map((li,i)=>`${i+1}. ${toRaw(li)}`).join('\n')+'\n';
+    }
+    if(tag==='li') return ch();
+    if(tag==='table'&&node.classList&&node.classList.contains('wiki-notice')){
+      const tEl=node.querySelector('.wn-t'),bEl=node.querySelector('.wn-b');
+      const cm=(node.getAttribute('style')||'').match(/border-top:\s*\d+px solid (#[0-9a-fA-F]{3,8})/);
+      const tv=tEl?toRaw(tEl).trim():'',bv=bEl?toRaw(bEl).trim():'';
+      return `\n[[안내: ${tv}|${bv}|${cm?cm[1]:'#ffcc00'}]]\n`;
+    }
+    if(tag==='table'||tag==='img')return '';
+    return ch();
+  }
+ 
+  let raw=toRaw(el);
+  raw=raw.replace(/\n{3,}/g,'\n\n').replace(/^\n+/,'').replace(/\n+$/,'');
+  return raw;
+}
+ 
+function importFromHTML(htmlStr){
+  const tmp=document.createElement('div');
+  tmp.innerHTML=htmlStr;
+ 
+  const profTableEl=tmp.querySelector('table[style*="display:inline-table"]');
+  if(profTableEl){
+    const bm=profTableEl.getAttribute('style').match(/border:2px solid (#[0-9a-fA-F]{3,8})/);
+    if(bm){
+      document.getElementById('c-main-hex').value=bm[1];
+      document.getElementById('c-main').value=bm[1];
+    }
+  }
+ 
+  const h1El=tmp.querySelector('h1[style*="font-size:26px"]');
+  if(h1El){
+    const txt=[...h1El.childNodes].filter(n=>n.nodeType===Node.TEXT_NODE).map(n=>n.textContent).join('').trim();
+    document.getElementById('name-ko').value=txt||h1El.textContent.trim();
+  }
+ 
+  const rubyEl=tmp.querySelector('ruby');
+  if(rubyEl){
+    const rt=rubyEl.querySelector('rt');
+    if(rt){
+      document.getElementById('name-ruby').value=rt.textContent.trim();
+      const jpTxt=[...rubyEl.childNodes].filter(n=>n.nodeType===Node.TEXT_NODE).map(n=>n.textContent).join('').trim();
+      document.getElementById('name-jp').value=jpTxt;
+    }
+  }
+  const subSpan=tmp.querySelector('span[style*="font-size:12px"][style*="font-weight:400"]');
+  if(subSpan){
+    const parts=subSpan.textContent.split('｜').map(s=>s.trim()).filter(Boolean);
+    if(parts.length>=2)document.getElementById('name-en').value=parts[parts.length-1];
+    else if(parts.length===1&&!rubyEl)document.getElementById('name-en').value=parts[0];
+  }
+ 
+  const dateEl=tmp.querySelector('div[style*="color:#888"]');
+  if(dateEl){
+    const dt=dateEl.textContent.replace('최근 수정 시각:','').trim();
+    if(dt)document.getElementById('page-date').value=dt;
+  }
+ 
+  const catDivEl=tmp.querySelector('div[style*="border:1px solid #e0e0e0"][style*="border-radius:4px"]');
+  const catRowsEl=document.getElementById('cat-rows');
+  catRowsEl.innerHTML='';
+  if(catDivEl){
+    [...catDivEl.querySelectorAll('a')].forEach(a=>{
+      const d=document.createElement('div');d.className='ri';
+      const ni=document.createElement('input');ni.className='cat-n';ni.placeholder='분류명';ni.value=a.textContent.trim();
+      const sep=document.createElement('span');sep.className='sep';sep.textContent='→';
+      const ui=document.createElement('input');ui.className='cat-u';ui.placeholder='URL';ui.value=a.getAttribute('href')||'#';
+      const xb=document.createElement('button');xb.className='xbtn';xb.textContent='✕';xb.onclick=function(){this.closest('.ri').remove();};
+      d.append(ni,sep,ui,xb);catRowsEl.appendChild(d);
+    });
+  }
+  if(!catRowsEl.children.length)addCat();
+ 
+  if(profTableEl){
+    const imgEl=profTableEl.querySelector('td[colspan="2"] img');
+    if(imgEl)document.getElementById('prof-img').value=imgEl.getAttribute('src')||'';
+  }
+ 
+  const profRowsEl=document.getElementById('prof-rows');
+  profRowsEl.innerHTML='';
+  if(profTableEl){
+    const tbody=profTableEl.querySelector(':scope>tbody')||profTableEl;
+    [...tbody.querySelectorAll(':scope>tr')].forEach(tr=>{
+      const tds=[...tr.querySelectorAll(':scope>td')];
+      if(tds.length===2&&!tds[0].getAttribute('colspan')){
+        const k=tds[0].textContent.trim();
+        const vRaw=htmlBodyToRaw(tds[1]);
+        if(k)addProfRow(k,vRaw,false);
+      }
+    });
+    const moreDet=profTableEl.querySelector('#prof-more-det');
+    if(moreDet){
+      document.getElementById('prof-more-open').checked=moreDet.hasAttribute('open');
+      [...moreDet.querySelectorAll('tr')].forEach(tr=>{
+        const tds=[...tr.querySelectorAll(':scope>td')];
+        if(tds.length===2){
+          const k=tds[0].textContent.trim();
+          const vRaw=htmlBodyToRaw(tds[1]);
+          if(k)addProfRow(k,vRaw,true);
+        }
+      });
+    }
+  }
+  if(!profRowsEl.children.length)addProfRow();
+ 
+  document.getElementById('stat-rows').innerHTML='';
+  const statDet=tmp.querySelector('#stat-det');
+  document.getElementById('use-stat').checked=!!statDet;
+  if(statDet)document.getElementById('stat-open').checked=statDet.hasAttribute('open');
+  toggleStat();
+  if(statDet){
+    const stBody=statDet.querySelector('[class$="-body"]')||statDet.querySelector('div');
+    if(stBody){
+      const trs=[...stBody.querySelectorAll('tr')];
+      if(trs.length>=2){
+        const keys=[...trs[0].querySelectorAll(':scope>td')].map(td=>td.textContent.trim());
+        const vals=[...trs[1].querySelectorAll(':scope>td')].map(td=>td.textContent.trim());
+        keys.forEach((k,idx)=>{
+          if(k==='총합계')return; // 총합계는 자동 계산되므로 불러오지 않음
+          if(!k)return;
+          mkStatCol(k,vals[idx]||'0');
+        });
+      }
+    }
+  }
+  if(!document.getElementById('stat-rows').children.length)STAT_DEFAULT.forEach(([k,v])=>mkStatCol(k,v));
+ 
+ 
+  document.getElementById('top-spoiler').checked=!!tmp.querySelector('table.top-spoiler')||
+    /border-top:2px solid #ffcc00/.test(htmlStr);
+ 
+  /* 소속 카드 */
+  document.getElementById('team-blocks').innerHTML='';
+  const affDetails=[...tmp.querySelectorAll('details')].find(d=>{
+    const s=d.querySelector('summary');
+    return s && /의 소속/.test(s.textContent);
+  });
+  document.getElementById('use-card').checked=!!affDetails;
+  document.getElementById('aff-open').checked=affDetails?affDetails.hasAttribute('open'):true;
+  toggleCard();
+  function splitSegments(html){
+    // ' · ' 로 구분된 조각을 안전하게 나눔 (태그 안에는 등장하지 않는 구분자)
+    return html.split(' · ').map(s=>s.trim()).filter(Boolean);
+  }
+  function parsePlayerSegment(html){
+    const box=document.createElement('div');
+    box.innerHTML=html;
+    const leadText=[...box.childNodes].find(n=>n.nodeType===Node.TEXT_NODE&&n.textContent.trim());
+    const numMatch=leadText?leadText.textContent.match(/(\d+)\s*\.\s*/):null;
+    const num=numMatch?numMatch[1]:'';
+    const b=box.querySelector('b');
+    const a=box.querySelector('a');
+    const i=box.querySelector('i');
+    const isSelf=!!b;
+    const name=(b?b.textContent:(a?a.textContent:box.textContent)).trim();
+    const pos=i?i.textContent.trim():'';
+    if(!name)return null;
+    return {num,name,pos,isSelf};
+  }
+  function parseStaffSegment(html){
+    const box=document.createElement('div');
+    box.innerHTML=html;
+    const i=box.querySelector('i');
+    let role=i?i.textContent.trim():'';
+    role=role.replace(/^\(|\)$/g,'');
+    const name=box.textContent.replace(i?i.textContent:'','').trim();
+    if(!name)return null;
+    return {name,role};
+  }
+  if(affDetails){
+    [...affDetails.querySelectorAll('table')].forEach(tbl=>{
+      const trs=[...tbl.querySelectorAll(':scope>tbody>tr')];
+      let teamName='',teamLink='',teamLogo='',playerHtml='',staffHtml='';
+      trs.forEach(tr=>{
+        const td=tr.querySelector('td');
+        if(!td)return;
+        const st=td.getAttribute('style')||'';
+        const img=td.querySelector('img');
+        if(img&&!teamLogo&&!/font-weight/.test(st)){teamLogo=img.getAttribute('src')||'';return;}
+        if(/font-weight:\s*700/.test(st)){
+          const a=td.querySelector('a');
+          teamName=td.textContent.trim();
+          teamLink=a?a.getAttribute('href')||'':'';
+          return;
+        }
+        if(/border-top/.test(st)){staffHtml=td.innerHTML;return;}
+        if(/line-height:\s*2/.test(st)){playerHtml=td.innerHTML;return;}
+      });
+      if(!teamName&&!playerHtml)return;
+      const id=addTeamBlock();
+      const wrap=document.getElementById(id);
+      wrap.querySelector('.tb-preset').value='custom';
+      wrap.querySelector('.tb-name').value=teamName;
+      wrap.querySelector('.tb-link').value=teamLink;
+      wrap.querySelector('.tb-logo').value=teamLogo;
+      splitSegments(playerHtml).forEach(seg=>{
+        const p=parsePlayerSegment(seg);
+        if(p)addPlayerRowTo(id,p);
+      });
+      splitSegments(staffHtml).forEach(seg=>{
+        const s=parseStaffSegment(seg);
+        if(s)addStaffRowTo(id,s);
+      });
+    });
+  }
+  if(!document.getElementById('team-blocks').children.length){
+    addTeamBlock('kaijo');
+  }
+ 
+  const tocRowsEl=document.getElementById('toc-rows');
+  tocRowsEl.innerHTML='';
+  const sectionDets=[...tmp.querySelectorAll('details[id^="s"]')].filter(d=>d.id!=='stat-det');
+  sectionDets.forEach(det=>{
+    const summary=det.querySelector('summary');
+    if(!summary)return;
+    const titleSpanEl=summary.querySelector('span[id]');
+    if(!titleSpanEl)return;
+    const numSpanEl=titleSpanEl.querySelector('span[style*="color:#"]');
+    const numTxt=numSpanEl?numSpanEl.textContent.replace('.','').trim():'';
+    const title=titleSpanEl.textContent.replace(numSpanEl?numSpanEl.textContent:'','').trim();
+    const dots=(numTxt.match(/\./g)||[]).length;
+    const lv=dots===0?'h1':dots===1?'h2':'h3';
+ 
+    const bodyDiv=det.querySelector('[class$="-body"]');
+    const bodyRaw=bodyDiv?htmlBodyToRaw(bodyDiv):'';
+ 
+    addTocRow(title,lv,bodyRaw,!det.hasAttribute('open'));
+  });
+  if(!tocRowsEl.children.length)addTocRow();
+  renumToc();
+}
+ 
+function liveRegen(){
+  if(!liveOn)return;
+  clearTimeout(liveTimer);
+  liveTimer=setTimeout(()=>{
+    if(document.getElementById('tab-prev').classList.contains('active'))
+      generateCode();
+  },400);
+}
+ 
+document.getElementById('left').addEventListener('input',liveRegen);
+document.getElementById('left').addEventListener('change',liveRegen);
+ 
+addTeamBlock('kaijo');
+addTocRow('개요','h1','"아아, 연기는 이제 그만 두자!"\n《쿠로코의 농구》의 oc 캐릭터. 카이조 고교 1학년으로 카이조 농구부에서 매니저로 활동하고 있다. 어린시절부터 연예인으로 꽤나 유명했던 만큼, 출중한 외모와 몸매[주석: 알렉스를 제외하면 작중에서 가슴이 가장 크다고 한다...]를 가지고 있다.');
+addTocRow('특징','h1','');
+addTocRow('외모','h2','');
+addTocRow('성격','h2','');
+addTocRow('작중행적','h1','');
+addTocRow('과거','h2','');
+addTocRow('본편','h2','');
+addTocRow('인간 관계','h1','');
 </script>
 </body>
 </html>
+ 
+
+
+
+
