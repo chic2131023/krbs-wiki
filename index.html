@@ -377,9 +377,9 @@ select.fi{cursor:pointer;}
     <h4>사용 전 꼭 읽어주세요</h4>
     <div class="notice-body">
 <p>왼쪽에서 값을 채우고 <strong>코드 생성하기</strong>를 누르면 오른쪽에 나무위키풍 HTML 코드가 만들어져요. 개인홈, 티스토리 등 HTML을 넣을 수 있는 곳에 그 코드를 복붙하면 그대로 출력됩니다.</p>
-<p><strong>이미지는 되도록 imgbb 등 이미지 호스팅 사이트에 올려서 이미지 주소(링크)를 넣어주세요.</strong> 파일 첨부 기능도 있지만 사진이 코드 안에 통째로 들어가는 방식이라 코드가 수십 배로 길어집니다. 티스토리에 붙여넣을 때 저장이 안 되거나 글이 잘릴 수 있고, 메모장에 보관해뒀다가 다시 불러오기도 어려워집니다. 주소를 쓸 수 없는 경우에만 사용해주세요.</p>
-<p><strong>소속 카드</strong>는 실제 나무위키 캐릭터 문서의 "OO의 소속" 박스와 같은 형식이에요. 학교를 고르면 번호·이름·포지션이 자동으로 채워지고, "이 캐릭터" 체크박스를 켠 항목은 링크 없이 굵게 표시돼요. "직접 입력"을 고르면 빈칸에서 시작해 다른 작품에도 쓸 수 있고, "+ 소속팀 추가"로 중학교 소속 등 여러 팀을 함께 넣을 수 있어요.</p>
-<p><strong>자동저장 같은 기능은 없습니다.</strong> 날아가지 않도록 미리 써두고 복붙하는 방식을 추천합니다. <strong>코드를 메모장에 가지고 있으면 이 프로그램에 다시 불러올 수 있습니다.</strong> 그때 이어서 조금씩 편집하면 되는데, 파일로 첨부했던 이미지는 복원되지 않아요. 코드를 전혀 모르신다면 처음부터 수정하지 않을 생각으로 완벽하게 적어두신 후 이 프로그램을 쓰는 것을 추천합니다.</p>
+<p><strong>이미지는 되도록 이미지 주소(링크)를 넣어주세요.</strong> 파일 첨부 기능도 있지만 사진이 코드 안에 통째로 들어가는 방식이라 코드가 수십 배로 길어집니다. 티스토리에 붙여넣을 때 저장이 안 되거나 글이 잘릴 수 있으니 주소를 쓸 수 없는 경우에만 사용해주세요.</p>
+<p><strong>소속 카드</strong>는 실제 나무위키 캐릭터 문서의 "OO의 소속" 박스와 같은 형식이에요. 학교를 고르면 번호·이름·포지션이 자동으로 채워지고, "이 캐릭터" 체크박스를 켠 항목은 링크 없이 굵게 표시돼요. "직접 입력"을 고르면 빈칸에서 시작해 다른 작품에도 쓸 수 있고, "+ 소속팀 추가"로 여러 팀을 함께 넣을 수 있어요.</p>
+<p><strong>자동저장 기능이 없습니다.</strong> 날아가지 않도록 미리 써두고 복붙하는 방식을 추천합니다. <strong>코드를 가지고 있으면 이 프로그램에 다시 불러올 수 있습니다.</strong> 그때 이어서 조금씩 편집하면 되는데, 파일로 첨부했을 시 이미지는 복원되지 않아요. 코드를 전혀 모르신다면 완성까지 한 번에 진행하는 것을 추천합니다.</p>
 </div>
     <div class="pop-btns" style="margin-top:14px;">
       <button class="pop-btn confirm" onclick="closeNotice()">확인했어요</button>
@@ -426,7 +426,7 @@ function getHex(id,fallback){
 /* 나무위키 각 학교 문서에서 확인한 실제 등번호·포지션 데이터 (2026-09 기준) */
 const TEAM_PRESETS={
   kaijo:{name:'카이조 (海常)',link:'https://namu.wiki/w/%EC%B9%B4%EC%9D%B4%EC%A1%B0%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
-    logo:'https://i.namu.wiki/i/c3LUxiRSLAwNJAfGaI4Ubhxthh5E_RzDGZ-dlDzRTeKJn4bl-PDXJOiH35QiNUlapqwwLBG4EgqRL_Zi6ozdFg.webp',
+    logo:'https://i.namu.wiki/i/unqYtV5rlHNQ2zeS7yF1Mls_d82Chh_AvH_z-bsqA5PrKaRDskBjyRbP-zY3iXxjbxwM03YaKCV8jWpI3wK2wA.webp',
     members:[
       {num:'4',name:'카사마츠 유키오',pos:'PG'},
       {num:'5',name:'모리야마 요시타카',pos:'SG'},
@@ -437,7 +437,7 @@ const TEAM_PRESETS={
     ],
     staff:[{name:'타케우치 겐타',role:'감독'}]},
   seirin:{name:'세이린 (誠凛)',link:'https://namu.wiki/w/%EC%84%B8%EC%9D%B4%EB%A6%B0%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
-    logo:'',
+    logo:'https://i.namu.wiki/i/nHwMVghz41SK_jIX3xvCYPeEw41-8vd4DJrWLqssj8hq-VMe9_C1xAivmj8e5jSlby33nym9qHLzQ2pQ6iiZMg.webp',
     members:[
       {num:'4',name:'휴가 준페이',pos:'SG'},
       {num:'5',name:'이즈키 슌',pos:'PG'},
@@ -449,9 +449,9 @@ const TEAM_PRESETS={
       {num:'11',name:'쿠로코 테츠야',pos:'??'},
       {num:'12',name:'후리하타 코우키',pos:'PG'}
     ],
-    staff:[{name:'아이다 리코',role:'감독'},{name:'타케다',role:'고문'}]},
+    staff:[{name:'아이다 리코',role:'감독'},{name:'타케다',role:'고문'},{name:'테츠야 2호',role:'마스코트'}]},
   too:{name:'토오 (桐皇)',link:'https://namu.wiki/w/%ED%86%A0%EC%98%A4%20%ED%95%99%EC%9B%90%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
-    logo:'',
+    logo:'https://i.namu.wiki/i/J39We5QFmBfcDoN02i_pnTwO1RS7j2vVqvp6av2cSQFT3C7Ks0f1c1xemXkGTal1UgrZTQB9FHEwVg2GvmwLMw.webp',
     members:[
       {num:'4',name:'이마요시 쇼이치',pos:'PG · 주장'},
       {num:'5',name:'아오미네 다이키',pos:'PF'},
@@ -460,16 +460,16 @@ const TEAM_PRESETS={
       {num:'9',name:'사쿠라이 료',pos:'SG'}
     ],
     staff:[{name:'모모이 사츠키',role:'매니저'},{name:'하라사와 카츠노리',role:'감독'}]},
-  yosen:{name:'요세이 (陽泉)',link:'https://namu.wiki/w/%EC%9A%94%EC%84%BC%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
-    logo:'',
+  yosen:{name:'요센 (陽泉)',link:'https://namu.wiki/w/%EC%9A%94%EC%84%BC%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
+    logo:'https://i.namu.wiki/i/UW9oFjLP7xrO-2_nzORfR8C0THOLrpxKGVcsICVLVYKl34gWqImk2Z66lwhFZGX6rVXZ0FaSSX7eoA8NHzRjVg.webp',
     members:[
       {num:'',name:'오카무라 켄이치',pos:'PF · 주장'},
       {num:'',name:'무라사키바라 아츠시',pos:'C'},
       {num:'',name:'히무로 타츠야',pos:'SG'}
     ],
-    staff:[]},
+    staff:[{name:'아라키 마사코',role:'감독'}]},
   rakuzan:{name:'라쿠잔 (洛山)',link:'https://namu.wiki/w/%EB%9D%BC%EC%BF%A0%EC%9E%94%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
-    logo:'',
+    logo:'https://i.namu.wiki/i/AqzItt1lzHsejwoioQi3HztlMhlt1uCR0BaF6ISqKaAUZNjezbpxdTkvblWGmLn6ARzY5WA56fyYt6ZvzkSk8A.webp',
     members:[
       {num:'4',name:'아카시 세이주로',pos:'PG · 주장'},
       {num:'5',name:'마유즈미 치히로',pos:'PF'},
@@ -479,7 +479,7 @@ const TEAM_PRESETS={
     ],
     staff:[{name:'히구치 쇼타',role:'매니저'},{name:'시로가네 에이지',role:'감독'}]},
   shutoku:{name:'슈토쿠 (秀徳)',link:'https://namu.wiki/w/%EC%8A%88%ED%86%A0%EC%BF%A0%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
-    logo:'',
+    logo:'https://i.namu.wiki/i/TYkcH7KgrKFqBB5bmvcRYfE6ec-8YxvYa6mUMvjkB9hEESKZYXzVFatVAM9Bg2UcUsdrotQluKdTN5eO4j35mg.webp',
     members:[
       {num:'4',name:'오츠보 타이스케',pos:'C · 주장'},
       {num:'5',name:'키무라 신스케',pos:'PF'},
