@@ -342,7 +342,7 @@ select.fi{cursor:pointer;}
 <div class="sec">
   <div class="sec-hd"><span>이미지 블록</span></div>
   <div class="nb">본문에 <code>[[이미지:N]]</code>을 넣으면 그 자리에 사진이 나와요.<br>
-<b>사진은 되도록 imgbb 같은 이미지 호스팅 사이트에 올린 뒤 이미지 주소를 붙여넣어 주세요.</b> 파일 첨부는 사진을 코드 안에 통째로 담는 방식이라 코드가 수십 배로 길어지고, 티스토리에서 저장이 안 되거나 잘릴 수 있어요. 주소를 도저히 못 쓰는 경우에만 써주세요.</div>
+<b>사진은 되도록 이미지 주소를 붙여넣어 주세요.</b> 파일 첨부는 사진을 코드 안에 통째로 담는 방식이라 코드가 수십 배로 길어지고, 티스토리에서 저장이 안 되거나 잘릴 수 있어요. 주소를 도저히 못 쓰는 경우에만 써주세요.</div>
   <div id="ib-rows"></div>
   <button class="add-btn" onclick="addIB()">＋ 이미지 블록 추가</button>
 </div>
@@ -423,7 +423,7 @@ function getHex(id,fallback){
 }
  
 /* ════════ 소속 카드 (나무위키 실제 형식) ════════ */
-/* 나무위키 각 학교 문서에서 확인한 실제 등번호·포지션 데이터 (2026-09 기준) */
+/* 나무위키 각 학교 문서에서 확인한 실제 등번호·포지션 데이터 */
 const TEAM_PRESETS={
   kaijo:{name:'카이조 (海常)',link:'https://namu.wiki/w/%EC%B9%B4%EC%9D%B4%EC%A1%B0%20%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90',
     logo:'https://i.namu.wiki/i/unqYtV5rlHNQ2zeS7yF1Mls_d82Chh_AvH_z-bsqA5PrKaRDskBjyRbP-zY3iXxjbxwM03YaKCV8jWpI3wK2wA.webp',
@@ -528,7 +528,7 @@ function addTeamBlock(preset){
         <option value="kaijo">카이조 고교</option>
         <option value="seirin">세이린 고교</option>
         <option value="too">토오 학원</option>
-        <option value="yosen">요세이 고교</option>
+        <option value="yosen">요센 고교</option>
         <option value="rakuzan">라쿠잔 고교</option>
         <option value="shutoku">슈토쿠 고교</option>
         <option value="custom" selected>직접 입력</option>
