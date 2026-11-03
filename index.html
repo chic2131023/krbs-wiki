@@ -50,15 +50,20 @@ header h1{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.02em;
 .left::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px;}
 .left::-webkit-scrollbar-track{background:transparent;}
  
+.notice-banners{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:18px;}
 .notice-banner{
   display:flex;align-items:center;gap:14px;
   background:var(--coral-tint);
   border:1px solid #cfe0fb;
   border-left:3px solid var(--coral);
   border-radius:var(--r-m);padding:12px 16px;
-  margin-bottom:18px;cursor:pointer;
+  cursor:pointer;
   transition:background .15s;
 }
+.notice-banner.alt{background:var(--panel);border-color:var(--line);border-left-color:var(--ink-2);}
+.notice-banner.alt:hover{background:var(--well);}
+.notice-banner.alt .notice-banner-text .title{color:var(--ink);}
+.notice-banner.alt .notice-banner-arrow{color:var(--ink-2);}
 .notice-banner:hover{background:#dce9fc;}
 .notice-banner-text .title{font-size:12.5px;font-weight:700;color:var(--coral-deep);}
 .notice-banner-text .sub{font-size:11px;color:var(--ink-2);margin-top:2px;line-height:1.5;}
@@ -255,19 +260,29 @@ select.fi{cursor:pointer;}
 <div class="app">
 <div class="left" id="left">
  
-<!-- ✏️ [부연설명 0] 맨 위 안내 배너 : title / sub 안의 글을 직접 바꿔 쓰세요 -->
-<div class="notice-banner" onclick="openNotice()">
+<div class="notice-banners">
+<!-- ✏️ [부연설명 0-A] 왼쪽 배너 (안내사항) : title / sub 안의 글을 직접 바꿔 쓰세요 -->
+<div class="notice-banner" onclick="openNotice('notice-overlay')">
   <div class="notice-banner-text">
-    <div class="title">사용 전 안내를 확인해주세요!</div>
-    <div class="sub">이미지 저장 방식 · 불러오기 방법 안내 · 클릭하면 열려요</div>
+    <div class="title">사용 전 필독!</div>
+    <div class="sub">made by. @m0rinoyume</div>
   </div>
   <div class="notice-banner-arrow">›</div>
+</div>
+<!-- ✏️ [부연설명 0-B] 오른쪽 배너 (사용법) : title / sub 안의 글을 직접 바꿔 쓰세요 -->
+<div class="notice-banner alt" onclick="openNotice('guide-overlay')">
+  <div class="notice-banner-text">
+    <div class="title">사용법</div>
+    <div class="sub">처음 쓰는 분은 여기부터 · 클릭하면 열려요</div>
+  </div>
+  <div class="notice-banner-arrow">›</div>
+</div>
 </div>
  
 <div class="sec">
   <div class="sec-hd"><span>색상 설정</span></div>
   <!-- ✏️ [부연설명 1] 색상 설정 박스 : 아래 <div class="nb"> 안의 글을 직접 바꿔 쓰세요 -->
-  <div class="nb">✏️ 여기에 색상 설정 부연설명을 써주세요.</div>
+  <div class="nb">✏️ 색상 코드 입력, 색상 선택 두 가지 다 가능합니다. 이 색을 바꾼다고 해서 학교 블록의 색 바꾸지 않습니다.</div>
   <div class="card">
     <div class="frow"><label>메인 컬러</label><div class="cpick"><input type="color" id="c-main" value="#1966e1"><input type="text" id="c-main-hex" value="#1966e1" maxlength="7"></div></div>
   </div>
@@ -276,7 +291,7 @@ select.fi{cursor:pointer;}
 <div class="sec">
   <div class="sec-hd"><span>페이지 헤더</span></div>
   <!-- ✏️ [부연설명 2] 페이지 헤더 박스 : 아래 <div class="nb"> 안의 글을 직접 바꿔 쓰세요 -->
-  <div class="nb">✏️ 여기에 페이지 헤더 부연설명을 써주세요.</div>
+  <div class="nb">✏️ 수정 시각은 자동으로 설정되지 않습니다. 원하시는 시간으로 설정 해주세요. </div>
   <div class="card">
     <div class="frow"><label>이름(KO)</label><input class="fi" id="name-ko" value="유메미야 유메" placeholder="한국어 이름"></div>
     <div class="frow"><label>이름(JP)</label><input class="fi" id="name-jp" value="夢宮 ユメ" placeholder="일본어"><input class="fi" id="name-ruby" value="ゆめみや ゆめ" placeholder="히라가나" style="font-size:10px;"></div>
@@ -297,7 +312,7 @@ select.fi{cursor:pointer;}
   </div>
   <div id="card-body">
   <!-- ✏️ [부연설명 3] 소속 카드 박스 : 아래 <div class="nb"> 안의 글을 직접 바꿔 쓰세요 -->
-  <div class="nb">실제 나무위키 캐릭터 문서의 소속 박스와 같은 형식이에요. 학교를 고르면 번호·이름·포지션·팀 색상이 자동으로 채워지고, 팀 색상은 학교 이름 줄과 테두리에 들어가요. 이 캐릭터 본인 항목은 체크박스로 표시하면 링크 없이 굵은 글씨로 나가요. 소속팀이 여러 개면 "+ 소속팀 추가"로 늘려주세요.</div>
+  <div class="nb"> 쿠농 나무위키 상단의 팀 소속과 유사한 형식으로 제작했습니다. 팀 추가도 가능하며, 학교 선택 시 원작 캐릭터들+로고는 자동으로 나옵니다. 또한 실제 나무위키와 연결도 가능합니다. </div>
   <div id="team-blocks"></div>
   <button class="add-btn" id="team-block-add" onclick="addTeamBlock()">＋ 소속팀 추가</button>
   </div>
@@ -309,7 +324,7 @@ select.fi{cursor:pointer;}
     <div class="frow"><label>이미지</label><input class="fi" id="prof-img" value="https://pbs.twimg.com/media/HJk7mHfagAAif2E?format=png&amp;name=360x360" placeholder="주소를 붙여넣거나 파일을 첨부하세요"><button class="pick-btn" onclick="pickImageFor(document.getElementById('prof-img'),600)">파일 첨부</button></div>
   </div>
   <!-- ✏️ [부연설명 4] 프로필 박스 : 아래 <div class="nb"> 안의 글을 직접 바꿔 쓰세요 -->
-  <div class="nb">각 항목의 <b>더보기</b>를 체크하면 "[프로필 더 보기]"를 눌러야 보이는 접힌 영역으로 들어가요. 실제 나무위키처럼 이름·학교·생일 같은 핵심 정보만 바로 보이게 할 수 있어요.</div>
+  <div class="nb"> 쿠농 나무위키처럼 더보기 기능을 제공합니다. 더보기 란에 체크를 하면 그 항목은 더보기가 됩니다. 캐릭터에 맞게 항목을 바꾸거나 주석 처리 또한 가능합니다. </div>
   <div id="prof-rows" style="margin-top:4px;"></div>
   <button class="add-btn" onclick="addProfRow()">＋ 항목 추가</button>
   <div class="card" style="margin-top:8px;">
@@ -325,7 +340,7 @@ select.fi{cursor:pointer;}
   </div>
   <div id="stat-body">
   <!-- ✏️ [부연설명 5] 능력치 박스 : 아래 <div class="nb"> 안의 글을 직접 바꿔 쓰세요 -->
-  <div class="nb">항목명·수치를 자유롭게 편집·추가·삭제할 수 있어요. <b>총합계</b>는 나머지 수치를 자동으로 더해서 보여줘요.</div>
+  <div class="nb">항목명·수치를 자유롭게 편집·추가·삭제할 수 있어요. <b>총합계</b>는 나머지 수치를 자동으로 더해서 보여주니 수정하지 않아도 됩니다.</div>
   <div id="stat-rows"></div>
   <button class="add-btn" onclick="addStatCol()">＋ 항목 추가</button>
   </div>
@@ -337,7 +352,7 @@ select.fi{cursor:pointer;}
   <div class="nb">
     <b>에디터 활용 팁</b><br>
     위의 <b>버튼</b>들로 편하게 삽입할 수 있지만, <b>주석 <u>안에</u> 굵은 글씨, 색상, 링크, 출처</b>를 섞어 쓰고 싶다면?<br>
-    팝업창(버튼)에서는 서식 지정이 안 되니, 본문에 <b>키보드로 직접 괄호를 입력</b>해 보세요! 괄호 안의 글씨를 드래그해서 버튼을 눌러도 그대로 적용됩니다.<br>
+    버튼으로는 중복 기능 적용이 되지 않으니 직접 괄호로 주석을 쓰고 기능을 삽입하면 됩니다!<br>
     <br>
     <b>주석 섞어 쓰기:</b> <code>[주석: 여기에 <b>굵게</b> 또는 링크 적용]</code><br>
   </div>
@@ -349,7 +364,7 @@ select.fi{cursor:pointer;}
   <div class="sec-hd"><span>이미지 블록</span></div>
   <!-- ✏️ [부연설명 7] 이미지 블록 박스 : 아래 <div class="nb"> 안의 글을 직접 바꿔 쓰세요 -->
   <div class="nb">본문에 <code>[[이미지:N]]</code>을 넣으면 그 자리에 사진이 나와요.<br>
-<b>사진은 되도록 이미지 주소를 붙여넣어 주세요.</b> 파일 첨부는 사진을 코드 안에 통째로 담는 방식이라 코드가 수십 배로 길어지고, 티스토리에서 저장이 안 되거나 잘릴 수 있어요. 주소를 도저히 못 쓰는 경우에만 써주세요.</div>
+<b>사진은 되도록 이미지 주소를 붙여넣어 주세요.</b> 파일 첨부는 사진을 코드 안에 통으로 담는 방식이라 코드가 수십 배로 길어지고, 티스토리에서 저장이 안 되거나 잘릴 수 있어요.</div>
   <div id="ib-rows"></div>
   <button class="add-btn" onclick="addIB()">＋ 이미지 블록 추가</button>
 </div>
@@ -379,18 +394,43 @@ select.fi{cursor:pointer;}
 </div>
 </div>
  
-<div class="pop-overlay" id="notice-overlay" style="display:none" onclick="closeNotice(event)">
+<!-- ════════ 팝업 ① 안내사항 ════════ -->
+<div class="pop-overlay" id="notice-overlay" style="display:none" onclick="closeNotice(event,'notice-overlay')">
   <div class="pop notice-pop" onclick="event.stopPropagation()">
-    <h4>사용 전 꼭 읽어주세요</h4>
-    <!-- ✏️ [부연설명 8] 사용 안내 팝업 : 아래 <p> 문단들을 직접 바꿔 쓰세요 (문단 추가·삭제 자유) -->
+    <!-- ✏️ [부연설명 8-A] 안내사항 팝업 : 제목(h4)과 아래 <p> 문단들을 직접 바꿔 쓰세요 (문단 추가·삭제 자유) -->
+    <h4>사용 전 안내사항</h4>
     <div class="notice-body">
+<p><strong style="color:#7b1fa2;">@m0rinoyume</strong></p>
+<p>해당 편집기는 '쿠로코의 농구' 나무위키에 맞춰서 제작했습니다.<br>전공 프로젝트 했던 짬빠와 AI의 도움으로 만들었습니다.<br>오류, 추가 할 부분은 언제나! 편하게! 트위터 소통창구로 알려주세요.</p>
+<p>이 편집기는 그저 해피 덕질을 위한 것이며, 만든 저 또한 수익이 0원입니다! 그러니 <strong>무단배포, 재배포, 금전적 목적으로 사용하는 것 모두 금지합니다.</strong></p>
+<p>이 편집기로 겹드림 견제 하지 마세요. 모두에게 열어두며 저와 겹드림 하시는 분들도 사용 가능합니다. 단, 예민하시면 피해주세요... 제 아이가 있어요.</p>
+<hr style="border:none;border-top:1px solid var(--line);margin:16px 0;">
 <p>왼쪽에서 값을 채우고 <strong>코드 생성하기</strong>를 누르면 오른쪽에 나무위키풍 HTML 코드가 만들어져요. 개인홈, 티스토리 등 HTML을 넣을 수 있는 곳에 그 코드를 복붙하면 그대로 출력됩니다.</p>
 <p><strong>이미지는 되도록 이미지 주소(링크)를 넣어주세요.</strong> 파일 첨부 기능도 있지만 사진이 코드 안에 통째로 들어가는 방식이라 코드가 수십 배로 길어집니다. 티스토리에 붙여넣을 때 저장이 안 되거나 글이 잘릴 수 있으니 주소를 쓸 수 없는 경우에만 사용해주세요.</p>
 <p><strong>소속 카드</strong>는 실제 나무위키 캐릭터 문서의 소속 박스와 같은 형식이에요. 학교를 고르면 번호·이름·포지션·팀 색상이 자동으로 채워지고, "이 캐릭터" 체크박스를 켠 항목은 링크 없이 굵게 표시돼요. "직접 입력"을 고르면 빈칸에서 시작해 다른 작품에도 쓸 수 있고, "+ 소속팀 추가"로 여러 팀을 함께 넣을 수 있어요.</p>
 <p><strong>자동저장 기능이 없습니다.</strong> 날아가지 않도록 미리 써두고 복붙하는 방식을 추천합니다. <strong>코드를 가지고 있으면 이 프로그램에 다시 불러올 수 있습니다.</strong> 그때 이어서 조금씩 편집하면 되는데, 파일로 첨부했을 시 이미지는 복원되지 않아요. 코드를 전혀 모르신다면 완성까지 한 번에 진행하는 것을 추천합니다.</p>
 </div>
     <div class="pop-btns" style="margin-top:14px;">
-      <button class="pop-btn confirm" onclick="closeNotice()">확인했어요</button>
+      <button class="pop-btn confirm" onclick="closeNotice(null,'notice-overlay')">확인했어요</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ 팝업 ② 사용법 ════════ -->
+<div class="pop-overlay" id="guide-overlay" style="display:none" onclick="closeNotice(event,'guide-overlay')">
+  <div class="pop notice-pop" onclick="event.stopPropagation()">
+    <!-- ✏️ [부연설명 8-B] 사용법 팝업 : 제목(h4)과 아래 <p> 문단들을 직접 바꿔 쓰세요 (문단 추가·삭제 자유)
+         · 굵게: <strong>글자</strong>
+         · 줄바꿈: <br>
+         · 문단 하나 = <p>…</p> 한 줄 -->
+    <h4>사용법</h4>
+    <div class="notice-body">
+<p><strong>1. ✏️ 첫 번째 단계 제목</strong><br>✏️ 여기에 설명을 써주세요.</p>
+<p><strong>2. ✏️ 두 번째 단계 제목</strong><br>✏️ 여기에 설명을 써주세요.</p>
+<p><strong>3. ✏️ 세 번째 단계 제목</strong><br>✏️ 여기에 설명을 써주세요.</p>
+</div>
+    <div class="pop-btns" style="margin-top:14px;">
+      <button class="pop-btn confirm" onclick="closeNotice(null,'guide-overlay')">확인했어요</button>
     </div>
   </div>
 </div>
@@ -417,8 +457,11 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function validHex(v,fallback){v=(v||'').trim();return /^#[0-9A-Fa-f]{6}$/.test(v)?v:fallback;}
  
 /* ════════ 공지 팝업 ════════ */
-function openNotice(){document.getElementById('notice-overlay').style.display='flex';}
-function closeNotice(e){if(!e||e.target===document.getElementById('notice-overlay'))document.getElementById('notice-overlay').style.display='none';}
+function openNotice(id){document.getElementById(id||'notice-overlay').style.display='flex';}
+function closeNotice(e,id){
+  const ov=document.getElementById(id||'notice-overlay');
+  if(!e||e.target===ov)ov.style.display='none';
+}
  
 /* ════════ 색상 동기화 ════════ */
 ['main'].forEach(k=>{
@@ -2310,14 +2353,13 @@ document.getElementById('left').addEventListener('input',liveRegen);
 document.getElementById('left').addEventListener('change',liveRegen);
  
 addTeamBlock('kaijo');
-addTocRow('개요','h1','"아아, 연기는 이제 그만 두자!"\n《쿠로코의 농구》의 oc 캐릭터. 카이조 고교 1학년으로 카이조 농구부에서 매니저로 활동하고 있다. 어린시절부터 연예인으로 꽤나 유명했던 만큼, 출중한 외모와 몸매[주석: 알렉스를 제외하면 작중에서 가슴이 가장 크다고 한다...]를 가지고 있다.');
-addTocRow('특징','h1','');
-addTocRow('외모','h2','');
-addTocRow('성격','h2','');
-addTocRow('작중행적','h1','');
-addTocRow('과거','h2','');
-addTocRow('본편','h2','');
-addTocRow('인간 관계','h1','');
+addTocRow('개요','h1','아무튼 캐에 대한 무언가를 입력하시면 됩니다');
+addTocRow('외모','h2','최애의 나무위키 넘버링을 보고 목차도 변경하시면 됩니다.');
+addTocRow('성격','h2','참고로 저의 캐릭터는 나무위키가 짧아서...');
+addTocRow('작중행적','h1','그냥 많이들 쓰시는 넘버링을 기본으로 해봤어요.');
+addTocRow('과거','h2','그러니 마음껏 수정하세요.');
+addTocRow('본편','h2','단, 날아갈 수 있으니 한 번에 입력을 권장합니다.');
+addTocRow('인간 관계','h1','그럼 즐거운 덕질, 행복한 드림하세요!');
 </script>
 </body>
 </html>
